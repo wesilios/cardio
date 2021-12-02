@@ -87,7 +87,6 @@ void swap(int *arr, int start, int end, int d) {
         arr[start + i] = arr[end + i];
         arr[end + i] = temp;
     }
-
 }
 
 void ArrayRotationSolution::rotateWithBlockSwapAlgorithm(int *arr, int d, int n) {
@@ -108,5 +107,26 @@ void ArrayRotationSolution::rotateWithBlockSwapAlgorithm(int *arr, int d, int n)
 
     swap(arr, 0, d, n - d);
     rotateWithBlockSwapAlgorithm(arr + n - d, 2 * d - n, d);
+}
+
+void ArrayRotationSolution::rotateWithBlockSwapIterativeAlgorithm(int *arr, int d, int n) {
+    int i, j;
+    if (d == 0 || n == 0) {
+        return;
+    }
+
+    i = d;
+    j = n - d;
+    while (i != j) {
+        if (i < j) {
+            swap(arr, d - i, d + j - i, i);
+            j -= i;
+            continue;
+        }
+
+        swap(arr, d - i, d, j);
+        i -= j;
+    }
+    swap(arr, d - i, d, i);
 }
 

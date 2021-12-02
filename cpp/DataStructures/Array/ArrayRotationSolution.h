@@ -21,6 +21,7 @@ public:
     void rotateWithReversalAlgorithm(int *arr, int d, int n);
 
     void rotateWithBlockSwapAlgorithm(int *arr, int d, int n);
+    void rotateWithBlockSwapIterativeAlgorithm(int *arr, int d, int n);
 };
 
 #endif //ALGORITHMS_ARRAYROTATIONSOLUTION_H
