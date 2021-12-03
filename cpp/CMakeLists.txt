@@ -3,4 +3,4 @@ project (Algorithms)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Algorithms main.cpp DataStructures/Array/ArrayRotationSolution.h DataStructures/Array/ArrayRotationSolution.cpp)
+add_executable(Algorithms main.cpp DataStructures/Array/ArrayRotationSolution.h)
