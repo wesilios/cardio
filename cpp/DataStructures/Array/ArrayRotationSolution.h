@@ -132,38 +132,38 @@ public:
         }
         swap(arr, d - i, d, i);
     }
-
-    static void tests() {
-        int t, n, d;
-        std::cin >> t;
-        while (t > 0) {
-            std::cin >> n >> d;
-            d = d % n;
-            int arr[n];
-            for (int i = 0; i < n; i++) {
-                std::cin >> arr[i];
-            }
-            std::cout << "Rotate using temp array: " << std::endl;
-            ArrayRotationSolution::rotateUsingTempArray(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            std::cout << "Rotate one by one: " << std::endl;
-            ArrayRotationSolution::leftRotateByOne(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            std::cout << "Rotate using Juggling Algorithm: " << std::endl;
-            ArrayRotationSolution::rotateWithJugglingAlgorithm(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            std::cout << "Rotate using Reversal Algorithm: " << std::endl;
-            ArrayRotationSolution::rotateWithReversalAlgorithm(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            std::cout << "Rotate using Block swap Algorithm: " << std::endl;
-            ArrayRotationSolution::rotateWithBlockSwapAlgorithm(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            std::cout << "Rotate using Block swap Iterative Algorithm: " << std::endl;
-            ArrayRotationSolution::rotateWithBlockSwapIterativeAlgorithm(arr, d, n);
-            ArrayRotationSolution::printResult(arr, n);
-            t--;
-        }
-    }
 };
+
+void arrayRotationSolutionTests() {
+    int t, n, d;
+    std::cin >> t;
+    while (t > 0) {
+        std::cin >> n >> d;
+        d = d % n;
+        int arr[n];
+        for (int i = 0; i < n; i++) {
+            std::cin >> arr[i];
+        }
+        std::cout << "Rotate using temp array: " << std::endl;
+        ArrayRotationSolution::rotateUsingTempArray(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        std::cout << "Rotate one by one: " << std::endl;
+        ArrayRotationSolution::leftRotateByOne(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        std::cout << "Rotate using Juggling Algorithm: " << std::endl;
+        ArrayRotationSolution::rotateWithJugglingAlgorithm(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        std::cout << "Rotate using Reversal Algorithm: " << std::endl;
+        ArrayRotationSolution::rotateWithReversalAlgorithm(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        std::cout << "Rotate using Block swap Algorithm: " << std::endl;
+        ArrayRotationSolution::rotateWithBlockSwapAlgorithm(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        std::cout << "Rotate using Block swap Iterative Algorithm: " << std::endl;
+        ArrayRotationSolution::rotateWithBlockSwapIterativeAlgorithm(arr, d, n);
+        ArrayRotationSolution::printResult(arr, n);
+        t--;
+    }
+}
 
 #endif //ALGORITHMS_ARRAYROTATIONSOLUTION_H
