@@ -37,6 +37,17 @@ private:
     Node *_head;
     Node *_tail;
 
+    void deleteNode(Node *&node, const T &value) {
+        if (node->data == value) {
+            Node *temp = node;
+            node = node->next;
+            delete temp;
+            _size--;
+            return;
+        }
+        deleteNode(node->next, value);
+    }
+
 public:
     SinglyLinkedList() : _size(0), _head(nullptr), _tail(nullptr) {}
 
@@ -45,16 +56,16 @@ public:
     }
 
     void clear() {
-        Node *temp = _head;
-        while (temp != nullptr) {
-            Node *next = temp->next;
-            delete temp;
-            temp = nullptr;
-            temp = next;
+        Node *node = _head;
+        while (node != nullptr) {
+            Node *next = node->next;
+            delete node;
+            node = nullptr;
+            node = next;
         }
         _head = nullptr;
         _tail = nullptr;
-        temp = nullptr;
+        node = nullptr;
         _size = 0;
     }
 
@@ -88,7 +99,7 @@ public:
             _head = new Node(data, nullptr);
             _tail = _head;
         } else {
-            Node first = new Node(data, _head);
+            Node *first = new Node(data, _head);
             _head = first;
         }
         _size++;
@@ -98,6 +109,7 @@ public:
         if (index < 0) {
             throw ("Illegal index");
         }
+
         if (index == 0) {
             addFirst(data);
             return;
@@ -108,25 +120,69 @@ public:
             return;
         }
 
-        Node *temp = _head;
+        Node *node = _head;
         for (int i = 1; i < index - 1; i++) {
-            temp = temp->next;
+            node = node->next;
         }
-        Node *newNode = new Node(data, temp->next);
-        temp->next = newNode;
+        Node *newNode = new Node(data, node->next);
+        node->next = newNode;
         _size++;
     }
 
     void printList() {
-        Node *temp = _head;
-        while (temp != nullptr) {
-            std::cout << temp->data << " ";
-            temp = temp->next;
+        Node *node = _head;
+        while (node != nullptr) {
+            std::cout << node->data << " ";
+            node = node->next;
         }
+        std::cout << std::endl;
+    }
+
+    void deleteFirst() {
+        Node *node = _head;
+        _head = node->next;
+        delete node;
+        _size--;
+    }
+
+    void deleteLast() {
+        Node *node = _head;
+        Node *previous;
+        for (int i = 0; i < size(); i++) {
+            previous = node;
+            node = node->next;
+        }
+        _tail = previous;
+        delete node;
+        _size--;
+    }
+
+    void deleteNode(const int &value) {
+        deleteNode(_head, value);
+    }
+
+    void deleteNodeAtPosition(const int &index) {
+        if (index < 0) {
+            throw ("Illegal index");
+        }
+
+        if (index == 0) {
+            deleteFirst();
+        }
+
+        if (index == size()) {
+            deleteLast();
+        }
+
+        Node *node = _head;
+        for (int i = 1; i < index; i++) {
+            node = node->next;
+        }
+        deleteNode(_head, node->data);
     }
 };
 
-void linkedListTest() {
+void SinglyLinkedListTest() {
     int n, data;
     std::cin >> n;
     SinglyLinkedList<int> linkedList;
@@ -135,6 +191,24 @@ void linkedListTest() {
         linkedList.add(data);
     }
     linkedList.printList();
+    int index;
+    std::cin >> index >> data;
+    linkedList.addAt(index, data);
+    linkedList.printList();
+    std::cin >> data;
+    linkedList.deleteNode(data);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    linkedList.deleteFirst();
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    linkedList.deleteLast();
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> index;
+    linkedList.deleteNodeAtPosition(index);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
 #endif //ALGORITHMS_SINGLYLINKEDLIST_H
