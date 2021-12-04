@@ -7,3 +7,5 @@
 13
 // Delete node at 7th
 7
+// Print value at location
+3

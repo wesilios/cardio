@@ -1,12 +1,12 @@
 #include <iostream>
 #include <sstream>
+#include "../../Exception.h"
 
 #ifndef ALGORITHMS_SINGLYLINKEDLIST_H
 #define ALGORITHMS_SINGLYLINKEDLIST_H
 
 template<class T>
 class SinglyLinkedList;
-
 
 template<typename T>
 class SinglyLinkedList {
@@ -37,15 +37,15 @@ private:
     Node *_head;
     Node *_tail;
 
-    void deleteNode(Node *&node, const T &value) {
-        if (node->data == value) {
+    void deleteNode(Node *&node, const T &data) {
+        if (node->data == data) {
             Node *temp = node;
             node = node->next;
             delete temp;
             _size--;
             return;
         }
-        deleteNode(node->next, value);
+        deleteNode(node->next, data);
     }
 
 public:
@@ -107,7 +107,7 @@ public:
 
     void addAt(int index, const T &data) {
         if (index < 0) {
-            throw ("Illegal index");
+            throw InvalidArgument("Illegal index");
         }
 
         if (index == 0) {
@@ -148,37 +148,58 @@ public:
     void deleteLast() {
         Node *node = _head;
         Node *previous;
-        for (int i = 0; i < size(); i++) {
+        for (int i = 0; i < size() - 1; i++) {
             previous = node;
             node = node->next;
         }
+        previous->next = nullptr;
         _tail = previous;
         delete node;
         _size--;
     }
 
-    void deleteNode(const int &value) {
-        deleteNode(_head, value);
+    void deleteNode(const int &data) {
+        deleteNode(_head, data);
     }
 
-    void deleteNodeAtPosition(const int &index) {
+    void deleteNodeAtLocation(const int &index) {
         if (index < 0) {
-            throw ("Illegal index");
+            throw InvalidArgument("Illegal index");
         }
 
         if (index == 0) {
             deleteFirst();
+            return;
         }
 
         if (index == size()) {
             deleteLast();
+            return;
         }
 
         Node *node = _head;
-        for (int i = 1; i < index; i++) {
+        for (int i = 0; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
-        deleteNode(_head, node->data);
+
+        if (node == nullptr || node->next == nullptr) {
+            return;
+        }
+        Node *next = node->next->next;
+        delete node->next;
+        node->next = next;
+        _size--;
+    }
+
+    void findByIndex(const int &index) {
+        if (index < 0 || index > size()) {
+            throw InvalidArgument("Illegal index");
+        }
+        Node *node = _head;
+        for (int i = 0; i < index - 1; ++i) {
+            node = node->next;
+        }
+        std::cout << node->data << std::endl;
     }
 };
 
@@ -206,9 +227,11 @@ void SinglyLinkedListTest() {
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> index;
-    linkedList.deleteNodeAtPosition(index);
+    linkedList.deleteNodeAtLocation(index);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> index;
+    linkedList.findByIndex(index);
 }
 
 #endif //ALGORITHMS_SINGLYLINKEDLIST_H
