@@ -1,6 +1,4 @@
-//
-// Created by Admin on 12/4/2021.
-//
+
 
 #ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
 #define ALGORITHMS_DOUBLYLINKEDLIST_H
@@ -51,6 +49,34 @@ public:
         node = nullptr;
         _size = 0;
     }
+
+    int size() {
+        return _size;
+    }
+
+    bool isEmpty() {
+        return size() == 0;
+    }
+
+    void add(const T &data);
+
+    void addFirst(const T &data);
+
+    void addLast(const T &data);
+
+    void addAt(const T &data);
+
+    void printList();
+
+    void deleteFirst();
+
+    void deleteLast();
+
+    void deleteNode(const T &data);
+
+    void deleteNodeAtIndex(const int &index);
+
+    void findByIndex(const int &index);
 };
 
 #endif //ALGORITHMS_DOUBLYLINKEDLIST_H

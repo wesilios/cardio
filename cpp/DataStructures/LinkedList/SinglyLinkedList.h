@@ -158,11 +158,11 @@ public:
         _size--;
     }
 
-    void deleteNode(const int &data) {
+    void deleteNode(const T &data) {
         deleteNode(_head, data);
     }
 
-    void deleteNodeAtLocation(const int &index) {
+    void deleteNodeAtIndex(const int &index) {
         if (index < 0) {
             throw InvalidArgument("Illegal index");
         }
@@ -227,7 +227,7 @@ void SinglyLinkedListTest() {
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> index;
-    linkedList.deleteNodeAtLocation(index);
+    linkedList.deleteNodeAtIndex(index);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> index;
