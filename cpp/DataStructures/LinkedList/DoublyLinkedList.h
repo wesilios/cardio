@@ -176,12 +176,27 @@ public:
             deleteLast();
             return;
         }
+
+        Node *node = _head->next;
+        for (int i = 1; node != nullptr && i < index - 2; i++) {
+            node = node->next;
+        }
+        if (node == nullptr || node->next == nullptr) {
+            return;
+        }
+
+        Node *next = node->next->next;
+        next->previous = node;
+        delete node->next;
+        node->next = next;
+        _size--;
     }
 
     void findByIndex(const int &index) {
         if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
+
         Node *node = _head;
         for (int i = 0; i < index - 1; ++i) {
             node = node->next;
@@ -214,10 +229,10 @@ void DoublyLinkedListTests() {
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
-//    std::cin >> index;
-//    linkedList.deleteNodeAtIndex(index);
-//    linkedList.printList();
-//    std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> index;
+    linkedList.deleteNodeAtIndex(index);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> index;
     linkedList.findByIndex(index);
 }

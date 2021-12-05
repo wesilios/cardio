@@ -181,10 +181,10 @@ public:
         for (int i = 0; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
-
         if (node == nullptr || node->next == nullptr) {
             return;
         }
+
         Node *next = node->next->next;
         delete node->next;
         node->next = next;
@@ -195,6 +195,7 @@ public:
         if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
+
         Node *node = _head;
         for (int i = 0; i < index - 1; ++i) {
             node = node->next;
