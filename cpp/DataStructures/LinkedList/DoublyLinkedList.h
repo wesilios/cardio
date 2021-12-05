@@ -1,57 +1,39 @@
 #include <iostream>
-#include <sstream>
 #include "../../Exception.h"
 
-#ifndef ALGORITHMS_SINGLYLINKEDLIST_H
-#define ALGORITHMS_SINGLYLINKEDLIST_H
-
-template<class T>
-class SinglyLinkedList;
+#ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
+#define ALGORITHMS_DOUBLYLINKEDLIST_H
 
 template<typename T>
-class SinglyLinkedList {
+class DoublyLinkedList;
+
+template<typename T>
+class DoublyLinkedList {
 public:
     class Node {
     private:
         T data;
-        Node *next;
+        Node *previous, *next;
 
-        friend class SinglyLinkedList<T>;
+        friend class DoublyLinkedList<T>;
 
     public:
-        Node() : next(nullptr) {
+        Node() : previous(nullptr), next(nullptr) {
         }
 
-        Node(const T &data, Node *next) : data(data), next(next) {
-        }
-
-        std::string toString() const {
-            std::stringstream ss;
-            ss << "Node(" << data << ")";
-            return ss.str();
+        Node(T data, Node *previous, Node *next) : data(data), previous(previous), next(next) {
         }
     };
 
 private:
     int _size = 0;
-    Node *_head;
-    Node *_tail;
-
-    void deleteNode(Node *&node, const T &data) {
-        if (node->data == data) {
-            Node *temp = node;
-            node = node->next;
-            delete temp;
-            _size--;
-            return;
-        }
-        deleteNode(node->next, data);
-    }
+    Node *_head, *_tail;
 
 public:
-    SinglyLinkedList() : _size(0), _head(nullptr), _tail(nullptr) {}
+    DoublyLinkedList() : _size(0), _head(nullptr), _tail(nullptr) {
+    }
 
-    virtual ~SinglyLinkedList() {
+    virtual ~DoublyLinkedList() {
         clear();
     }
 
@@ -81,26 +63,25 @@ public:
         addLast(data);
     }
 
-    // Add element to the end of the list, O(1)
-    void addLast(const T &data) {
+    void addFirst(const T &data) {
         if (isEmpty()) {
-            _head = new Node(data, nullptr);
+            _head = new Node(data, nullptr, nullptr);
             _tail = _head;
         } else {
-            _tail->next = new Node(data, nullptr);
-            _tail = _tail->next;
+            Node *first = new Node(data, nullptr, _head);
+            _head->previous = first;
+            _head = first;
         }
         _size++;
     }
 
-    // Add element to the beginning of the list, O(1)
-    void addFirst(const T &data) {
+    void addLast(const T &data) {
         if (isEmpty()) {
-            _head = new Node(data, nullptr);
+            _head = new Node(data, nullptr, nullptr);
             _tail = _head;
         } else {
-            Node *first = new Node(data, _head);
-            _head = first;
+            _tail->next = new Node(data, _tail, nullptr);
+            _tail = _tail->next;
         }
         _size++;
     }
@@ -119,12 +100,11 @@ public:
             addLast(data);
             return;
         }
-
         Node *node = _head;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
-        Node *newNode = new Node(data, node->next);
+        Node *newNode = new Node(data, node, node->next);
         node->next = newNode;
         _size++;
     }
@@ -139,27 +119,47 @@ public:
     }
 
     void deleteFirst() {
-        Node *node = _head;
-        _head = node->next;
-        delete node;
+        Node *head = _head;
+        _head = head->next;
+        _head->previous = nullptr;
+        delete head;
         _size--;
     }
 
     void deleteLast() {
-        Node *node = _head;
-        Node *previous;
-        for (int i = 0; i < size() - 1; i++) {
-            previous = node;
-            node = node->next;
-        }
-        previous->next = nullptr;
-        _tail = previous;
-        delete node;
+        Node *tail = _tail;
+        _tail = tail->previous;
+        _tail->next = nullptr;
+        delete tail;
         _size--;
     }
 
     void deleteNode(const T &data) {
-        deleteNode(_head, data);
+        if (_head->data == data) {
+            deleteFirst();
+        }
+
+        if (_tail->data == data) {
+            deleteLast();
+        }
+
+        Node *node = _head;
+        while (node != nullptr) {
+            if (node->data != data) {
+                node = node->next;
+                continue;
+            }
+
+            Node *next = node->next;
+            node->previous->next = next;
+            if (next != nullptr) {
+                next->previous = node->previous;
+            }
+
+            delete node;
+            node = next;
+            _size--;
+        }
     }
 
     void deleteNodeAtIndex(const int &index) {
@@ -177,8 +177,8 @@ public:
             return;
         }
 
-        Node *node = _head;
-        for (int i = 0; node != nullptr && i < index - 2; i++) {
+        Node *node = _head->next;
+        for (int i = 1; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
         if (node == nullptr || node->next == nullptr) {
@@ -186,6 +186,7 @@ public:
         }
 
         Node *next = node->next->next;
+        next->previous = node;
         delete node->next;
         node->next = next;
         _size--;
@@ -204,10 +205,10 @@ public:
     }
 };
 
-void SinglyLinkedListTest() {
+void DoublyLinkedListTests() {
     int n, data;
     std::cin >> n;
-    SinglyLinkedList<int> linkedList;
+    DoublyLinkedList<int> linkedList;
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
@@ -236,4 +237,4 @@ void SinglyLinkedListTest() {
     linkedList.findByIndex(index);
 }
 
-#endif //ALGORITHMS_SINGLYLINKEDLIST_H
+#endif //ALGORITHMS_DOUBLYLINKEDLIST_H
