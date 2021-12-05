@@ -216,6 +216,7 @@ void SinglyLinkedListTest() {
     std::cin >> index >> data;
     linkedList.addAt(index, data);
     linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
