@@ -26,11 +26,11 @@ public:
     };
 
 private:
-    int _size = 0;
-    Node *_head, *_tail;
+    int size_ = 0;
+    Node *head_, *tail_;
 
 public:
-    DoublyLinkedList() : _size(0), _head(nullptr), _tail(nullptr) {
+    DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
     }
 
     virtual ~DoublyLinkedList() {
@@ -38,21 +38,21 @@ public:
     }
 
     void clear() {
-        Node *node = _head;
+        Node *node = head_;
         while (node != nullptr) {
             Node *next = node->next;
             delete node;
             node = nullptr;
             node = next;
         }
-        _head = nullptr;
-        _tail = nullptr;
+        head_ = nullptr;
+        tail_ = nullptr;
         node = nullptr;
-        _size = 0;
+        size_ = 0;
     }
 
     int size() {
-        return _size;
+        return size_;
     }
 
     bool isEmpty() {
@@ -65,25 +65,25 @@ public:
 
     void addFirst(const T &data) {
         if (isEmpty()) {
-            _head = new Node(data, nullptr, nullptr);
-            _tail = _head;
+            head_ = new Node(data, nullptr, nullptr);
+            tail_ = head_;
         } else {
-            Node *first = new Node(data, nullptr, _head);
-            _head->previous = first;
-            _head = first;
+            Node *first = new Node(data, nullptr, head_);
+            head_->previous = first;
+            head_ = first;
         }
-        _size++;
+        size_++;
     }
 
     void addLast(const T &data) {
         if (isEmpty()) {
-            _head = new Node(data, nullptr, nullptr);
-            _tail = _head;
+            head_ = new Node(data, nullptr, nullptr);
+            tail_ = head_;
         } else {
-            _tail->next = new Node(data, _tail, nullptr);
-            _tail = _tail->next;
+            tail_->next = new Node(data, tail_, nullptr);
+            tail_ = tail_->next;
         }
-        _size++;
+        size_++;
     }
 
     void addAt(int index, const T &data) {
@@ -100,17 +100,17 @@ public:
             addLast(data);
             return;
         }
-        Node *node = _head;
+        Node *node = head_;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
         Node *newNode = new Node(data, node, node->next);
         node->next = newNode;
-        _size++;
+        size_++;
     }
 
     void printList() {
-        Node *node = _head;
+        Node *node = head_;
         while (node != nullptr) {
             std::cout << node->data << " ";
             node = node->next;
@@ -119,31 +119,31 @@ public:
     }
 
     void deleteFirst() {
-        Node *head = _head;
-        _head = head->next;
-        _head->previous = nullptr;
+        Node *head = head_;
+        head_ = head->next;
+        head_->previous = nullptr;
         delete head;
-        _size--;
+        size_--;
     }
 
     void deleteLast() {
-        Node *tail = _tail;
-        _tail = tail->previous;
-        _tail->next = nullptr;
+        Node *tail = tail_;
+        tail_ = tail->previous;
+        tail_->next = nullptr;
         delete tail;
-        _size--;
+        size_--;
     }
 
     void deleteNode(const T &data) {
-        if (_head->data == data) {
+        if (head_->data == data) {
             deleteFirst();
         }
 
-        if (_tail->data == data) {
+        if (tail_->data == data) {
             deleteLast();
         }
 
-        Node *node = _head;
+        Node *node = head_;
         while (node != nullptr) {
             if (node->data != data) {
                 node = node->next;
@@ -158,7 +158,7 @@ public:
 
             delete node;
             node = next;
-            _size--;
+            size_--;
         }
     }
 
@@ -177,7 +177,7 @@ public:
             return;
         }
 
-        Node *node = _head->next;
+        Node *node = head_->next;
         for (int i = 1; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
@@ -189,7 +189,7 @@ public:
         next->previous = node;
         delete node->next;
         node->next = next;
-        _size--;
+        size_--;
     }
 
     void findByIndex(const int &index) {
@@ -197,7 +197,7 @@ public:
             throw InvalidArgument("Illegal index");
         }
 
-        Node *node = _head;
+        Node *node = head_;
         for (int i = 0; i < index - 1; ++i) {
             node = node->next;
         }
