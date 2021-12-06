@@ -1,33 +1,17 @@
 #include <iostream>
+#include "Node.h"
 #include "../../Exception.h"
 
 #ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
 #define ALGORITHMS_DOUBLYLINKEDLIST_H
 
-template<typename T>
-class DoublyLinkedList;
+void DoublyLinkedListTest();
 
 template<typename T>
 class DoublyLinkedList {
-public:
-    class Node {
-    private:
-        T data;
-        Node *previous, *next;
-
-        friend class DoublyLinkedList<T>;
-
-    public:
-        Node() : previous(nullptr), next(nullptr) {
-        }
-
-        Node(T data, Node *previous, Node *next) : data(data), previous(previous), next(next) {
-        }
-    };
-
 private:
     int size_ = 0;
-    Node *head_, *tail_;
+    DoublyNode<T> *head_, *tail_;
 
 public:
     DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
@@ -38,16 +22,14 @@ public:
     }
 
     void clear() {
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         while (node != nullptr) {
-            Node *next = node->next;
+            DoublyNode<T> *next = node->next;
             delete node;
-            node = nullptr;
             node = next;
         }
         head_ = nullptr;
         tail_ = nullptr;
-        node = nullptr;
         size_ = 0;
     }
 
@@ -65,10 +47,10 @@ public:
 
     void addFirst(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr, nullptr);
+            head_ = new DoublyNode<T>(data, nullptr, nullptr);
             tail_ = head_;
         } else {
-            Node *first = new Node(data, nullptr, head_);
+            auto *first = new DoublyNode<T>(data, nullptr, head_);
             head_->previous = first;
             head_ = first;
         }
@@ -77,10 +59,10 @@ public:
 
     void addLast(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr, nullptr);
+            head_ = new DoublyNode<T>(data, nullptr, nullptr);
             tail_ = head_;
         } else {
-            tail_->next = new Node(data, tail_, nullptr);
+            tail_->next = new DoublyNode<T>(data, tail_, nullptr);
             tail_ = tail_->next;
         }
         size_++;
@@ -101,17 +83,17 @@ public:
             return;
         }
 
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
-        Node *newNode = new Node(data, node, node->next);
+        auto *newNode = new DoublyNode<T>(data, node, node->next);
         node->next = newNode;
         size_++;
     }
 
     void printList() {
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         while (node != nullptr) {
             std::cout << node->data << " ";
             node = node->next;
@@ -120,7 +102,7 @@ public:
     }
 
     void deleteFirst() {
-        Node *head = head_;
+        DoublyNode<T> *head = head_;
         head_ = head->next;
         head_->previous = nullptr;
         delete head;
@@ -128,7 +110,7 @@ public:
     }
 
     void deleteLast() {
-        Node *tail = tail_;
+        DoublyNode<T> *tail = tail_;
         tail_ = tail->previous;
         tail_->next = nullptr;
         delete tail;
@@ -144,14 +126,14 @@ public:
             deleteLast();
         }
 
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         while (node != nullptr) {
             if (node->data != data) {
                 node = node->next;
                 continue;
             }
 
-            Node *next = node->next;
+            DoublyNode<T> *next = node->next;
             node->previous->next = next;
             if (next != nullptr) {
                 next->previous = node->previous;
@@ -178,7 +160,7 @@ public:
             return;
         }
 
-        Node *node = head_->next;
+        DoublyNode<T> *node = head_->next;
         for (int i = 1; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
@@ -186,7 +168,7 @@ public:
             return;
         }
 
-        Node *next = node->next->next;
+        DoublyNode<T> *next = node->next->next;
         next->previous = node;
         delete node->next;
         node->next = next;
@@ -198,7 +180,7 @@ public:
             throw InvalidArgument("Illegal index");
         }
 
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         for (int i = 0; i < index - 1; ++i) {
             node = node->next;
         }
@@ -206,7 +188,7 @@ public:
     }
 };
 
-void DoublyLinkedListTests() {
+void DoublyLinkedListTest() {
     int n, data;
     std::cin >> n;
     DoublyLinkedList<int> linkedList;
@@ -216,30 +198,38 @@ void DoublyLinkedListTests() {
     }
     linkedList.printList();
     int index;
+
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.findByIndex(index);
+
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();
