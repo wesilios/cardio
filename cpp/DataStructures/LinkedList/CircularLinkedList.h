@@ -1,53 +1,53 @@
 #include <iostream>
 #include "../../Exception.h"
 
-#ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
-#define ALGORITHMS_DOUBLYLINKEDLIST_H
+#ifndef ALGORITHMS_CIRCULARLINKEDLIST_H
+#define ALGORITHMS_CIRCULARLINKEDLIST_H
 
 template<typename T>
-class DoublyLinkedList;
+class CircularLinkedList;
 
 template<typename T>
-class DoublyLinkedList {
+class CircularLinkedList {
 public:
     class Node {
     private:
         T data;
-        Node *previous, *next;
+        Node *next;
 
-        friend class DoublyLinkedList<T>;
+        friend class CircularLinkedList<T>;
 
     public:
-        Node() : previous(nullptr), next(nullptr) {
+        Node() : next(nullptr) {
         }
 
-        Node(T data, Node *previous, Node *next) : data(data), previous(previous), next(next) {
+        Node(const T &data, Node *next) : data(data), next(next) {
         }
     };
 
 private:
     int size_ = 0;
-    Node *head_, *tail_;
+    Node *head_;
+    Node *tail_;
 
 public:
-    DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
+    CircularLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
     }
 
-    virtual ~DoublyLinkedList() {
+    virtual ~CircularLinkedList() {
         clear();
     }
 
     void clear() {
         Node *node = head_;
-        while (node != nullptr) {
+        while (node->next != head_) {
             Node *next = node->next;
             delete node;
             node = nullptr;
             node = next;
         }
+        delete head_;
         head_ = nullptr;
-        tail_ = nullptr;
-        node = nullptr;
         size_ = 0;
     }
 
@@ -63,30 +63,32 @@ public:
         addLast(data);
     }
 
-    void addFirst(const T &data) {
-        if (isEmpty()) {
-            head_ = new Node(data, nullptr, nullptr);
-            tail_ = head_;
-        } else {
-            Node *first = new Node(data, nullptr, head_);
-            head_->previous = first;
-            head_ = first;
-        }
-        size_++;
-    }
-
     void addLast(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr, nullptr);
+            head_ = new Node(data, nullptr);
+            head_->next = head_;
             tail_ = head_;
         } else {
-            tail_->next = new Node(data, tail_, nullptr);
+            tail_->next = new Node(data, head_);
             tail_ = tail_->next;
         }
         size_++;
     }
 
-    void addAtIndex(int index, const T &data) {
+    void addFirst(const T &data) {
+        if (isEmpty()) {
+            head_ = new Node(data, nullptr);
+            head_->next = head_;
+            tail_ = head_;
+        } else {
+            Node *head = new Node(data, head_);
+            head_ = head;
+            tail_->next = head;
+        }
+        size_++;
+    }
+
+    void addAtIndex(int &index, const T &data) {
         if (index < 0) {
             throw InvalidArgument("Illegal index");
         }
@@ -105,34 +107,30 @@ public:
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
-        Node *newNode = new Node(data, node, node->next);
+        Node *newNode = new Node(data, node->next);
         node->next = newNode;
         size_++;
     }
 
     void printList() {
         Node *node = head_;
-        while (node != nullptr) {
+        for (int i = 0; node != nullptr && i < size(); i++) {
             std::cout << node->data << " ";
             node = node->next;
         }
         std::cout << std::endl;
     }
 
-    void deleteFirst() {
-        Node *head = head_;
-        head_ = head->next;
-        head_->previous = nullptr;
-        delete head;
-        size_--;
-    }
+    void findByIndex(const int &index) {
+        if (index < 0 || index > size()) {
+            throw InvalidArgument("Illegal index");
+        }
 
-    void deleteLast() {
-        Node *tail = tail_;
-        tail_ = tail->previous;
-        tail_->next = nullptr;
-        delete tail;
-        size_--;
+        Node *node = head_;
+        for (int i = 0; i < index - 1; i++) {
+            node = node->next;
+        }
+        std::cout << node->data << std::endl;
     }
 
     void deleteNode(const T &data) {
@@ -145,26 +143,22 @@ public:
         }
 
         Node *node = head_;
-        while (node != nullptr) {
-            if (node->data != data) {
+        while (node != tail_) {
+            if (node->next->data != data) {
                 node = node->next;
                 continue;
             }
 
             Node *next = node->next;
-            node->previous->next = next;
-            if (next != nullptr) {
-                next->previous = node->previous;
-            }
-
-            delete node;
-            node = next;
+            node->next = next->next;
+            node = node->next;
+            delete next;
             size_--;
         }
     }
 
     void deleteNodeAtIndex(const int &index) {
-        if (index < 0) {
+        if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -173,43 +167,46 @@ public:
             return;
         }
 
-        if (index == size()) {
+        if (index == size() - 1) {
             deleteLast();
             return;
         }
 
-        Node *node = head_->next;
-        for (int i = 1; node != nullptr && i < index - 2; i++) {
-            node = node->next;
-        }
-        if (node == nullptr || node->next == nullptr) {
-            return;
+        Node *previousNode = head_;
+        for (int i = 0; i < index - 2; ++i) {
+            previousNode = previousNode->next;
         }
 
-        Node *next = node->next->next;
-        next->previous = node;
-        delete node->next;
-        node->next = next;
+        Node *node = previousNode->next;
+        previousNode->next = previousNode->next->next;
+        delete node;
         size_--;
     }
 
-    void findByIndex(const int &index) {
-        if (index < 0 || index > size()) {
-            throw InvalidArgument("Illegal index");
-        }
+    void deleteFirst() {
+        Node *head = head_;
+        tail_->next = head->next;
+        head_ = head->next;
+        delete head;
+        size_--;
+    }
 
+    void deleteLast() {
         Node *node = head_;
-        for (int i = 0; i < index - 1; ++i) {
+        while (node->next != tail_) {
             node = node->next;
         }
-        std::cout << node->data << std::endl;
+        node->next = tail_->next;
+        delete tail_;
+        tail_ = node;
+        size_--;
     }
 };
 
-void DoublyLinkedListTests() {
+void CircularLinkedListTests() {
     int n, data;
     std::cin >> n;
-    DoublyLinkedList<int> linkedList;
+    CircularLinkedList<int> linkedList;
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
@@ -246,4 +243,4 @@ void DoublyLinkedListTests() {
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
-#endif //ALGORITHMS_DOUBLYLINKEDLIST_H
+#endif //ALGORITHMS_CIRCULARLINKEDLIST_H
