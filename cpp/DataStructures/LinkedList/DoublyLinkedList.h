@@ -86,7 +86,7 @@ public:
         size_++;
     }
 
-    void addAt(int index, const T &data) {
+    void addAtIndex(int index, const T &data) {
         if (index < 0) {
             throw InvalidArgument("Illegal index");
         }
@@ -100,6 +100,7 @@ public:
             addLast(data);
             return;
         }
+
         Node *node = head_;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
@@ -216,25 +217,33 @@ void DoublyLinkedListTests() {
     linkedList.printList();
     int index;
     std::cin >> index >> data;
-    linkedList.addAt(index, data);
+    linkedList.addAtIndex(index, data);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> data;
+    linkedList.addFirst(data);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> data;
+    linkedList.addLast(data);
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    std::cin >> index;
+    linkedList.findByIndex(index);
+    linkedList.deleteLast();
+    linkedList.printList();
+    std::cout << "Size: " << linkedList.size() << std::endl;
+    linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
-    linkedList.deleteFirst();
-    linkedList.printList();
-    std::cout << "Size: " << linkedList.size() << std::endl;
-    linkedList.deleteLast();
-    linkedList.printList();
-    std::cout << "Size: " << linkedList.size() << std::endl;
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
-    std::cin >> index;
-    linkedList.findByIndex(index);
 }
 
 #endif //ALGORITHMS_DOUBLYLINKEDLIST_H
