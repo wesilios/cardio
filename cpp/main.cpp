@@ -2,6 +2,7 @@
 #include "DataStructures/LinkedList/SinglyLinkedList.h"
 #include "DataStructures/LinkedList/DoublyLinkedList.h"
 #include "DataStructures/LinkedList/CircularSinglyLinkedList.h"
+#include "DataStructures/LinkedList/CircularDoublyLinkedList.h"
 
 int main() {
     int choice;

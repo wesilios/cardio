@@ -2,8 +2,8 @@
 #include "Node.h"
 #include "../../Exception.h"
 
-#ifndef ALGORITHMS_CIRCULARLINKEDLIST_H
-#define ALGORITHMS_CIRCULARLINKEDLIST_H
+#ifndef ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
+#define ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
 
 void CircularSinglyLinkedListTest();
 
@@ -235,53 +235,4 @@ void CircularSinglyLinkedListTest() {
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
-template<typename T>
-class CircularDoublyLinkedList {
-private:
-    int size_ = 0;
-    DoublyNode<T> *head_;
-    DoublyNode<T> *tail_;
-
-public:
-    CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
-    }
-
-    virtual ~CircularDoublyLinkedList() {
-        clear();
-    }
-
-    void clear() {
-        DoublyNode<T> *node = head_;
-        while (node->next != head_) {
-            DoublyNode<T> *next = node->next;
-            delete node;
-            node = next;
-        }
-        delete head_;
-        head_ = nullptr;
-        tail_ = nullptr;
-        size_ = 0;
-    }
-
-    int size() {
-        return size_;
-    }
-
-    bool isEmpty() {
-        return size() == 0;
-    }
-
-    void add(const T &data) {
-        addFirst(data);
-    }
-
-    void addLast(const T &data);
-
-    void addFirst(const T &data);
-};
-
-void CircularDoublyLinkedListTest() {
-
-}
-
-#endif //ALGORITHMS_CIRCULARLINKEDLIST_H
+#endif //ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
