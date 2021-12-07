@@ -1,53 +1,35 @@
 #include <iostream>
+#include "Node.h"
 #include "../../Exception.h"
 
-#ifndef ALGORITHMS_CIRCULARLINKEDLIST_H
-#define ALGORITHMS_CIRCULARLINKEDLIST_H
+#ifndef ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
+#define ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
 
 template<typename T>
-class CircularLinkedList;
-
-template<typename T>
-class CircularLinkedList {
-public:
-    class Node {
-    private:
-        T data;
-        Node *next;
-
-        friend class CircularLinkedList<T>;
-
-    public:
-        Node() : next(nullptr) {
-        }
-
-        Node(const T &data, Node *next) : data(data), next(next) {
-        }
-    };
-
+class CircularDoublyLinkedList {
 private:
     int size_ = 0;
-    Node *head_;
-    Node *tail_;
+    DoublyNode<T> *head_;
+    DoublyNode<T> *tail_;
 
 public:
-    CircularLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
+    CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
     }
 
-    virtual ~CircularLinkedList() {
+    virtual ~CircularDoublyLinkedList() {
         clear();
     }
 
     void clear() {
-        Node *node = head_;
+        DoublyNode<T> *node = head_;
         while (node->next != head_) {
-            Node *next = node->next;
+            DoublyNode<T> *next = node->next;
             delete node;
-            node = nullptr;
             node = next;
         }
         delete head_;
         head_ = nullptr;
+        tail_ = nullptr;
         size_ = 0;
     }
 
@@ -59,37 +41,55 @@ public:
         return size() == 0;
     }
 
+    void printList() {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; node != nullptr && i < size(); ++i) {
+            std::cout << node->data << " ";
+            node = node->next;
+        }
+        std::cout << std::endl;
+    }
+
     void add(const T &data) {
         addLast(data);
     }
 
     void addLast(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr);
+            head_ = new DoublyNode<T>(data, nullptr, nullptr);
             head_->next = head_;
+            head_->previous = head_;
             tail_ = head_;
-        } else {
-            tail_->next = new Node(data, head_);
-            tail_ = tail_->next;
+            size_++;
+            return;
         }
+
+        auto *node = new DoublyNode<T>(data, tail_, head_);
+        tail_->next = node;
+        head_->previous = node;
+        tail_ = node;
         size_++;
     }
 
     void addFirst(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr);
+            head_ = new DoublyNode<T>(data, nullptr, nullptr);
             head_->next = head_;
+            head_->previous = head_;
             tail_ = head_;
-        } else {
-            Node *head = new Node(data, head_);
-            head_ = head;
-            tail_->next = head;
+            size_++;
+            return;
         }
+
+        auto *node = new DoublyNode<T>(data, tail_, head_);
+        tail_->next = node;
+        head_->previous = node;
+        head_ = node;
         size_++;
     }
 
-    void addAtIndex(int &index, const T &data) {
-        if (index < 0) {
+    void addAtIndex(const int &index, const T &data) {
+        if (index < 0 || index > size_) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -98,27 +98,20 @@ public:
             return;
         }
 
-        if (index == size()) {
+        if (index == size_ - 1) {
             addLast(data);
             return;
         }
 
-        Node *node = head_;
-        for (int i = 1; i < index - 1; i++) {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; i < index - 1; ++i) {
             node = node->next;
         }
-        Node *newNode = new Node(data, node->next);
+
+        auto *newNode = new DoublyNode<T>(data, node, node->next);
+        node->next->previous = newNode;
         node->next = newNode;
         size_++;
-    }
-
-    void printList() {
-        Node *node = head_;
-        for (int i = 0; node != nullptr && i < size(); i++) {
-            std::cout << node->data << " ";
-            node = node->next;
-        }
-        std::cout << std::endl;
     }
 
     void findByIndex(const int &index) {
@@ -126,11 +119,27 @@ public:
             throw InvalidArgument("Illegal index");
         }
 
-        Node *node = head_;
-        for (int i = 0; i < index - 1; i++) {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; i < index - 1; ++i) {
             node = node->next;
         }
         std::cout << node->data << std::endl;
+    }
+
+    void deleteFirst() {
+        DoublyNode<T> *head = head_;
+        head_ = head->next;
+        head_->previous = nullptr;
+        delete head;
+        size_--;
+    }
+
+    void deleteLast() {
+        DoublyNode<T> *tail = tail_;
+        tail_ = tail->previous;
+        tail_->next = nullptr;
+        delete tail;
+        size_--;
     }
 
     void deleteNode(const T &data) {
@@ -142,17 +151,18 @@ public:
             deleteLast();
         }
 
-        Node *node = head_;
+        DoublyNode<T> *node = head_->next;
         while (node != tail_) {
-            if (node->next->data != data) {
+            if (node->data != data) {
                 node = node->next;
                 continue;
             }
 
-            Node *next = node->next;
-            node->next = next->next;
-            node = node->next;
-            delete next;
+            DoublyNode<T> *next = node->next;
+            node->previous->next = node->next;
+            next->previous = node->previous;
+            delete node;
+            node = next;
             size_--;
         }
     }
@@ -172,75 +182,65 @@ public:
             return;
         }
 
-        Node *previousNode = head_;
-        for (int i = 0; i < index - 2; ++i) {
-            previousNode = previousNode->next;
-        }
-
-        Node *node = previousNode->next;
-        previousNode->next = previousNode->next->next;
-        delete node;
-        size_--;
-    }
-
-    void deleteFirst() {
-        Node *head = head_;
-        tail_->next = head->next;
-        head_ = head->next;
-        delete head;
-        size_--;
-    }
-
-    void deleteLast() {
-        Node *node = head_;
-        while (node->next != tail_) {
+        DoublyNode<T> *node = head_->next;
+        for (int i = 1; i < index - 1; ++i) {
             node = node->next;
         }
-        node->next = tail_->next;
-        delete tail_;
-        tail_ = node;
+
+        DoublyNode<T> *next = node->next;
+        node->previous->next = next;
+        next->next = node->previous;
+        delete node;
         size_--;
     }
 };
 
-void CircularLinkedListTests() {
+void CircularDoublyLinkedListTest() {
     int n, data;
     std::cin >> n;
-    CircularLinkedList<int> linkedList;
+    CircularDoublyLinkedList<int> linkedList;
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
     }
     linkedList.printList();
+
     int index;
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.findByIndex(index);
+
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
-#endif //ALGORITHMS_CIRCULARLINKEDLIST_H
+#endif //ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H

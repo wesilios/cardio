@@ -1,45 +1,23 @@
 #include <iostream>
 #include <sstream>
+#include "Node.h"
 #include "../../Exception.h"
 
 #ifndef ALGORITHMS_SINGLYLINKEDLIST_H
 #define ALGORITHMS_SINGLYLINKEDLIST_H
 
-template<class T>
-class SinglyLinkedList;
+void SinglyLinkedListTest();
 
 template<typename T>
 class SinglyLinkedList {
-public:
-    class Node {
-    private:
-        T data;
-        Node *next;
-
-        friend class SinglyLinkedList<T>;
-
-    public:
-        Node() : next(nullptr) {
-        }
-
-        Node(const T &data, Node *next) : data(data), next(next) {
-        }
-
-        std::string toString() const {
-            std::stringstream ss;
-            ss << "Node(" << data << ")";
-            return ss.str();
-        }
-    };
-
 private:
     int size_ = 0;
-    Node *head_;
-    Node *tail_;
+    SinglyNode<T> *head_;
+    SinglyNode<T> *tail_;
 
-    void deleteNode(Node *&node, const T &data) {
+    void deleteNode(SinglyNode<T> *&node, const T &data) {
         if (node->data == data) {
-            Node *temp = node;
+            SinglyNode<T> *temp = node;
             node = node->next;
             delete temp;
             size_--;
@@ -56,9 +34,9 @@ public:
     }
 
     void clear() {
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         while (node != nullptr) {
-            Node *next = node->next;
+            SinglyNode<T> *next = node->next;
             delete node;
             node = nullptr;
             node = next;
@@ -84,10 +62,10 @@ public:
     // Add element to the end of the list, O(1)
     void addLast(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr);
+            head_ = new SinglyNode<T>(data, nullptr);
             tail_ = head_;
         } else {
-            tail_->next = new Node(data, nullptr);
+            tail_->next = new SinglyNode<T>(data, nullptr);
             tail_ = tail_->next;
         }
         size_++;
@@ -96,10 +74,10 @@ public:
     // Add element to the beginning of the list, O(1)
     void addFirst(const T &data) {
         if (isEmpty()) {
-            head_ = new Node(data, nullptr);
+            head_ = new SinglyNode<T>(data, nullptr);
             tail_ = head_;
         } else {
-            Node *first = new Node(data, head_);
+            auto *first = new SinglyNode<T>(data, head_);
             head_ = first;
         }
         size_++;
@@ -120,17 +98,17 @@ public:
             return;
         }
 
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
-        Node *newNode = new Node(data, node->next);
+        auto *newNode = new SinglyNode<T>(data, node->next);
         node->next = newNode;
         size_++;
     }
 
     void printList() {
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         while (node != nullptr) {
             std::cout << node->data << " ";
             node = node->next;
@@ -139,15 +117,15 @@ public:
     }
 
     void deleteFirst() {
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         head_ = node->next;
         delete node;
         size_--;
     }
 
     void deleteLast() {
-        Node *node = head_;
-        Node *previous;
+        SinglyNode<T> *node = head_;
+        SinglyNode<T> *previous;
         for (int i = 0; i < size() - 1; i++) {
             previous = node;
             node = node->next;
@@ -177,7 +155,7 @@ public:
             return;
         }
 
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         for (int i = 0; node != nullptr && i < index - 2; i++) {
             node = node->next;
         }
@@ -185,7 +163,7 @@ public:
             return;
         }
 
-        Node *next = node->next->next;
+        SinglyNode<T> *next = node->next->next;
         delete node->next;
         node->next = next;
         size_--;
@@ -196,7 +174,7 @@ public:
             throw InvalidArgument("Illegal index");
         }
 
-        Node *node = head_;
+        SinglyNode<T> *node = head_;
         for (int i = 0; i < index - 1; ++i) {
             node = node->next;
         }
@@ -214,30 +192,38 @@ void SinglyLinkedListTest() {
     }
     linkedList.printList();
     int index;
+
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.findByIndex(index);
+
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
+
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();

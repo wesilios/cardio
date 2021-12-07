@@ -2,32 +2,34 @@
 #include "Node.h"
 #include "../../Exception.h"
 
-#ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
-#define ALGORITHMS_DOUBLYLINKEDLIST_H
+#ifndef ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
+#define ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
 
-void DoublyLinkedListTest();
+void CircularSinglyLinkedListTest();
 
 template<typename T>
-class DoublyLinkedList {
+class CircularSinglyLinkedList {
 private:
     int size_ = 0;
-    DoublyNode<T> *head_, *tail_;
+    SinglyNode<T> *head_;
+    SinglyNode<T> *tail_;
 
 public:
-    DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
+    CircularSinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
     }
 
-    virtual ~DoublyLinkedList() {
+    virtual ~CircularSinglyLinkedList() {
         clear();
     }
 
     void clear() {
-        DoublyNode<T> *node = head_;
-        while (node != nullptr) {
-            DoublyNode<T> *next = node->next;
+        SinglyNode<T> *node = head_;
+        while (node->next != head_) {
+            SinglyNode<T> *next = node->next;
             delete node;
             node = next;
         }
+        delete head_;
         head_ = nullptr;
         tail_ = nullptr;
         size_ = 0;
@@ -45,30 +47,32 @@ public:
         addLast(data);
     }
 
-    void addFirst(const T &data) {
-        if (isEmpty()) {
-            head_ = new DoublyNode<T>(data, nullptr, nullptr);
-            tail_ = head_;
-        } else {
-            auto *first = new DoublyNode<T>(data, nullptr, head_);
-            head_->previous = first;
-            head_ = first;
-        }
-        size_++;
-    }
-
     void addLast(const T &data) {
         if (isEmpty()) {
-            head_ = new DoublyNode<T>(data, nullptr, nullptr);
+            head_ = new SinglyNode<T>(data, nullptr);
+            head_->next = head_;
             tail_ = head_;
         } else {
-            tail_->next = new DoublyNode<T>(data, tail_, nullptr);
+            tail_->next = new SinglyNode<T>(data, head_);
             tail_ = tail_->next;
         }
         size_++;
     }
 
-    void addAtIndex(int index, const T &data) {
+    void addFirst(const T &data) {
+        if (isEmpty()) {
+            head_ = new SinglyNode<T>(data, nullptr);
+            head_->next = head_;
+            tail_ = head_;
+        } else {
+            auto *head = new SinglyNode<T>(data, head_);
+            head_ = head;
+            tail_->next = head;
+        }
+        size_++;
+    }
+
+    void addAtIndex(int &index, const T &data) {
         if (index < 0) {
             throw InvalidArgument("Illegal index");
         }
@@ -83,39 +87,34 @@ public:
             return;
         }
 
-        DoublyNode<T> *node = head_;
+        SinglyNode<T> *node = head_;
         for (int i = 1; i < index - 1; i++) {
             node = node->next;
         }
-        auto *newNode = new DoublyNode<T>(data, node, node->next);
-        node->next->previous = newNode;
+        auto *newNode = new SinglyNode<T>(data, node->next);
         node->next = newNode;
         size_++;
     }
 
     void printList() {
-        DoublyNode<T> *node = head_;
-        while (node != nullptr) {
+        SinglyNode<T> *node = head_;
+        for (int i = 0; node != nullptr && i < size(); i++) {
             std::cout << node->data << " ";
             node = node->next;
         }
         std::cout << std::endl;
     }
 
-    void deleteFirst() {
-        DoublyNode<T> *head = head_;
-        head_ = head->next;
-        head_->previous = nullptr;
-        delete head;
-        size_--;
-    }
+    void findByIndex(const int &index) {
+        if (index < 0 || index > size()) {
+            throw InvalidArgument("Illegal index");
+        }
 
-    void deleteLast() {
-        DoublyNode<T> *tail = tail_;
-        tail_ = tail->previous;
-        tail_->next = nullptr;
-        delete tail;
-        size_--;
+        SinglyNode<T> *node = head_;
+        for (int i = 0; i < index - 1; i++) {
+            node = node->next;
+        }
+        std::cout << node->data << std::endl;
     }
 
     void deleteNode(const T &data) {
@@ -127,27 +126,23 @@ public:
             deleteLast();
         }
 
-        DoublyNode<T> *node = head_;
-        while (node != nullptr) {
-            if (node->data != data) {
+        SinglyNode<T> *node = head_;
+        while (node != tail_) {
+            if (node->next->data != data) {
                 node = node->next;
                 continue;
             }
 
-            DoublyNode<T> *next = node->next;
-            node->previous->next = next;
-            if (next != nullptr) {
-                next->previous = node->previous;
-            }
-
-            delete node;
-            node = next;
+            SinglyNode<T> *next = node->next;
+            node->next = next->next;
+            node = node->next;
+            delete next;
             size_--;
         }
     }
 
     void deleteNodeAtIndex(const int &index) {
-        if (index < 0) {
+        if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -156,43 +151,46 @@ public:
             return;
         }
 
-        if (index == size()) {
+        if (index == size() - 1) {
             deleteLast();
             return;
         }
 
-        DoublyNode<T> *node = head_->next;
-        for (int i = 1; node != nullptr && i < index - 2; i++) {
-            node = node->next;
-        }
-        if (node == nullptr || node->next == nullptr) {
-            return;
+        SinglyNode<T> *previousNode = head_;
+        for (int i = 0; i < index - 2; ++i) {
+            previousNode = previousNode->next;
         }
 
-        DoublyNode<T> *next = node->next->next;
-        next->previous = node;
-        delete node->next;
-        node->next = next;
+        SinglyNode<T> *node = previousNode->next;
+        previousNode->next = previousNode->next->next;
+        delete node;
         size_--;
     }
 
-    void findByIndex(const int &index) {
-        if (index < 0 || index > size()) {
-            throw InvalidArgument("Illegal index");
-        }
+    void deleteFirst() {
+        SinglyNode<T> *head = head_;
+        tail_->next = head->next;
+        head_ = head->next;
+        delete head;
+        size_--;
+    }
 
-        DoublyNode<T> *node = head_;
-        for (int i = 0; i < index - 1; ++i) {
+    void deleteLast() {
+        SinglyNode<T> *node = head_;
+        while (node->next != tail_) {
             node = node->next;
         }
-        std::cout << node->data << std::endl;
+        node->next = tail_->next;
+        delete tail_;
+        tail_ = node;
+        size_--;
     }
 };
 
-void DoublyLinkedListTest() {
+void CircularSinglyLinkedListTest() {
     int n, data;
     std::cin >> n;
-    DoublyLinkedList<int> linkedList;
+    CircularSinglyLinkedList<int> linkedList;
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
@@ -237,4 +235,4 @@ void DoublyLinkedListTest() {
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
-#endif //ALGORITHMS_DOUBLYLINKEDLIST_H
+#endif //ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
