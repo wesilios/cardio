@@ -2,62 +2,93 @@
 #define ALGORITHMS_ARRAYSTACK_H
 
 #include <iostream>
+#include <vector>
+#include <exception>
+
+#include "Stack.h"
 
 namespace dsa {
-    template<typename T, const int U>
-    class ArrayStack {
+    template<typename T>
+    class ArrayStack : public Stack<T> {
     private:
-        T top_;
-        T array_[U];
+        int capacity_;
+        std::vector<T> data_;
 
     public:
-        ArrayStack() {
-            top_ = -1;
+        ArrayStack(int id) : Stack<T>(id) {
+            capacity_ = data_.capacity();
         }
 
-        void push(const T &data) {
-            array_[++top_] = data;
+        ~ArrayStack() {
+            data_.clear();
         }
 
-        T pop() {
-            return top_ == -1 ? top_ : array_[top_--];
+        void clear() override {
+            data_.clear();
+            data_.shrink_to_fit();
+            capacity_ = data_.capacity();
         }
 
-        T top() {
-            return top_;
+        int size() override {
+            return data_.size();
+        }
+
+        bool isEmpty() override {
+            return data_.empty();
+        }
+
+        void push(const T &element) override {
+            data_.push_back(element);
+        }
+
+        T pop() override {
+            if (isEmpty()) {
+                throw std::runtime_error("Empty stack");
+            }
+            T element = data_.back();
+            data_.erase(data_.end() - 1);
+            return element;
+        }
+
+        T peek() override {
+            if (isEmpty()) {
+                throw std::runtime_error("Empty stack");
+            }
+            return data_.back();
         }
 
         void printStack() {
             if (isEmpty()) {
-                std::cout << top() << std::endl;
+                throw std::runtime_error("Empty stack");
             }
-            for (int i = 0; i <= top_; ++i) {
-                std::cout << array_[i] << " ";
+
+            for (int i: data_) {
+                std::cout << i << " ";
             }
             std::cout << std::endl;
         }
 
-        bool isEmpty() {
-            return top() == -1;
+        int capacity() override {
+            return capacity_;
         }
     };
 
-//    void ArrayStackTest() {
-//        int t, data;
-//        std::cin >> t;
-//        ArrayStack<int, 1000> stack;
-//        for (int i = 0; i < t; i++) {
-//            std::cin >> data;
-//            stack.push(data);
-//        }
-//        stack.printStack();
-//        std::cin >> t;
-//        for (int i = 0; i < t; i++) {
-//            std::cout << stack.pop() << " ";
-//        }
-//        std::cout << std::endl;
-//        stack.printStack();
-//    }
+    void ArrayStackTest() {
+        int t, data;
+        std::cin >> t;
+        ArrayStack<int> stack(0);
+        for (int i = 0; i < t; i++) {
+            std::cin >> data;
+            stack.push(data);
+        }
+        stack.printStack();
+        std::cin >> t;
+        for (int i = 0; i < t; i++) {
+            std::cout << stack.pop() << " ";
+        }
+        std::cout << std::endl;
+        stack.printStack();
+    }
 }
 
 
