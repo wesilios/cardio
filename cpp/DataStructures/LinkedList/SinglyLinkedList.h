@@ -4,28 +4,18 @@
 #include <iostream>
 #include <sstream>
 #include "Node.h"
+#include "LinkedList.h"
 #include "../Exception.h"
 
 namespace dsa {
     void SinglyLinkedListTest();
 
     template<typename T>
-    class SinglyLinkedList {
+    class SinglyLinkedList : public LinkedList<T> {
     private:
         int size_ = 0;
         SinglyNode<T> *head_;
         SinglyNode<T> *tail_;
-
-        void deleteNode(SinglyNode<T> *&node, const T &data) {
-            if (node->data == data) {
-                SinglyNode<T> *temp = node;
-                node = node->next;
-                delete temp;
-                size_--;
-                return;
-            }
-            deleteNode(node->next, data);
-        }
 
     public:
         SinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
@@ -37,7 +27,7 @@ namespace dsa {
         void clear() {
             SinglyNode<T> *node = head_;
             while (node != nullptr) {
-                SinglyNode<T> *next = node->next;
+                SinglyNode<T> *next = node->getNext();
                 delete node;
                 node = nullptr;
                 node = next;
@@ -48,32 +38,32 @@ namespace dsa {
             size_ = 0;
         }
 
-        int size() {
+        int size() override {
             return size_;
         }
 
-        bool isEmpty() {
+        bool isEmpty() override {
             return size() == 0;
         }
 
-        void add(const T &data) {
+        void add(const T &data) override {
             addLast(data);
         }
 
         // Add element to the end of the list, O(1)
-        void addLast(const T &data) {
+        void addLast(const T &data) override {
             if (isEmpty()) {
                 head_ = new SinglyNode<T>(data, nullptr);
                 tail_ = head_;
             } else {
-                tail_->next = new SinglyNode<T>(data, nullptr);
-                tail_ = tail_->next;
+                tail_->setNext(new SinglyNode<T>(data, nullptr));
+                tail_ = tail_->getNext();
             }
             size_++;
         }
 
         // Add element to the beginning of the list, O(1)
-        void addFirst(const T &data) {
+        void addFirst(const T &data) override {
             if (isEmpty()) {
                 head_ = new SinglyNode<T>(data, nullptr);
                 tail_ = head_;
@@ -84,7 +74,7 @@ namespace dsa {
             size_++;
         }
 
-        void addAtIndex(int index, const T &data) {
+        void addAtIndex(const int &index, const T &data) override {
             if (index < 0) {
                 throw InvalidArgument("Illegal index");
             }
@@ -101,47 +91,67 @@ namespace dsa {
 
             SinglyNode<T> *node = head_;
             for (int i = 1; i < index - 1; i++) {
-                node = node->next;
+                node = node->getNext();
             }
-            auto *newNode = new SinglyNode<T>(data, node->next);
-            node->next = newNode;
+            auto *newNode = new SinglyNode<T>(data, node->getNext());
+            node->setNext(newNode);
             size_++;
         }
 
-        void printList() {
+        void printList() override {
             SinglyNode<T> *node = head_;
             while (node != nullptr) {
-                std::cout << node->data << " ";
-                node = node->next;
+                std::cout << node->getData() << " ";
+                node = node->getNext();
             }
             std::cout << std::endl;
         }
 
-        void deleteFirst() {
+        void deleteFirst() override {
             SinglyNode<T> *node = head_;
-            head_ = node->next;
+            head_ = node->getNext();
             delete node;
             size_--;
         }
 
-        void deleteLast() {
+        void deleteLast() override {
             SinglyNode<T> *node = head_;
             SinglyNode<T> *previous;
             for (int i = 0; i < size() - 1; i++) {
                 previous = node;
-                node = node->next;
+                node = node->getNext();
             }
-            previous->next = nullptr;
+            previous->setNext(nullptr);
             tail_ = previous;
             delete node;
             size_--;
         }
 
-        void deleteNode(const T &data) {
-            deleteNode(head_, data);
+        void deleteNode(const T &data) override {
+            if (head_->getData() == data) {
+                deleteFirst();
+            }
+
+            if (tail_->getData() == data) {
+                deleteLast();
+            }
+
+            SinglyNode<T> *node = head_;
+            while (node != tail_) {
+                if (node->getNext()->getData() != data) {
+                    node = node->getNext();
+                    continue;
+                }
+
+                SinglyNode<T> *next = node->getNext();
+                node->setNext(next->getNext());
+                node = node->getNext();
+                delete next;
+                size_--;
+            }
         }
 
-        void deleteNodeAtIndex(const int &index) {
+        void deleteNodeAtIndex(const int &index) override {
             if (index < 0) {
                 throw InvalidArgument("Illegal index");
             }
@@ -158,28 +168,28 @@ namespace dsa {
 
             SinglyNode<T> *node = head_;
             for (int i = 0; node != nullptr && i < index - 2; i++) {
-                node = node->next;
+                node = node->getNext();
             }
-            if (node == nullptr || node->next == nullptr) {
+            if (node == nullptr || node->getNext() == nullptr) {
                 return;
             }
 
-            SinglyNode<T> *next = node->next->next;
-            delete node->next;
-            node->next = next;
+            SinglyNode<T> *next = node->getNext()->getNext();
+            delete node->getNext();
+            node->setNext(next);
             size_--;
         }
 
-        void findByIndex(const int &index) {
+        void findByIndex(const int &index) override {
             if (index < 0 || index > size()) {
                 throw InvalidArgument("Illegal index");
             }
 
             SinglyNode<T> *node = head_;
             for (int i = 0; i < index - 1; ++i) {
-                node = node->next;
+                node = node->getNext();
             }
-            std::cout << node->data << std::endl;
+            std::cout << node->getData() << std::endl;
         }
     };
 
