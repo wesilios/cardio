@@ -9,6 +9,9 @@ add_executable(Algorithms main.cpp
         DataStructures/LinkedList/Node.h
         DataStructures/LinkedList/SinglyLinkedList.h
         DataStructures/LinkedList/DoublyLinkedList.h
+        DataStructures/LinkedList/CircularSinglyLinkedList.h
         DataStructures/LinkedList/CircularDoublyLinkedList.h
+        DataStructures/LinkedList/LinkedList.h
         DataStructures/Stack/Stack.h
-        DataStructures/Stack/ArrayStack.h DataStructures/LinkedList/LinkedList.h DataStructures/LinkedList/CircularSinglyLinkedList.h)
+        DataStructures/Stack/ArrayStack.h
+        DataStructures/Stack/ListStack.h)
