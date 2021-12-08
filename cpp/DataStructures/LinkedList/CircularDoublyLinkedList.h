@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Node.h"
-#include "../../Exception.h"
+#include "../Node.h"
+#include "../Exception.h"
 
 #ifndef ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
 #define ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
-#include "Node.h"
-#include "../../Exception.h"
+#include "../Node.h"
+#include "../Exception.h"
 
 #ifndef ALGORITHMS_SINGLYLINKEDLIST_H
 #define ALGORITHMS_SINGLYLINKEDLIST_H
