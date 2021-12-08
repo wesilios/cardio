@@ -1,19 +1,20 @@
-#ifndef ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
-#define ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
+#ifndef ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
+#define ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
 
 #include <iostream>
 #include "Node.h"
+#include "LinkedList.h"
 #include "../Exception.h"
 
 namespace dsa {
     void CircularSinglyLinkedListTest();
 
     template<typename T>
-    class CircularSinglyLinkedList {
+    class CircularSinglyLinkedList : public LinkedList<T> {
     private:
         int size_ = 0;
-        SinglyNode <T> *head_;
-        SinglyNode <T> *tail_;
+        SinglyNode<T> *head_;
+        SinglyNode<T> *tail_;
 
     public:
         CircularSinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
@@ -25,8 +26,8 @@ namespace dsa {
 
         void clear() {
             SinglyNode<T> *node = head_;
-            while (node->next != head_) {
-                SinglyNode<T> *next = node->next;
+            while (node->getNext() != head_) {
+                SinglyNode<T> *next = node->getNext();
                 delete node;
                 node = next;
             }
@@ -36,44 +37,44 @@ namespace dsa {
             size_ = 0;
         }
 
-        int size() {
+        int size() override {
             return size_;
         }
 
-        bool isEmpty() {
+        bool isEmpty() override {
             return size() == 0;
         }
 
-        void add(const T &data) {
+        void add(const T &data) override {
             addLast(data);
         }
 
-        void addLast(const T &data) {
+        void addLast(const T &data) override {
             if (isEmpty()) {
                 head_ = new SinglyNode<T>(data, nullptr);
-                head_->next = head_;
+                head_->setNext(head_);
                 tail_ = head_;
             } else {
-                tail_->next = new SinglyNode<T>(data, head_);
-                tail_ = tail_->next;
+                tail_->setNext(new SinglyNode<T>(data, head_));
+                tail_ = tail_->getNext();
             }
             size_++;
         }
 
-        void addFirst(const T &data) {
+        void addFirst(const T &data) override {
             if (isEmpty()) {
                 head_ = new SinglyNode<T>(data, nullptr);
-                head_->next = head_;
+                head_->setNext(head_);
                 tail_ = head_;
             } else {
                 auto *head = new SinglyNode<T>(data, head_);
                 head_ = head;
-                tail_->next = head;
+                tail_->setNext(head);
             }
             size_++;
         }
 
-        void addAtIndex(int &index, const T &data) {
+        void addAtIndex(const int &index, const T &data) override {
             if (index < 0) {
                 throw InvalidArgument("Illegal index");
             }
@@ -90,59 +91,59 @@ namespace dsa {
 
             SinglyNode<T> *node = head_;
             for (int i = 1; i < index - 1; i++) {
-                node = node->next;
+                node = node->getNext();
             }
-            auto *newNode = new SinglyNode<T>(data, node->next);
-            node->next = newNode;
+            auto *newNode = new SinglyNode<T>(data, node->getNext());
+            node->setNext(newNode);
             size_++;
         }
 
-        void printList() {
+        void printList() override {
             SinglyNode<T> *node = head_;
             for (int i = 0; node != nullptr && i < size(); i++) {
-                std::cout << node->data << " ";
-                node = node->next;
+                std::cout << node->getData() << " ";
+                node = node->getNext();
             }
             std::cout << std::endl;
         }
 
-        void findByIndex(const int &index) {
+        void findByIndex(const int &index) override {
             if (index < 0 || index > size()) {
                 throw InvalidArgument("Illegal index");
             }
 
             SinglyNode<T> *node = head_;
             for (int i = 0; i < index - 1; i++) {
-                node = node->next;
+                node = node->getNext();
             }
-            std::cout << node->data << std::endl;
+            std::cout << node->getData() << std::endl;
         }
 
-        void deleteNode(const T &data) {
-            if (head_->data == data) {
+        void deleteNode(const T &data) override {
+            if (head_->getData() == data) {
                 deleteFirst();
             }
 
-            if (tail_->data == data) {
+            if (tail_->getData() == data) {
                 deleteLast();
             }
 
             SinglyNode<T> *node = head_;
             while (node != tail_) {
-                if (node->next->data != data) {
-                    node = node->next;
+                if (node->getNext()->getData() != data) {
+                    node = node->getNext();
                     continue;
                 }
 
-                SinglyNode<T> *next = node->next;
-                node->next = next->next;
-                node = node->next;
+                SinglyNode<T> *next = node->getNext();
+                node->setNext(next->getNext());
+                node = node->getNext();
                 delete next;
                 size_--;
             }
         }
 
-        void deleteNodeAtIndex(const int &index) {
+        void deleteNodeAtIndex(const int &index) override {
             if (index < 0 || index > size()) {
                 throw InvalidArgument("Illegal index");
             }
@@ -159,29 +160,29 @@ namespace dsa {
 
             SinglyNode<T> *previousNode = head_;
             for (int i = 0; i < index - 2; ++i) {
-                previousNode = previousNode->next;
+                previousNode = previousNode->getNext();
             }
 
-            SinglyNode<T> *node = previousNode->next;
-            previousNode->next = previousNode->next->next;
+            SinglyNode<T> *node = previousNode->getNext();
+            previousNode->setNext(previousNode->getNext()->getNext());
             delete node;
             size_--;
         }
 
-        void deleteFirst() {
+        void deleteFirst() override {
             SinglyNode<T> *head = head_;
-            tail_->next = head->next;
-            head_ = head->next;
+            tail_->setNext(head->getNext());
+            head_ = head->getNext();
             delete head;
             size_--;
         }
 
-        void deleteLast() {
+        void deleteLast() override {
             SinglyNode<T> *node = head_;
-            while (node->next != tail_) {
-                node = node->next;
+            while (node->getNext() != tail_) {
+                node = node->getNext();
             }
-            node->next = tail_->next;
+            node->setNext(tail_->getNext());
             delete tail_;
             tail_ = node;
             size_--;
@@ -237,4 +238,4 @@ namespace dsa {
     }
 }
 
-#endif //ALGORITHMS_CIRCULARSINLYLINKEDLIST_H
+#endif //ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
