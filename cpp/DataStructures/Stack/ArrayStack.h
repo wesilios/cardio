@@ -15,11 +15,11 @@ namespace dsa {
         std::vector<T> data_;
 
     public:
-        ArrayStack(int id) : Stack<T>(id) {
+        explicit ArrayStack(int id) : Stack<T>(id) {
             capacity_ = data_.capacity();
         }
 
-        ~ArrayStack() {
+        ~ArrayStack() override {
             data_.clear();
         }
 

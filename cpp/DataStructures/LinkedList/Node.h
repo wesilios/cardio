@@ -1,30 +1,62 @@
 #ifndef ALGORITHMS_NODE_H
 #define ALGORITHMS_NODE_H
-namespace dsa {
-    template<typename T>
-    class SinglyNode {
-    public:
-        T data;
-        SinglyNode *next;
 
-        SinglyNode() : next(nullptr) {
+namespace dsa {
+    template<typename T, class U>
+    class Node {
+    protected:
+        T data_;
+        U *next_;
+    public:
+        Node() : next_(nullptr) {}
+
+        Node(T data, U *next) : data_(data), next_(next) {}
+
+        void setData(const T &data) {
+            Node<T, U>::data_ = data;
         }
 
-        SinglyNode(T data, SinglyNode *next) : data(data), next(next) {
+        T getData() {
+            return Node<T, U>::data_;
+        }
+
+        void setNext(U *next) {
+            Node<T, U>::next_ = next;
+        }
+
+        U *getNext() {
+            return Node<T, U>::next_;
         }
     };
 
     template<typename T>
-    class DoublyNode {
+    class SinglyNode final : protected Node<T, SinglyNode<T>> {
     public:
-        T data;
-        DoublyNode *previous, *next;
+        SinglyNode() : Node<T, SinglyNode<T>>(nullptr) {
+        }
 
-        DoublyNode() : previous(nullptr), next(nullptr) {
+        SinglyNode(T data, SinglyNode *next) : Node<T, SinglyNode<T>>(data, next) {
+        }
+    };
+
+    template<typename T>
+    class DoublyNode final : protected Node<T, DoublyNode<T>> {
+    private:
+        DoublyNode<T> *previous_;
+    public:
+        DoublyNode() : Node<T, DoublyNode<T>>(nullptr), previous_(nullptr) {
         }
 
         DoublyNode(T data, DoublyNode *previous, DoublyNode *next)
-                : data(data), previous(previous), next(next) {
+                : Node<T, DoublyNode<T>>(data, next), previous_(previous) {
+        }
+
+        void setPrevious(DoublyNode<T> *previous) {
+            previous_ = previous;
+        }
+
+        DoublyNode<T> *getPrevious() {
+            return previous_;
         }
     };
 }
