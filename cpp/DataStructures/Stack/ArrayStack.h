@@ -6,32 +6,38 @@
 template<typename T, const int U>
 class ArrayStack {
 private:
-    T top;
-    T array[U];
+    T top_;
+    T array_[U];
 
 public:
     ArrayStack() {
-        top = -1;
-    }
-
-    ArrayStack(int length) {
-        top = -1;
-        array[length];
+        top_ = -1;
     }
 
     void push(const T &data) {
-        array[++top] = data;
+        array_[++top_] = data;
     }
 
     T pop() {
-        return top == -1 ? top : array[top--];
+        return top_ == -1 ? top_ : array_[top_--];
+    }
+
+    T top() {
+        return top_;
     }
 
     void printStack() {
-        for (int i = 0; i <= top; ++i) {
-            std::cout << array[i] << " ";
+        if (isEmpty()) {
+            std::cout << top() << std::endl;
+        }
+        for (int i = 0; i <= top_; ++i) {
+            std::cout << array_[i] << " ";
         }
         std::cout << std::endl;
+    }
+
+    bool isEmpty() {
+        return top() == -1;
     }
 };
 

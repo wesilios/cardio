@@ -144,7 +144,7 @@ void arrayRotationSolutionTests() {
         for (int i = 0; i < n; i++) {
             std::cin >> arr[i];
         }
-        std::cout << "Rotate using temp array: " << std::endl;
+        std::cout << "Rotate using temp array_: " << std::endl;
         ArrayRotationSolution::rotateUsingTempArray(arr, d, n);
         ArrayRotationSolution::printResult(arr, n);
         std::cout << "Rotate one by one: " << std::endl;
