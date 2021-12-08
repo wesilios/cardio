@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project (Algorithms)
+project(Algorithms)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -11,4 +11,5 @@ add_executable(Algorithms main.cpp
         DataStructures/LinkedList/DoublyLinkedList.h
         DataStructures/LinkedList/CircularSinglyLinkedList.h
         DataStructures/LinkedList/CircularDoublyLinkedList.h
+        DataStructures/Stack/Stack.h
         DataStructures/Stack/ArrayStack.h)
