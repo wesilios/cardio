@@ -19,19 +19,19 @@ int main() {
             arrayRotationSolutionTests();
             break;
         case 2:
-            SinglyLinkedListTest();
+            dsa::SinglyLinkedListTest();
             break;
         case 3:
-            DoublyLinkedListTest();
+            dsa::DoublyLinkedListTest();
             break;
         case 4:
-            CircularSinglyLinkedListTest();
+            dsa::CircularSinglyLinkedListTest();
             break;
         case 5:
-            CircularDoublyLinkedListTest();
+            dsa::CircularDoublyLinkedListTest();
             break;
         case 6:
-            ArrayStackTest();
+            dsa::ArrayStackTest();
             break;
         default:
             break;
