@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Node.h"
-#include "../../Exception.h"
+#include "../Node.h"
+#include "../Exception.h"
 
 #ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
 #define ALGORITHMS_DOUBLYLINKEDLIST_H
