@@ -10,7 +10,7 @@ namespace dsa {
     void CircularSinglyLinkedListTest();
 
     template<typename T>
-    class CircularSinglyLinkedList : public LinkedList<T> {
+    class CircularSinglyLinkedList : public LinkedList<T, SinglyNode<T>> {
     private:
         int size_ = 0;
         SinglyNode<T> *head_;
@@ -186,6 +186,14 @@ namespace dsa {
             delete tail_;
             tail_ = node;
             size_--;
+        }
+
+        SinglyNode<T> *getHead() override {
+            return head_;
+        }
+
+        SinglyNode<T> *getTail() override {
+            return tail_;
         }
     };
 

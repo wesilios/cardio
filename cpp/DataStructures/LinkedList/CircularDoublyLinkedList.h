@@ -8,17 +8,20 @@
 
 namespace dsa {
     template<typename T>
-    class CircularDoublyLinkedList : public LinkedList<T> {
+    class CircularDoublyLinkedList : public LinkedList<T, DoublyNode<T>> {
     private:
         int size_ = 0;
-        DoublyNode <T> *head_;
-        DoublyNode <T> *tail_;
+        DoublyNode<T> *head_;
+        DoublyNode<T> *tail_;
 
     public:
+
         CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
         }
 
-        virtual ~CircularDoublyLinkedList() {
+        virtual ~
+
+        CircularDoublyLinkedList() {
             clear();
         }
 
@@ -35,63 +38,109 @@ namespace dsa {
             size_ = 0;
         }
 
-        int size() override {
-            return size_;
+        int size()
+
+        override {
+            return
+                    size_;
         }
 
-        bool isEmpty() override {
-            return size() == 0;
+        bool isEmpty()
+
+        override {
+            return
+
+                    size()
+
+                    == 0;
         }
 
-        void printList() override {
+        void printList()
+
+        override {
             DoublyNode<T> *node = head_;
-            for (int i = 0; node != nullptr && i < size(); ++i) {
-                std::cout << node->getData() << " ";
+            for (
+                    int i = 0;
+                    node != nullptr &&
+                    i < size();
+                    ++i) {
+                std::cout << node->
+
+                        getData()
+
+                          << " ";
                 node = node->getNext();
             }
-            std::cout << std::endl;
+            std::cout <<
+                      std::endl;
         }
 
-        void add(const T &data) override {
+        void add(const T &data)
+
+        override {
             addLast(data);
         }
 
-        void addLast(const T &data) override {
-            if (isEmpty()) {
+        void addLast(const T &data)
+
+        override {
+            if (
+
+                    isEmpty()
+
+                    ) {
                 head_ = new DoublyNode<T>(data, nullptr, nullptr);
-                head_->setNext(head_);
-                head_->setPrevious(head_);
+                head_->
+                        setNext(head_);
+                head_->
+                        setPrevious(head_);
                 tail_ = head_;
                 size_++;
                 return;
             }
 
             auto *node = new DoublyNode<T>(data, tail_, head_);
-            tail_->setNext(node);
-            head_->setPrevious(node);
+            tail_->
+                    setNext(node);
+            head_->
+                    setPrevious(node);
             tail_ = node;
             size_++;
         }
 
-        void addFirst(const T &data) override {
-            if (isEmpty()) {
+        void addFirst(const T &data)
+
+        override {
+            if (
+
+                    isEmpty()
+
+                    ) {
                 head_ = new DoublyNode<T>(data, nullptr, nullptr);
-                head_->setNext(head_);
-                head_->setPrevious(head_);
+                head_->
+                        setNext(head_);
+                head_->
+                        setPrevious(head_);
                 tail_ = head_;
                 size_++;
                 return;
             }
 
             auto *node = new DoublyNode<T>(data, tail_, head_);
-            tail_->setNext(node);
-            head_->setPrevious(node);
+            tail_->
+                    setNext(node);
+            head_->
+                    setPrevious(node);
             head_ = node;
             size_++;
         }
 
-        void addAtIndex(const int &index, const T &data) override {
-            if (index < 0 || index > size_) {
+        void addAtIndex(const int &index, const T &data)
+
+        override {
+            if (
+                    index < 0 || index > size_
+                    ) {
                 throw InvalidArgument("Illegal index");
             }
 
@@ -106,94 +155,184 @@ namespace dsa {
             }
 
             DoublyNode<T> *node = head_;
-            for (int i = 0; i < index - 1; ++i) {
+            for (
+                    int i = 0;
+                    i < index - 1; ++i) {
                 node = node->getNext();
             }
 
             auto *newNode = new DoublyNode<T>(data, node, node->getNext());
-            node->getNext()->setPrevious(newNode);
-            node->setNext(newNode);
+            node->getNext()->
+                    setPrevious(newNode);
+            node->
+                    setNext(newNode);
             size_++;
         }
 
-        void findByIndex(const int &index) override {
-            if (index < 0 || index > size()) {
+        void findByIndex(const int &index)
+
+        override {
+            if (
+
+                    index < 0 || index > size()
+
+                    ) {
                 throw InvalidArgument("Illegal index");
             }
 
             DoublyNode<T> *node = head_;
-            for (int i = 0; i < index - 1; ++i) {
+            for (
+                    int i = 0;
+                    i < index - 1; ++i) {
                 node = node->getNext();
             }
-            std::cout << node->getData() << std::endl;
+            std::cout << node->
+
+                    getData()
+
+                      <<
+                      std::endl;
         }
 
-        void deleteFirst() override {
+        void deleteFirst()
+
+        override {
             DoublyNode<T> *head = head_;
             head_ = head->getNext();
-            head_->setPrevious(tail_);
-            delete head;
+            head_->
+                    setPrevious(tail_);
+            delete
+                    head;
             size_--;
         }
 
-        void deleteLast() override {
+        void deleteLast()
+
+        override {
             DoublyNode<T> *tail = tail_;
             tail_ = tail->getPrevious();
-            tail_->setNext(head_);
-            delete tail;
+            tail_->
+                    setNext(head_);
+            delete
+                    tail;
             size_--;
         }
 
-        void deleteNode(const T &data) override {
-            if (head_->getData() == data) {
+        void deleteNode(const T &data)
+
+        override {
+            if (head_->
+
+                    getData()
+
+                == data) {
                 deleteFirst();
+
             }
 
-            if (tail_->getData() == data) {
+            if (tail_->
+
+                    getData()
+
+                == data) {
                 deleteLast();
+
             }
 
             DoublyNode<T> *node = head_->getNext();
             while (node != tail_) {
-                if (node->getData() != data) {
+                if (node->
+
+                        getData()
+
+                    != data) {
                     node = node->getNext();
                     continue;
                 }
 
                 DoublyNode<T> *next = node->getNext();
-                node->getPrevious()->setNext(node->getNext());
-                next->setPrevious(node->getPrevious());
-                delete node;
+                node->getPrevious()->
+                        setNext(node
+                                        ->
+
+                                                getNext()
+
+                );
+                next->
+                        setPrevious(node
+                                            ->
+
+                                                    getPrevious()
+
+                );
+                delete
+                        node;
                 node = next;
                 size_--;
             }
         }
 
-        void deleteNodeAtIndex(const int &index) override {
-            if (index < 0 || index > size()) {
+        void deleteNodeAtIndex(const int &index)
+
+        override {
+            if (
+
+                    index < 0 || index > size()
+
+                    ) {
                 throw InvalidArgument("Illegal index");
             }
 
             if (index == 0) {
                 deleteFirst();
+
                 return;
             }
 
-            if (index == size() - 1) {
+            if (index ==
+
+                size()
+
+                - 1) {
                 deleteLast();
+
                 return;
             }
 
             DoublyNode<T> *node = head_->getNext();
-            for (int i = 1; i < index - 1; ++i) {
+            for (
+                    int i = 1;
+                    i < index - 1; ++i) {
                 node = node->getNext();
             }
 
             DoublyNode<T> *next = node->getNext();
-            node->getPrevious()->setNext(next);
-            next->setPrevious(node->getPrevious());
-            delete node;
+            node->getPrevious()->
+                    setNext(next);
+            next->
+                    setPrevious(node
+                                        ->
+
+                                                getPrevious()
+
+            );
+            delete
+                    node;
             size_--;
+        }
+
+        DoublyNode<T> *getHead()
+
+        override {
+            return
+                    head_;
+        }
+
+        DoublyNode<T> *getTail()
+
+        override {
+            return
+                    tail_;
         }
     };
 
@@ -244,6 +383,7 @@ namespace dsa {
         linkedList.printList();
         std::cout << "Size: " << linkedList.size() << std::endl;
     }
+
 }
 
 #endif //ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
