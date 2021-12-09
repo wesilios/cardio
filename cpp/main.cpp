@@ -4,6 +4,7 @@
 #include "DataStructures/LinkedList/CircularSinglyLinkedList.h"
 #include "DataStructures/LinkedList/CircularDoublyLinkedList.h"
 #include "DataStructures/Stack/ArrayStack.h"
+#include "DataStructures/Stack/ListStack.h"
 
 int main() {
     int choice;
@@ -13,6 +14,7 @@ int main() {
     std::cout << "4. Circular Singly Linked list" << std::endl;
     std::cout << "5. Circular Doubly Linked list" << std::endl;
     std::cout << "6. Array Stack" << std::endl;
+    std::cout << "7. List Stack" << std::endl;
     std::cin >> choice;
     switch (choice) {
         case 1:
@@ -32,6 +34,9 @@ int main() {
             break;
         case 6:
             dsa::ArrayStackTest();
+            break;
+        case 7:
+            dsa::ListStackTest();
             break;
         default:
             break;

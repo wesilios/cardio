@@ -2,7 +2,7 @@
 #define ALGORITHMS_LINKEDLIST_H
 
 namespace dsa {
-    template<typename T>
+    template<typename T, class U>
     class LinkedList {
     public:
         virtual int size() = 0;
@@ -28,6 +28,10 @@ namespace dsa {
         virtual void deleteNodeAtIndex(const int &index) = 0;
 
         virtual void findByIndex(const int &index) = 0;
+
+        virtual U *getHead() = 0;
+
+        virtual U *getTail() = 0;
     };
 }
 

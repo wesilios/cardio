@@ -8,8 +8,10 @@
 #include "Stack.h"
 
 namespace dsa {
+    void ArrayStackTest();
+
     template<typename T>
-    class ArrayStack : public Stack<T> {
+    class ArrayStack final : public Stack<T> {
     private:
         int capacity_;
         std::vector<T> data_;
@@ -57,7 +59,7 @@ namespace dsa {
             return data_.back();
         }
 
-        void printStack() {
+        void printStack() override {
             if (isEmpty()) {
                 throw std::runtime_error("Empty stack");
             }

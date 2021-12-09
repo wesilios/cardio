@@ -2,7 +2,6 @@
 #define ALGORITHMS_SINGLYLINKEDLIST_H
 
 #include <iostream>
-#include <sstream>
 #include "Node.h"
 #include "LinkedList.h"
 #include "../Exception.h"
@@ -11,7 +10,7 @@ namespace dsa {
     void SinglyLinkedListTest();
 
     template<typename T>
-    class SinglyLinkedList : public LinkedList<T> {
+    class SinglyLinkedList : public LinkedList<T, SinglyNode<T>> {
     private:
         int size_ = 0;
         SinglyNode<T> *head_;
@@ -190,6 +189,14 @@ namespace dsa {
                 node = node->getNext();
             }
             std::cout << node->getData() << std::endl;
+        }
+
+        SinglyNode<T> *getHead() override {
+            return head_;
+        }
+
+        SinglyNode<T> *getTail() override {
+            return tail_;
         }
     };
 
