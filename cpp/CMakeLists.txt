@@ -14,4 +14,5 @@ add_executable(Algorithms main.cpp
         DataStructures/LinkedList/CircularDoublyLinkedList.h
         DataStructures/Stack/Stack.h
         DataStructures/Stack/ArrayStack.h
-        DataStructures/Stack/ListStack.h)
+        DataStructures/Stack/ListStack.h
+        DataStructures/Queue/Queue.h)
