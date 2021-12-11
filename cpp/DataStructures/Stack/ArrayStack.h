@@ -25,6 +25,10 @@ namespace dsa {
             data_.clear();
         }
 
+        int id() override {
+            return Stack<T>::id();
+        }
+
         void clear() override {
             data_.clear();
             data_.shrink_to_fit();
@@ -64,13 +68,13 @@ namespace dsa {
                 throw std::runtime_error("Empty stack");
             }
 
-            for (int i: data_) {
+            for (__attribute__((unused)) int i: data_) {
                 std::cout << i << " ";
             }
             std::cout << std::endl;
         }
 
-        int capacity() override {
+        __attribute__((unused)) int capacity() {
             return capacity_;
         }
     };
@@ -79,17 +83,22 @@ namespace dsa {
         int t, data;
         std::cin >> t;
         ArrayStack<int> stack(0);
-        for (int i = 0; i < t; i++) {
+        for (int i = 0; i < t; ++i) {
             std::cin >> data;
             stack.push(data);
         }
         stack.printStack();
         std::cin >> t;
         for (int i = 0; i < t; i++) {
-            std::cout << stack.pop() << " ";
+            std::cout << stack.peek() << " ";
         }
         std::cout << std::endl;
         stack.printStack();
+        for (int i = 0; i < t; i++) {
+            std::cout << "Pop: " << stack.pop() << std::endl;
+            stack.printStack();
+        }
+        std::cout << std::endl;
     }
 }
 
