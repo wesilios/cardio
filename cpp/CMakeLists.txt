@@ -15,4 +15,6 @@ add_executable(Algorithms main.cpp
         DataStructures/Stack/Stack.h
         DataStructures/Stack/ArrayStack.h
         DataStructures/Stack/ListStack.h
-        DataStructures/Queue/Queue.h)
+        DataStructures/Queue/Queue.h
+        DataStructures/Queue/ArrayQueue.h
+        DataStructures/Queue/ListQueue.h)
