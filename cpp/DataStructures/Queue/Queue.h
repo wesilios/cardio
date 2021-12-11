@@ -29,8 +29,6 @@ namespace dsa {
 
         virtual T peek() = 0;
 
-        virtual int capacity() = 0;
-
         virtual void printStack() = 0;
     };
 }
