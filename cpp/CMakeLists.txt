@@ -14,7 +14,7 @@ option(CARDIO_BUILD_TESTS "Build unit tests" ON)
 if(CARDIO_BUILD_TESTS)
     include(FetchContent)
     FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz)
-    fetchcontent_makeavailable(googletest)
+    FetchContent_MakeAvailable(googletest)
 
     enable_testing()
     add_executable(runTests tests/ArrayStackTests.cpp tests/ArrayRotationSolutionTests.cpp)
