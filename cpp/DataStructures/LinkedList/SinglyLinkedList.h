@@ -15,6 +15,39 @@ namespace dsa {
         int size_ = 0;
         SinglyNode<T> *head_;
         SinglyNode<T> *tail_;
+    public:
+        class Iterator {
+        public:
+            explicit Iterator(const SinglyNode<T> *pNode) noexcept: currNode_(pNode) {}
+
+            Iterator &operator=(SinglyNode<T> *pNode) {
+                this->currNode_ = pNode;
+                return *this;
+            }
+
+            Iterator &operator++() {
+                if (currNode_)
+                    currNode_ = currNode_->next_;
+                return *this;
+            }
+
+            Iterator operator++(int) {
+                Iterator iterator = *this;
+                ++*this;
+                return iterator;
+            }
+
+            bool operator!=(const Iterator &iterator) {
+                return currNode_ != iterator.currNode_;
+            }
+
+            T operator*() {
+                return currNode_->data_;
+            }
+
+        private:
+            const SinglyNode<T> *currNode_;
+        };
 
     public:
         SinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
@@ -98,12 +131,7 @@ namespace dsa {
         }
 
         void printList() override {
-            SinglyNode<T> *node = head_;
-            while (node != nullptr) {
-                std::cout << node->getData() << " ";
-                node = node->getNext();
-            }
-            std::cout << std::endl;
+            std::cout << toString() << "\n";
         }
 
         void deleteFirst() override {
@@ -197,6 +225,31 @@ namespace dsa {
 
         SinglyNode<T> *getTail() override {
             return tail_;
+        }
+
+        Iterator begin() {
+            return Iterator(head_);
+        }
+
+        Iterator end() {
+            return Iterator(nullptr);
+        }
+
+        std::string toString() const {
+            std::stringstream os;
+            os << "[ ";
+            SinglyNode<T> *traversal = head_;
+            while (traversal != nullptr) {
+                os << traversal->getData();
+                traversal = traversal->getNext();
+                if (traversal) os << ", ";
+            }
+            os << " ]";
+            return os.str();
+        }
+
+        friend std::ostream &operator<<(std::ostream &strm, const SinglyLinkedList<T> &a) {
+            return strm << a.toString();
         }
     };
 

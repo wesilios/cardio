@@ -1,6 +1,8 @@
 #ifndef ALGORITHMS_NODE_H
 #define ALGORITHMS_NODE_H
 
+#include <sstream>
+
 namespace dsa {
     template<typename T, class U>
     class Node {
@@ -26,6 +28,12 @@ namespace dsa {
 
         void setNext(U *next) {
             Node<T, U>::next_ = next;
+        }
+
+        std::string toString() const {
+            std::stringstream os;
+            os << "Node(" << data_ << ")";
+            return os.str();
         }
     };
 
