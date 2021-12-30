@@ -198,6 +198,23 @@ namespace dsa {
         DoublyNode<T> *getTail() override {
             return tail_;
         }
+
+        std::string toString() const {
+            std::stringstream os;
+            os << "[ ";
+            SinglyNode<T> *traversal = head_;
+            while (traversal != nullptr) {
+                os << traversal->getData();
+                traversal = traversal->getNext();
+                if (traversal) os << ", ";
+            }
+            os << " ]";
+            return os.str();
+        }
+
+        friend std::ostream &operator<<(std::ostream &strm, const SinglyLinkedList<T> &a) {
+            return strm << a.toString();
+        }
     };
 
     void DoublyLinkedListTest() {
