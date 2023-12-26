@@ -1,4 +1,4 @@
-using Algorithms;
+using Algorithms.SortingAlgorithms;
 using Xunit;
 
 namespace DSA.Tests;
