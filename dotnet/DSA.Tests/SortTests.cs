@@ -43,4 +43,16 @@ public class SortTests
             Assert.Equal(_expectedResults[i], result[i]);
         }
     }
+    
+    [Fact]
+    public void MergeSort()
+    {
+        var insertionSort = new MergeSort();
+
+        var result = insertionSort.Sort(_input);
+        for (var i = 0; i < result.Length; i++)
+        {
+            Assert.Equal(_expectedResults[i], result[i]);
+        }
+    }
 }
