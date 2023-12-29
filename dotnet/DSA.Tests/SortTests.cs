@@ -76,4 +76,22 @@ public class SortTests
             Assert.Equal(expectedResults[i], result[i]);
         }
     }
+
+    [Fact]
+    public void HeapSort()
+    {
+        // Arrange
+        int[] input = { 4, 3, 2, 10, 12, 1, 5, 6 };
+        int[] expectedResults = { 1, 2, 3, 4, 5, 6, 10, 12 };
+        var sortAlgo = SortingFactory.FactoryMethod(nameof(HeapSort));
+
+        // Act
+        var result = sortAlgo.Sort(input);
+
+        // Assert
+        for (var i = 0; i < result.Length; i++)
+        {
+            Assert.Equal(expectedResults[i], result[i]);
+        }
+    }
 }
