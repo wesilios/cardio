@@ -1,17 +1,18 @@
 namespace Algorithms.SortingAlgorithms;
 
-public interface IHeapSort
+public interface IHeapSort : ISort
 {
     void Heapify(int[] input, int length, int root);
 }
 
-public class HeapSort : ISort, IHeapSort
+/*
+ * Time complexity: Best case O(nlogn), Average case O(nlogn), Worst case O(nlogn)
+ * Space complexity: O(1)
+ * Stable: No
+ */
+public class HeapSort : IHeapSort
 {
-    /*
-     * Time complexity: Best case O(nlogn), Average case O(nlogn), Worst case O(nlogn)
-     * Space complexity: 1
-     * Stable: No
-     */
+    
     public int[] Sort(int[] input)
     {
         var length = input.Length;
