@@ -66,7 +66,7 @@ public class TimSort : ITimSort
 
     public void InsertSort(int[] input, int left, int right)
     {
-        for (var i = left + 1; i <= right; i ++)
+        for (var i = left + 1; i <= right; i++)
         {
             var temp = input[i];
             var j = i - 1;
