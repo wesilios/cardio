@@ -1,4 +1,4 @@
-# Algorithms & DataStuctures
+# Algorithms & Data Structures
 
 This is a my free time project when I try to learn Algorithms & DataStructures and implement on every programming language from scratch.
 
