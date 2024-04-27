@@ -14,17 +14,67 @@ public class SinglyLinkedList<T> : ILinkedList<T>
 
     public void Add(T data)
     {
-        throw new NotImplementedException();
+        if (IsEmpty())
+        {
+            Head = new SinglyLinkedListNode<T>(data);
+        }
+        else
+        {
+            var previous = Head;
+            while (previous.Next is not null)
+            {
+                previous = previous.Next;
+            }
+            
+            previous.SetNextNode(new SinglyLinkedListNode<T>(data));
+        }
+
+        Size++;
     }
 
     public void AddToHead(T data)
     {
-        throw new NotImplementedException();
+        if (IsEmpty())
+        {
+            Head = new SinglyLinkedListNode<T>(data);
+        }
+        else
+        {
+            var newHead = new SinglyLinkedListNode<T>(data, Head);
+            Head = newHead;
+        }
+
+        Size++;
     }
 
     public void InsertNodeToPosition(T data, int position)
     {
-        throw new NotImplementedException();
+        if (position < 0)
+        {
+            throw new ArgumentException("Illegal position");
+        }
+
+        if (position == 0)
+        {
+            AddToHead(data);
+            return;
+        }
+
+        if (position == Size)
+        {
+            Add(data);
+            return;
+        }
+
+        var previous = Head;
+        for (var i = 0; i < position; i++)
+        {
+            previous = previous!.Next;
+        }
+
+        var newNode = new SinglyLinkedListNode<T>(data, previous!.Next);
+        previous.SetNextNode(newNode);
+        Size++;
     }
 
     public void DeleteNodeAtPosition(int position)
@@ -34,7 +84,7 @@ public class SinglyLinkedList<T> : ILinkedList<T>
 
     public bool IsEmpty()
     {
-        throw new NotImplementedException();
+        return Size == 0;
     }
 
     public void PrintInReverse()
