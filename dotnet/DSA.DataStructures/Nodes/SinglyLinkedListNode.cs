@@ -17,7 +17,7 @@ public class SinglyLinkedListNode<T>
         Next = next;
     }
 
-    public void SetNextNode(SinglyLinkedListNode<T> next)
+    public void SetNextNode(SinglyLinkedListNode<T>? next)
     {
         Next = next;
     }

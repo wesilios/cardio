@@ -7,7 +7,5 @@ public interface ILinkedList<in T>
     void InsertNodeToPosition(T data, int position);
     void DeleteNodeAtPosition(int position);
     bool IsEmpty();
-    void PrintInReverse();
-    void Print();
-    void Reverse();
+    string Print();
 }
