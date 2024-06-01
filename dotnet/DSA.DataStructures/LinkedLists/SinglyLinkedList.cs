@@ -5,8 +5,8 @@ namespace DSA.DataStructures.LinkedLists;
 
 public class SinglyLinkedList<T> : ISinglyLinkedList<T>
 {
-    public int Size { get; set; } = 0;
-    public SinglyLinkedListNode<T>? Head { get; set; } = null;
+    private int Size { get; set; } = 0;
+    private SinglyLinkedListNode<T>? Head { get; set; } = null;
 
     public void Add(T data)
     {
