@@ -3,13 +3,12 @@ using Xunit;
 
 namespace DSA.Tests.SinglyLinkedListTests;
 
-public class AddTests
+public class IsEmptyTests
 {
     [Theory]
-    [InlineData("", "")]
-    [InlineData("1", "[1]")]
-    [InlineData("1,2,3,4,5", "[1] -> [2] -> [3] -> [4] -> [5]")]
-    public void Add_ExpectSuccess(string valuesString, string expectedPrintedResult)
+    [InlineData("", true)]
+    [InlineData("1", false)]
+    public void IsEmpty(string valuesString, bool expectedResult)
     {
         // Arrange
         ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
@@ -22,10 +21,7 @@ public class AddTests
             }
         }
 
-        // Act
-        var printedResult = singlyLinkedList.Print();
-
-        // Assert
-        Assert.Equal(expectedPrintedResult, printedResult);
+        // Act & Assert
+        Assert.Equal(expectedResult, singlyLinkedList.IsEmpty());
     }
 }

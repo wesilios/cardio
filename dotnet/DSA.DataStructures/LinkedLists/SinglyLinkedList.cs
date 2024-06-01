@@ -80,7 +80,37 @@ public class SinglyLinkedList<T> : ISinglyLinkedList<T>
 
     public void DeleteNodeAtPosition(int position)
     {
-        throw new NotImplementedException();
+        if (position < 0)
+        {
+            throw new ArgumentException("Illegal position");
+        }
+
+        if (position == 0 && IsEmpty())
+        {
+            return;
+        }
+
+        if (position == 0)
+        {
+            Head = Head!.Next;
+            return;
+        }
+
+        if (position >= Size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        SinglyLinkedListNode<T>? previous = null;
+        var current = Head;
+        for (var i = 0; i < position; i++)
+        {
+            previous = current;
+            current = current!.Next;
+        }
+        
+        previous!.SetNextNode(current!.Next);
+        Size--;
     }
 
     public bool IsEmpty()

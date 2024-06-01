@@ -4,15 +4,14 @@ using Xunit;
 
 namespace DSA.Tests.SinglyLinkedListTests;
 
-public class InsertNodeToPositionTests
+public class DeleteNodeAtPositionTests
 {
     [Theory]
-    [InlineData("", "0", 0, "[0]")]
-    [InlineData("1", "0", 1, "[1] -> [0]")]
-    [InlineData("1,2,3,4,5", "0", 0, "[0] -> [1] -> [2] -> [3] -> [4] -> [5]")]
-    [InlineData("1,2,3,4,5", "0", 5, "[1] -> [2] -> [3] -> [4] -> [5] -> [0]")]
-    [InlineData("1,2,3,4,5", "0", 3, "[1] -> [2] -> [0] -> [3] -> [4] -> [5]")]
-    public void Add_ExpectSuccess(string valuesString, string value, int position, string expectedPrintedResult)
+    [InlineData("", 0, "")]
+    [InlineData("1", 0, "")]
+    [InlineData("1,2,3,4,5", 2, "[1] -> [2] -> [4] -> [5]")]
+    [InlineData("1,2,3,4,5", 4, "[1] -> [2] -> [3] -> [4]")]
+    public void DeleteNodeAtPosition_ExpectSuccess(string valuesString, int position, string expectedPrintedResult)
     {
         // Arrange
         ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
@@ -26,7 +25,7 @@ public class InsertNodeToPositionTests
         }
 
         // Act
-        singlyLinkedList.InsertNodeToPosition(value, position);
+        singlyLinkedList.DeleteNodeAtPosition(position);
         var printedResult = singlyLinkedList.Print();
 
         // Assert
@@ -34,10 +33,8 @@ public class InsertNodeToPositionTests
     }
 
     [Theory]
-    [InlineData("", "0", 1)]
-    [InlineData("1", "0", 2)]
-    [InlineData("1,2,3,4,5", "0", 6)]
-    public void Add_ExpectArgumentOutOfRangeException(string valuesString, string value, int position)
+    [InlineData("1", -1)]
+    public void DeleteNodeAtPosition_ExpectArgumentException(string valuesString, int position)
     {
         // Arrange
         ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
@@ -51,14 +48,14 @@ public class InsertNodeToPositionTests
         }
 
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => singlyLinkedList.InsertNodeToPosition(value, position));
+        Assert.Throws<ArgumentException>(() => singlyLinkedList.DeleteNodeAtPosition(position));
     }
-    
+
     [Theory]
-    [InlineData("", "0", -1)]
-    [InlineData("1", "0", -2)]
-    [InlineData("1,2,3,4,5", "0", -100)]
-    public void Add_ExpectArgumentException(string valuesString, string value, int position)
+    [InlineData("", 1)]
+    [InlineData("1", 1)]
+    [InlineData("1,2,3,4,5", 5)]
+    public void DeleteNodeAtPosition_ExpectArgumentOutOfRangeException(string valuesString, int position)
     {
         // Arrange
         ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
@@ -72,6 +69,6 @@ public class InsertNodeToPositionTests
         }
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => singlyLinkedList.InsertNodeToPosition(value, position));
+        Assert.Throws<ArgumentOutOfRangeException>(() => singlyLinkedList.DeleteNodeAtPosition(position));
     }
 }
