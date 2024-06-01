@@ -12,7 +12,7 @@ public class ReverseTests
     public void Add_ExpectSuccess(string valuesString, string expectedPrintedResult)
     {
         // Arrange
-        var singlyLinkedList = new SinglyLinkedList<string>();
+        ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
         if (!string.IsNullOrEmpty(valuesString))
         {
             var values = valuesString.Split(",");

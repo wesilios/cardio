@@ -11,7 +11,7 @@ public class AddToHeadTests
     public void AddToHead_ExpectSuccess(string valuesString, string value, string expectedPrintedResult)
     {
         // Arrange
-        var singlyLinkedList = new SinglyLinkedList<string>();
+        ISinglyLinkedList<string> singlyLinkedList = new SinglyLinkedList<string>();
         if (!string.IsNullOrEmpty(valuesString))
         {
             var values = valuesString.Split(",");
