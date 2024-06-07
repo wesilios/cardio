@@ -2,5 +2,4 @@
 
 public interface ISinglyLinkedList<in T> : ILinkedList<T>
 {
-    void Reverse();
 }

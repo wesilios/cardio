@@ -14,6 +14,7 @@ public class DoublyLinkedListNode<T>
     public DoublyLinkedListNode(T data, DoublyLinkedListNode<T>? next)
     {
         Data = data;
+        SetNextNode(next);
         next?.SetPreviousNode(this);
     }
     
@@ -27,12 +28,10 @@ public class DoublyLinkedListNode<T>
     public void SetNextNode(DoublyLinkedListNode<T>? next)
     {
         Next = next;
-        next?.SetPreviousNode(this);
     }
     
     public void SetPreviousNode(DoublyLinkedListNode<T>? previous)
     {
         Previous = previous;
-        previous?.SetNextNode(this);
     }
 }
