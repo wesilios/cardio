@@ -8,4 +8,5 @@ public interface ILinkedList<in T>
     void DeleteNodeAtPosition(int position);
     bool IsEmpty();
     string Print();
+    void Reverse();
 }
