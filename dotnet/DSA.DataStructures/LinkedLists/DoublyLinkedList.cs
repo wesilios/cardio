@@ -32,6 +32,7 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>
         if (IsEmpty())
         {
             Head = new DoublyLinkedListNode<T>(data);
+            Tail = Head;
         }
         else
         {
@@ -44,12 +45,74 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>
 
     public void InsertNodeToPosition(T data, int position)
     {
-        throw new NotImplementedException();
+        if (position < 0)
+        {
+            throw new ArgumentException("Illegal position");
+        }
+
+        if ((position == 0 && IsEmpty()) || position == 0 && !IsEmpty())
+        {
+            AddToHead(data);
+            return;
+        }
+
+        if (position == Size)
+        {
+            Add(data);
+            return;
+        }
+
+        if (position > Size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        var previous = Head;
+        for (var i = 1; i < position - 1; i++)
+        {
+            previous = previous!.Next;
+        }
+
+        var newNode = new DoublyLinkedListNode<T>(data, previous!.Next);
+        previous.SetNextNode(newNode);
+        newNode.SetPreviousNode(previous);
+        Size++;
     }
 
     public void DeleteNodeAtPosition(int position)
     {
-        throw new NotImplementedException();
+        if (position < 0)
+        {
+            throw new ArgumentException("Illegal position");
+        }
+
+        if (position == 0 && IsEmpty())
+        {
+            return;
+        }
+
+        if (position == 0)
+        {
+            Head = Head!.Next;
+            return;
+        }
+
+        if (position >= Size)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        DoublyLinkedListNode<T>? previous = null;
+        var current = Head;
+        for (var i = 0; i < position; i++)
+        {
+            previous = current;
+            current = current!.Next;
+        }
+
+        previous!.SetNextNode(current!.Next);
+        current.SetPreviousNode(previous);
+        Size--;
     }
 
     public bool IsEmpty()
@@ -81,6 +144,18 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>
 
     public void Reverse()
     {
-        throw new NotImplementedException();
+        if (IsEmpty()) return;
+        DoublyLinkedListNode<T>? previous = null;
+        var current = Head;
+        while (current is not null)
+        {
+            var next = current.Next;
+            current.SetNextNode(previous);
+            current.SetPreviousNode(next);
+            previous = current;
+            current = next;
+        }
+        
+        (Head, Tail) = (Tail, Head);
     }
 }
