@@ -1,0 +1,37 @@
+name: Bug Report
+description: Report a problem in an algorithm or test
+labels: ["bug", "language"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the issue clearly
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Language/Module
+      description: Affected folder (cpp, dotnet, php, java, etc.)
+      placeholder: dotnet
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Include minimal code if possible
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Output
+      description: Attach logs or test output if relevant

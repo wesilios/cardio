@@ -1,0 +1,30 @@
+name: Feature Request
+description: Suggest a new algorithm, structure, or enhancement
+labels: ["enhancement", "language"]
+body:
+  - type: input
+    id: feature
+    attributes:
+      label: Feature Title
+      placeholder: Add Dijkstra’s Algorithm in C++
+
+  - type: input
+    id: language
+    attributes:
+      label: Target Language
+      description: Which implementation folder will this apply to?
+      placeholder: cpp / dotnet / php / java
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why?
+      description: Explain the value or learning objective
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Notes
+      description: Optional ideas for how it could be built
