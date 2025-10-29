@@ -9,10 +9,18 @@ updates:
       - dependency-type: "security"
     schedule:
       interval: "weekly"
+    lables:
+      - "dependencies"
+      - "ci"
 
   - package-ecosystem: "docker"
     directory: "/"
-    schedule: "weekly"
+    open-pull-request-limit: 5
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
 
   - package-ecosystem: "nuget"
     directory: "/dotnet"
