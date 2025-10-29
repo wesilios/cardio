@@ -1,0 +1,24 @@
+name: Code/Docs Improvement
+description: Refactor, optimize, or improve documentation
+labels: ["improvement", "language"]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Target Language
+      description: Folder or language affected (cpp, dotnet, etc.)
+      placeholder: cpp
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: What needs improvement?
+      placeholder: Optimize quicksort or improve README
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Provide more info or references
