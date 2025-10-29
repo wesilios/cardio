@@ -32,10 +32,39 @@ different ecosystems.
     └── .github/
         └── workflows/ # Language-specific CI pipelines
 
+# Running Tests
 
-## Languages implementation
+Each language folder includes its own build and test instructions.
 
-- [C/CPP](/cpp)
-- [.NET/.NET Core](/dotnet)
-- PHP (coming soon)
-- Java (coming soon)
+## C/C++
+
+```bash
+cd cpp
+cmake .
+make
+./tests/runTests
+```
+
+## .NET
+
+```bash
+cd dotnet
+dotnet test
+```
+
+# Contributing
+
+Contributions are welcome!
+You can help improve Cardio by:
+
+- 🐞 Reporting bugs: Open an issue with details and reproduction steps.
+- 💡 Proposing new algorithms: Use the Feature Request issue template.
+- 🧑‍💻 Reviewing pull requests: Provide feedback, improvements, or optimizations.
+- 🪜 Improving documentation: Fix typos, clarify concepts, or enhance structure.
+
+Please check existing issues or open a new one before submitting a PR.
+All contributions should follow the folder naming and testing conventions per language.
+
+# License
+
+This project is licensed under the [MIT License](LICENSE)
