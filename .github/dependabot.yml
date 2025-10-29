@@ -1,0 +1,35 @@
+version: 2
+updates:
+  # C/C++ dependencies (via vcpkg or CMake)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    open-pull-request-limit: 5
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "security"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule: "weekly"
+
+  - package-ecosystem: "nuget"
+    directory: "/dotnet"
+    open-pull-request-limit: 5
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "dotnet"
+      - "csharp"
+
+  # C/C++ dependency tracking (for manifest-based tools like vcpkg.json)
+  - package-ecosystem: "vcpkg"
+    directory: "/cpp"
+    open-pull-request-limit: 5
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "cpp"
