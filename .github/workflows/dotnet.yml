@@ -5,6 +5,9 @@ on:
     paths:
       - 'dotnet/**'
 
+permissions:
+  pull-requests: write
+
 jobs:
   test:
     if: ${{ github.event.pull_request.draft == false }}
