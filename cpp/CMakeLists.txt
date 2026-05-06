@@ -16,5 +16,6 @@ add_executable(Algorithms main.cpp
         DataStructures/Queue/Queue.h
         DataStructures/Queue/ArrayQueue.h
         DataStructures/Queue/ListQueue.h
+        DataStructures/Queue/PriorityQueue.h
         DataStructures/LinkedList/CircularDoublyLinkedList.h
         DataStructures/LinkedList/CircularSinglyLinkedList.h)
