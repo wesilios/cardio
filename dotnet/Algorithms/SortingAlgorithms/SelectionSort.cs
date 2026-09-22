@@ -1,12 +1,12 @@
 ﻿namespace Algorithms.SortingAlgorithms;
 
+/*
+ * Time complexity: Best case O(n), Average case O(n2), Worst case O(n2)
+ * Space complexity: O(1)
+ * Stable: no
+ */
 public class SelectionSort : ISort
 {
-    /*
-     * Time complexity: Best case O(n), Average case O(n2), Worst case O(n2)
-     * Space complexity: 1
-     * Stable: no
-     */
     public int[] Sort(int[] input)
     {
         for (var i = 0; i < input.Length - 1; i++)

@@ -1,19 +1,18 @@
 namespace Algorithms.SortingAlgorithms;
 
-public interface IMergeSort
+public interface IMergeSort : ISort
 {
     void Merge(int[] input, int left, int middle, int right);
     void Sort(int[] input, int left, int right);
 }
 
-public class MergeSort : ISort, IMergeSort
+/*
+ * Time complexity: Best case O(nlogn), Average case O(nlogn), Worst case O(nlogn)
+ * Space complexity: O(n)
+ * Stable: Yes
+ */
+public class MergeSort : IMergeSort
 {
-    /*
-     * Time complexity: Best case O(nlogn), Average case O(nlogn), Worst case O(nlogn)
-     * Space complexity: n
-     * Stable: Yes
-     */
-
     public int[] Sort(int[] input)
     {
         Sort(input, 0, input.Length - 1);
@@ -34,7 +33,7 @@ public class MergeSort : ISort, IMergeSort
             firstArray[i] = input[left + i];
         }
 
-        for (j = 0; j < firstArrayLength; j++)
+        for (j = 0; j < secondArrayLength; j++)
         {
             secondArray[j] = input[middle + 1 + j];
         }
