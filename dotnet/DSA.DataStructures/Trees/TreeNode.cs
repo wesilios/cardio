@@ -5,7 +5,7 @@ public class TreeNode : IComparable<TreeNode>, ITreeNode
     public int Data { get; set; }
     public ITreeNode Left { get; set; }
     public ITreeNode Right { get; set; }
-    
+
     public TreeNode(int data, ITreeNode? left = null, ITreeNode? right = null)
     {
         Data = data;
