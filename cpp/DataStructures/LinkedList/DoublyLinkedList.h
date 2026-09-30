@@ -13,7 +13,8 @@ namespace dsa {
     class DoublyLinkedList : public LinkedList<T, DoublyNode<T>> {
     private:
         int size_ = 0;
-        DoublyNode<T> *head_, *tail_;
+        DoublyNode<T> *head_;
+        DoublyNode<T> *tail_;
 
     public:
         DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {
@@ -89,7 +90,6 @@ namespace dsa {
             for (int i = 1; i < index - 1; i++) {
                 node = node->getNext();
             }
-            DoublyNode<T> *testNode = node->getNext();
             auto *newNode = new DoublyNode<T>(data, node, node->getNext());
             node->getNext()->setPrevious(newNode);
             node->setNext(newNode);
