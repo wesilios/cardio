@@ -4,64 +4,51 @@
 #include <sstream>
 
 namespace dsa {
-    template<typename T, class U>
-    class Node {
-    protected:
-        T data_;
-        U *next_;
-    public:
-        Node() : next_(nullptr) {}
+template <typename T, class U> class Node {
+  protected:
+    T data_;
+    U *next_;
 
-        Node(T data, U *next) : data_(data), next_(next) {}
+  public:
+    Node() : next_(nullptr) {}
 
-        void setData(const T &data) {
-            Node<T, U>::data_ = data;
-        }
+    Node(T data, U *next) : data_(data), next_(next) {}
 
-        T getData() {
-            return Node<T, U>::data_;
-        }
+    void setData(const T &data) { Node<T, U>::data_ = data; }
 
-        U *getNext() {
-            return Node<T, U>::next_;
-        }
+    T getData() { return Node<T, U>::data_; }
 
-        void setNext(U *next) {
-            Node<T, U>::next_ = next;
-        }
+    U *getNext() { return Node<T, U>::next_; }
 
-        std::string toString() const {
-            std::stringstream os;
-            os << "Node(" << data_ << ")";
-            return os.str();
-        }
-    };
+    void setNext(U *next) { Node<T, U>::next_ = next; }
 
-    template<typename T>
-    class SinglyNode final : public Node<T, SinglyNode<T>> {
-    public:
-        SinglyNode() : Node<T, SinglyNode<T>>(nullptr) {}
+    std::string toString() const {
+        std::stringstream os;
+        os << "Node(" << data_ << ")";
+        return os.str();
+    }
+};
 
-        SinglyNode(T data, SinglyNode *next) : Node<T, SinglyNode<T>>(data, next) {}
-    };
+template <typename T> class SinglyNode final : public Node<T, SinglyNode<T>> {
+  public:
+    SinglyNode() : Node<T, SinglyNode<T>>(nullptr) {}
 
-    template<typename T>
-    class DoublyNode final : public Node<T, DoublyNode<T>> {
-    private:
-        DoublyNode<T> *previous_;
-    public:
-        DoublyNode() : Node<T, DoublyNode<T>>(nullptr), previous_(nullptr) {}
+    SinglyNode(T data, SinglyNode *next) : Node<T, SinglyNode<T>>(data, next) {}
+};
 
-        DoublyNode(T data, DoublyNode *previous, DoublyNode *next)
-                : Node<T, DoublyNode<T>>(data, next), previous_(previous) {}
+template <typename T> class DoublyNode final : public Node<T, DoublyNode<T>> {
+  private:
+    DoublyNode<T> *previous_;
 
-        void setPrevious(DoublyNode<T> *previous) {
-            previous_ = previous;
-        }
+  public:
+    DoublyNode() : Node<T, DoublyNode<T>>(nullptr), previous_(nullptr) {}
 
-        DoublyNode<T> *getPrevious() {
-            return previous_;
-        }
-    };
-}
-#endif //ALGORITHMS_NODE_H
+    DoublyNode(T data, DoublyNode *previous, DoublyNode *next)
+        : Node<T, DoublyNode<T>>(data, next), previous_(previous) {}
+
+    void setPrevious(DoublyNode<T> *previous) { previous_ = previous; }
+
+    DoublyNode<T> *getPrevious() { return previous_; }
+};
+} // namespace dsa
+#endif // ALGORITHMS_NODE_H

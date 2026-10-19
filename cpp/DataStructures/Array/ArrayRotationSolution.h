@@ -4,7 +4,7 @@
 #define ALGORITHMS_ARRAYROTATIONSOLUTION_H
 
 class ArrayRotationSolution {
-private:
+  private:
     static int findGreatestCommonDivisor(int d, int n) {
         int remain = n % d;
         if (remain != 0) {
@@ -31,7 +31,7 @@ private:
         }
     }
 
-public:
+  public:
     static void printResult(int *arr, int n) {
         for (int i = 0; i < n; i++) {
             std::cout << arr[i] << " ";
@@ -166,4 +166,4 @@ void arrayRotationSolutionTests() {
     }
 }
 
-#endif //ALGORITHMS_ARRAYROTATIONSOLUTION_H
+#endif // ALGORITHMS_ARRAYROTATIONSOLUTION_H

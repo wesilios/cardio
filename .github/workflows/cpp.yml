@@ -1,0 +1,56 @@
+name: C++ PR Tests
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'cpp/**'
+      - '.github/workflows/cpp.yml'
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PR (cpp, c++)
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: |
+            cpp
+            c++
+
+  build:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++, clang++ ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure
+        run: >
+          cmake -S cpp -B cpp/build
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+
+      - name: Build
+        run: cmake --build cpp/build --parallel
+
+      # main.cpp is an interactive menu: feed the menu choice followed by the sample input.
+      # Sanitizers make memory errors / UB fail the step.
+      - name: Smoke test (stacks and queues)
+        working-directory: cpp
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: |
+          run() { echo "::group::menu $1 < $2"; (echo "$1"; cat "$2") | timeout 30 ./build/Algorithms; echo "::endgroup::"; }
+          run 6 DataStructures/Stack/testcases.txt
+          run 7 DataStructures/Stack/testcases.txt
+          run 8 DataStructures/Queue/testcases.txt
+          run 9 DataStructures/Queue/testcases.txt
