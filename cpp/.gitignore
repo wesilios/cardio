@@ -3,3 +3,6 @@
 /cmake-build-debug
 a.out
 a.exe
+/build
+/build-*
+

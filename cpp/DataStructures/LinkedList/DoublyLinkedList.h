@@ -61,7 +61,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void addAtIndex(const int &index, const T &data) override {
-        if (index < 0) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -140,7 +140,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -170,7 +170,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void findByIndex(const int &index) override {
-        if (index < 0 || index > size()) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 

@@ -1,8 +1,6 @@
 #ifndef ALGORITHMS_STACK_H
 #define ALGORITHMS_STACK_H
 
-#include <iostream>
-
 namespace dsa {
 template <typename T> class Stack {
   private:

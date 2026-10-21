@@ -3,7 +3,6 @@
 
 #include "../LinkedList/SinglyLinkedList.h"
 #include "Stack.h"
-#include <exception>
 #include <iostream>
 
 namespace dsa {

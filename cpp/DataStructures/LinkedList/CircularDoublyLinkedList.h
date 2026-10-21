@@ -63,9 +63,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_++;
     }
 
-    void addFirst(const T &data)
-
-        override {
+    void addFirst(const T &data) override {
         if (isEmpty()) {
             head_ = new DoublyNode<T>(data, nullptr, nullptr);
             head_->setNext(head_);
@@ -82,10 +80,8 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_++;
     }
 
-    void addAtIndex(const int &index, const T &data)
-
-        override {
-        if (index < 0 || index > size_) {
+    void addAtIndex(const int &index, const T &data) override {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -110,10 +106,8 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_++;
     }
 
-    void findByIndex(const int &index)
-
-        override {
-        if (index < 0 || index > size()) {
+    void findByIndex(const int &index) override {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -124,9 +118,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         std::cout << node->getData() << std::endl;
     }
 
-    void deleteFirst()
-
-        override {
+    void deleteFirst() override {
         DoublyNode<T> *head = head_;
         head_ = head->getNext();
         head_->setPrevious(tail_);
@@ -134,9 +126,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_--;
     }
 
-    void deleteLast()
-
-        override {
+    void deleteLast() override {
         DoublyNode<T> *tail = tail_;
         tail_ = tail->getPrevious();
         tail_->setNext(head_);
@@ -170,7 +160,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index > size()) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
