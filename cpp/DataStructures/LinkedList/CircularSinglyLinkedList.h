@@ -65,7 +65,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     }
 
     void addAtIndex(const int &index, const T &data) override {
-        if (index < 0) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -98,7 +98,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     }
 
     void findByIndex(const int &index) override {
-        if (index < 0 || index > size()) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -134,7 +134,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index > size()) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 

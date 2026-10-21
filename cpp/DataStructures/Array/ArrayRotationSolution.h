@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 #ifndef ALGORITHMS_ARRAYROTATIONSOLUTION_H
 #define ALGORITHMS_ARRAYROTATIONSOLUTION_H
@@ -6,10 +7,15 @@
 class ArrayRotationSolution {
   private:
     static int findGreatestCommonDivisor(int d, int n) {
+        if (d == 0) {
+            throw std::runtime_error("Division by zero error!");
+        }
+
         int remain = n % d;
         if (remain != 0) {
             return findGreatestCommonDivisor(remain, d);
         }
+
         return d;
     }
 
@@ -40,6 +46,10 @@ class ArrayRotationSolution {
     }
 
     static void rotateUsingTempArray(int *arr, int d, int n) {
+        if (d == 0 || n == 0) {
+            return;
+        }
+
         int temp[d];
         for (int i = 0; i < d; ++i) {
             temp[i] = arr[i];
@@ -67,6 +77,10 @@ class ArrayRotationSolution {
     }
 
     static void rotateWithJugglingAlgorithm(int *arr, int d, int n) {
+        if (d == 0 || n == 0) {
+            return;
+        }
+
         int gcd = findGreatestCommonDivisor(d, n);
         for (int i = 0; i < gcd; ++i) {
             int temp = arr[i];
@@ -113,13 +127,12 @@ class ArrayRotationSolution {
     }
 
     static void rotateWithBlockSwapIterativeAlgorithm(int *arr, int d, int n) {
-        int i, j;
-        if (d == 0 || n == 0) {
+        if (d == 0 || n == d) {
             return;
         }
 
-        i = d;
-        j = n - d;
+        int i = d;
+        int j = n - d;
         while (i != j) {
             if (i < j) {
                 swap(arr, d - i, d + j - i, i);

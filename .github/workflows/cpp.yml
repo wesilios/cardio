@@ -41,6 +41,12 @@ jobs:
       - name: Build
         run: cmake --build cpp/build --parallel
 
+      - name: Unit tests
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: ctest --test-dir cpp/build --output-on-failure --timeout 60
+
       # main.cpp is an interactive menu: feed the menu choice followed by the sample input.
       # Sanitizers make memory errors / UB fail the step.
       - name: Smoke test (stacks and queues)

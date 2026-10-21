@@ -95,7 +95,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
     }
 
     void addAtIndex(const int &index, const T &data) override {
-        if (index < 0) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -165,7 +165,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0) {
+        if (index < 0 || index >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -241,37 +241,45 @@ void SinglyLinkedListTest() {
     linkedList.printList();
     int index;
 
+    std::cout << "Add new value at specific index: ";
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to first node: ";
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to last node: ";
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Find value at specific index: ";
     std::cin >> index;
     linkedList.findByIndex(index);
 
+    std::cout << "Delete last node: ";
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete first node: ";
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific value: ";
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific index: ";
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();

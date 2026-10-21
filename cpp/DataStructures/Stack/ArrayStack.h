@@ -1,7 +1,6 @@
 #ifndef ALGORITHMS_ARRAYSTACK_H
 #define ALGORITHMS_ARRAYSTACK_H
 
-#include <exception>
 #include <iostream>
 #include <vector>
 

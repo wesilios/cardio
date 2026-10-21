@@ -40,10 +40,12 @@ Each language folder includes its own build and test instructions.
 
 ```bash
 cd cpp
-cmake .
-make
-./tests/runTests
+cmake -S . -B build
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
 ```
+
+See [cpp/README.md](cpp/README.md) for running a single test, the interactive demo, and sanitizer builds.
 
 ## .NET
 
@@ -51,6 +53,43 @@ make
 cd dotnet
 dotnet test
 ```
+
+# Running the Application
+
+## C/C++
+
+The C++ build produces `Algorithms`, an interactive menu that demonstrates each data structure. Build it first (see [Running Tests](#cc)), then from `cpp/`:
+
+```bash
+./build/Algorithms
+```
+
+Choose a structure by number, then type its input:
+
+| # | Structure                   | # | Structure   |
+|---|-----------------------------|---|-------------|
+| 1 | Array rotation              | 6 | Array Stack |
+| 2 | Singly Linked list          | 7 | List Stack  |
+| 3 | Doubly Linked list          | 8 | Array Queue |
+| 4 | Circular Singly Linked list | 9 | List Queue  |
+| 5 | Circular Doubly Linked list |   |             |
+
+To skip typing, pipe the input in. The stack and queue folders include sample input in `testcases.txt`; put the menu number in front of it:
+
+```bash
+(echo 6; cat DataStructures/Stack/testcases.txt) | ./build/Algorithms   # Array Stack
+(echo 8; cat DataStructures/Queue/testcases.txt) | ./build/Algorithms   # Array Queue
+```
+
+Array rotation (option 1) reads the number of test cases, then `n d` for each case, then the `n` values:
+
+```bash
+printf '1\n1\n12 3\n1 2 3 4 5 6 7 8 9 10 11 12\n' | ./build/Algorithms
+```
+
+## .NET
+
+The .NET projects are class libraries with no executable. Run them through the test suite with `dotnet test`.
 
 # Contributing
 
