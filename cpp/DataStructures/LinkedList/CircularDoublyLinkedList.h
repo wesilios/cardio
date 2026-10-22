@@ -14,6 +14,36 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     DoublyNode<T> *tail_;
 
   public:
+    class Iterator {
+      private:
+        const DoublyNode<T> *currNode_;
+        int remaining_;
+
+      public:
+        explicit Iterator(const DoublyNode<T> *pNode, const int remaining) noexcept
+            : currNode_(pNode), remaining_(remaining) {}
+
+        Iterator &operator++() {
+            if (remaining_ > 0) {
+                currNode_ = currNode_->getNext();
+                --remaining_;
+            }
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator iterator = *this;
+            ++*this;
+            return iterator;
+        }
+
+        bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
+        bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
+
+        T operator*() { return currNode_->getData(); }
+    };
+
+  public:
     CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
     virtual ~CircularDoublyLinkedList() { clear(); }
@@ -209,6 +239,30 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     DoublyNode<T> *getHead() override { return head_; }
 
     DoublyNode<T> *getTail() override { return tail_; }
+
+    Iterator begin() { return Iterator(head_, size_); }
+
+    Iterator end() { return Iterator(head_, 0); }
+
+    std::string toString() const {
+        std::stringstream os;
+        os << "[ ";
+        DoublyNode<T> *traversal = head_;
+        int size = size_;
+        while (size > 0) {
+            os << traversal->getData();
+            traversal = traversal->getNext();
+            --size;
+            if (size > 0)
+                os << ", ";
+        }
+        os << " ]";
+        return os.str();
+    }
+
+    friend std::ostream &operator<<(std::ostream &strm, const CircularDoublyLinkedList<T> &a) {
+        return strm << a.toString();
+    }
 };
 
 void CircularDoublyLinkedListTest() {

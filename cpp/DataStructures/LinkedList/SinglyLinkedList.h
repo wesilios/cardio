@@ -17,6 +17,9 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
 
   public:
     class Iterator {
+      private:
+        const SinglyNode<T> *currNode_;
+
       public:
         explicit Iterator(const SinglyNode<T> *pNode) noexcept : currNode_(pNode) {}
 
@@ -36,9 +39,6 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         bool operator==(const Iterator &iterator) const { return currNode_ == iterator.currNode_; }
 
         T operator*() { return currNode_->getData(); }
-
-      private:
-        const SinglyNode<T> *currNode_;
     };
 
   public:

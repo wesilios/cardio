@@ -16,6 +16,36 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     SinglyNode<T> *tail_;
 
   public:
+    class Iterator {
+      private:
+        const SinglyNode<T> *currNode_;
+        int remaining_;
+
+      public:
+        explicit Iterator(const SinglyNode<T> *pNode, int remaining) noexcept
+            : currNode_(pNode), remaining_(remaining) {}
+
+        Iterator &operator++() {
+            if (remaining_ > 0) {
+                currNode_ = currNode_->getNext();
+                --remaining_;
+            }
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator iterator = *this;
+            ++*this;
+            return iterator;
+        }
+
+        bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
+        bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
+
+        T operator*() { return currNode_->getData(); }
+    };
+
+  public:
     CircularSinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
     virtual ~CircularSinglyLinkedList() { clear(); }
@@ -200,6 +230,30 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     SinglyNode<T> *getHead() override { return head_; }
 
     SinglyNode<T> *getTail() override { return tail_; }
+
+    Iterator begin() { return Iterator(head_, size_); }
+
+    Iterator end() { return Iterator(head_, 0); }
+
+    std::string toString() const {
+        std::stringstream os;
+        os << "[ ";
+        SinglyNode<T> *traversal = head_;
+        int size = size_;
+        while (size > 0) {
+            os << traversal->getData();
+            traversal = traversal->getNext();
+            size--;
+            if (size > 0)
+                os << ", ";
+        }
+        os << " ]";
+        return os.str();
+    }
+
+    friend std::ostream &operator<<(std::ostream &strm, const CircularSinglyLinkedList<T> &a) {
+        return strm << a.toString();
+    }
 };
 
 void CircularSinglyLinkedListTest() {

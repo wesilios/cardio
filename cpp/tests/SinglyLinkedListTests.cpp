@@ -626,3 +626,22 @@ TEST(SinglyLinkedList, StreamOperatorPrintsToString) {
     os << list;
     EXPECT_EQ(os.str(), "[ 1, 2, 3 ]");
 }
+
+TEST(SinglyLinkedList, ToStringOnEmptyList) {
+    dsa::SinglyLinkedList<int> list;
+    EXPECT_EQ(list.toString(), "[  ]");
+}
+
+TEST(SinglyLinkedList, ToStringOnSingleNode) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, {7});
+    EXPECT_EQ(list.toString(), "[ 7 ]");
+}
+
+TEST(SinglyLinkedList, ToStringAfterDeletes) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4});
+    list.deleteFirst();
+    list.deleteLast();
+    EXPECT_EQ(list.toString(), "[ 2, 3 ]");
+}

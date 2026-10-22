@@ -528,6 +528,104 @@ TEST(DoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
 
+// ---------- Iterator ----------
+
+TEST(DoublyLinkedList, RangeForVisitsEveryValueInOrder) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+    }
+    EXPECT_EQ(visited, std::vector<int>({1, 2, 3}));
+}
+
+TEST(DoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
+    dsa::DoublyLinkedList<int> list;
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+    }
+    EXPECT_TRUE(visited.empty());
+}
+
+TEST(DoublyLinkedList, RangeForOnSingleNode) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {7});
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+    }
+    EXPECT_EQ(visited, std::vector<int>({7}));
+}
+
+TEST(DoublyLinkedList, RangeForSeesChangesToTheList) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    list.deleteFirst();
+    list.addFirst(0);
+    list.addLast(4);
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+    }
+    EXPECT_EQ(visited, std::vector<int>({0, 2, 3, 4}));
+}
+
+TEST(DoublyLinkedList, BeginEqualsEndOnEmptyList) {
+    dsa::DoublyLinkedList<int> list;
+    EXPECT_TRUE(list.begin() == list.end());
+    EXPECT_FALSE(list.begin() != list.end());
+}
+
+TEST(DoublyLinkedList, BeginDiffersFromEndOnNonEmptyList) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1});
+    EXPECT_TRUE(list.begin() != list.end());
+    EXPECT_FALSE(list.begin() == list.end());
+}
+
+TEST(DoublyLinkedList, DereferenceReturnsCurrentValue) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    EXPECT_EQ(*it, 10);
+}
+
+TEST(DoublyLinkedList, PrefixIncrementMovesToNextNode) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {10, 20, 30});
+    auto it = list.begin();
+    ++it;
+    EXPECT_EQ(*it, 20);
+    EXPECT_EQ(*++it, 30);
+}
+
+TEST(DoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    auto old = it++;
+    EXPECT_EQ(*old, 10);
+    EXPECT_EQ(*it, 20);
+}
+
+TEST(DoublyLinkedList, IncrementPastLastNodeReachesEnd) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    ++it;
+    ++it;
+    EXPECT_TRUE(it == list.end());
+}
+
+TEST(DoublyLinkedList, IncrementAtEndStaysAtEnd) {
+    dsa::DoublyLinkedList<int> list;
+    auto it = list.end();
+    ++it;
+    EXPECT_TRUE(it == list.end());
+}
+
 // ---------- Printing ----------
 
 TEST(DoublyLinkedList, ToStringListsValues) {
@@ -542,4 +640,23 @@ TEST(DoublyLinkedList, StreamOperatorPrintsToString) {
     std::stringstream os;
     os << list;
     EXPECT_EQ(os.str(), "[ 1, 2, 3 ]");
+}
+
+TEST(DoublyLinkedList, ToStringOnEmptyList) {
+    dsa::DoublyLinkedList<int> list;
+    EXPECT_EQ(list.toString(), "[  ]");
+}
+
+TEST(DoublyLinkedList, ToStringOnSingleNode) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {7});
+    EXPECT_EQ(list.toString(), "[ 7 ]");
+}
+
+TEST(DoublyLinkedList, ToStringAfterDeletes) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4});
+    list.deleteFirst();
+    list.deleteLast();
+    EXPECT_EQ(list.toString(), "[ 2, 3 ]");
 }

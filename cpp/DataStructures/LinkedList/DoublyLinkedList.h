@@ -15,6 +15,32 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     DoublyNode<T> *head_, *tail_;
 
   public:
+    class Iterator {
+      private:
+        const DoublyNode<T> *currNode_;
+
+      public:
+        explicit Iterator(const DoublyNode<T> *pNode) noexcept : currNode_(pNode) {}
+
+        Iterator &operator++() {
+            if (currNode_)
+                currNode_ = currNode_->getNext();
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator iterator = *this;
+            ++*this;
+            return iterator;
+        }
+
+        bool operator!=(const Iterator &iterator) const { return currNode_ != iterator.currNode_; }
+        bool operator==(const Iterator &iterator) const { return currNode_ == iterator.currNode_; }
+
+        T operator*() { return currNode_->getData(); }
+    };
+
+  public:
     DoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
     virtual ~DoublyLinkedList() { clear(); }
@@ -194,6 +220,10 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     DoublyNode<T> *getHead() override { return head_; }
 
     DoublyNode<T> *getTail() override { return tail_; }
+
+    Iterator begin() { return Iterator(head_); }
+
+    Iterator end() { return Iterator(nullptr); }
 
     std::string toString() const {
         std::stringstream os;

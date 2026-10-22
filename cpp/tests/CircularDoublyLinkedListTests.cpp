@@ -528,3 +528,174 @@ TEST(CircularDoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
+
+// ---------- Iterator ----------
+// The tail links back to the head, so end() must not rely on reaching nullptr.
+// Each range-for stops after 10 values so a broken end() fails the test instead of looping forever.
+
+TEST(CircularDoublyLinkedList, RangeForVisitsEveryValueOnce) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+        if (visited.size() > 10) {
+            break;
+        }
+    }
+    EXPECT_EQ(visited, std::vector<int>({1, 2, 3}));
+}
+
+TEST(CircularDoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
+    dsa::CircularDoublyLinkedList<int> list;
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+        if (visited.size() > 10) {
+            break;
+        }
+    }
+    EXPECT_TRUE(visited.empty());
+}
+
+TEST(CircularDoublyLinkedList, RangeForOnSingleNodeVisitsItOnce) {
+    // The single node links to itself.
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {7});
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+        if (visited.size() > 10) {
+            break;
+        }
+    }
+    EXPECT_EQ(visited, std::vector<int>({7}));
+}
+
+TEST(CircularDoublyLinkedList, RangeForSeesChangesToTheList) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    list.deleteFirst();
+    list.addFirst(0);
+    list.addLast(4);
+    std::vector<int> visited;
+    for (int value : list) {
+        visited.push_back(value);
+        if (visited.size() > 10) {
+            break;
+        }
+    }
+    EXPECT_EQ(visited, std::vector<int>({0, 2, 3, 4}));
+}
+
+TEST(CircularDoublyLinkedList, RangeForTwiceGivesSameValues) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    std::vector<int> first;
+    for (int value : list) {
+        first.push_back(value);
+        if (first.size() > 10) {
+            break;
+        }
+    }
+    std::vector<int> second;
+    for (int value : list) {
+        second.push_back(value);
+        if (second.size() > 10) {
+            break;
+        }
+    }
+    EXPECT_EQ(first, std::vector<int>({1, 2, 3}));
+    EXPECT_EQ(second, std::vector<int>({1, 2, 3}));
+}
+
+TEST(CircularDoublyLinkedList, BeginEqualsEndOnEmptyList) {
+    dsa::CircularDoublyLinkedList<int> list;
+    EXPECT_TRUE(list.begin() == list.end());
+    EXPECT_FALSE(list.begin() != list.end());
+}
+
+TEST(CircularDoublyLinkedList, BeginDiffersFromEndOnNonEmptyList) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1});
+    EXPECT_TRUE(list.begin() != list.end());
+    EXPECT_FALSE(list.begin() == list.end());
+}
+
+TEST(CircularDoublyLinkedList, DereferenceReturnsCurrentValue) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    EXPECT_EQ(*it, 10);
+}
+
+TEST(CircularDoublyLinkedList, PrefixIncrementMovesToNextNode) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {10, 20, 30});
+    auto it = list.begin();
+    ++it;
+    EXPECT_EQ(*it, 20);
+    EXPECT_EQ(*++it, 30);
+}
+
+TEST(CircularDoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    auto old = it++;
+    EXPECT_EQ(*old, 10);
+    EXPECT_EQ(*it, 20);
+}
+
+TEST(CircularDoublyLinkedList, IncrementPastTailReachesEnd) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    auto it = list.begin();
+    ++it;
+    ++it;
+    EXPECT_TRUE(it == list.end());
+}
+
+TEST(CircularDoublyLinkedList, IncrementPastSingleNodeReachesEnd) {
+    // The node's next is itself, so the iterator must still count it as one lap.
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {7});
+    auto it = list.begin();
+    ++it;
+    EXPECT_TRUE(it == list.end());
+}
+
+// ---------- Printing ----------
+
+TEST(CircularDoublyLinkedList, ToStringListsValues) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    EXPECT_EQ(list.toString(), "[ 1, 2, 3 ]");
+}
+
+TEST(CircularDoublyLinkedList, StreamOperatorPrintsToString) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    std::stringstream os;
+    os << list;
+    EXPECT_EQ(os.str(), "[ 1, 2, 3 ]");
+}
+
+TEST(CircularDoublyLinkedList, ToStringOnEmptyList) {
+    dsa::CircularDoublyLinkedList<int> list;
+    EXPECT_EQ(list.toString(), "[  ]");
+}
+
+TEST(CircularDoublyLinkedList, ToStringOnSingleNode) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {7});
+    EXPECT_EQ(list.toString(), "[ 7 ]");
+}
+
+TEST(CircularDoublyLinkedList, ToStringAfterDeletes) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4});
+    list.deleteFirst();
+    list.deleteLast();
+    EXPECT_EQ(list.toString(), "[ 2, 3 ]");
+}
