@@ -61,7 +61,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void addAtIndex(const int &index, const T &data) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -76,13 +76,14 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
         }
 
         DoublyNode<T> *node = head_;
-        for (int i = 1; i < index - 1; i++) {
+        for (int i = 0; i < index; i++) {
             node = node->getNext();
         }
-        DoublyNode<T> *testNode = node->getNext();
-        auto *newNode = new DoublyNode<T>(data, node, node->getNext());
-        node->getNext()->setPrevious(newNode);
-        node->setNext(newNode);
+
+        auto *previous = node->getPrevious();
+        auto *newNode = new DoublyNode<T>(data, previous, node);
+        previous->setNext(newNode);
+        node->setPrevious(newNode);
         size_++;
     }
 
@@ -96,6 +97,11 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void deleteFirst() override {
+        if (head_ == tail_) {
+            clear();
+            return;
+        }
+
         DoublyNode<T> *head = head_;
         head_ = head->getNext();
         head_->setPrevious(nullptr);
@@ -104,6 +110,11 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void deleteLast() override {
+        if (head_ == tail_) {
+            clear();
+            return;
+        }
+
         DoublyNode<T> *tail = tail_;
         tail_ = tail->getPrevious();
         tail_->setNext(nullptr);
@@ -112,35 +123,33 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     }
 
     void deleteNode(const T &data) override {
-        if (head_->getData() == data) {
-            deleteFirst();
-        }
-
-        if (tail_->getData() == data) {
-            deleteLast();
-        }
-
         DoublyNode<T> *node = head_;
+
         while (node != nullptr) {
-            if (node->getData() != data) {
-                node = node->getNext();
-                continue;
-            }
-
             DoublyNode<T> *next = node->getNext();
-            node->getPrevious()->setNext(next);
-            if (next != nullptr) {
-                next->setPrevious(node->getPrevious());
+
+            if (node->getData() == data) {
+                if (node == head_) {
+                    deleteFirst();
+                } else if (node == tail_) {
+                    deleteLast();
+                } else {
+                    DoublyNode<T> *previous = node->getPrevious();
+
+                    previous->setNext(next);
+                    next->setPrevious(previous);
+
+                    delete node;
+                    --size_;
+                }
             }
 
-            delete node;
             node = next;
-            size_--;
         }
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size() - 1) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -149,33 +158,34 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
             return;
         }
 
-        if (index == size()) {
+        if (index == size() - 1) {
             deleteLast();
             return;
         }
 
-        DoublyNode<T> *node = head_->getNext();
-        for (int i = 1; node != nullptr && i < index - 2; i++) {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; node != nullptr && i < index; i++) {
             node = node->getNext();
         }
         if (node == nullptr || node->getNext() == nullptr) {
             return;
         }
 
-        DoublyNode<T> *next = node->getNext()->getNext();
-        next->setPrevious(node);
-        delete node->getNext();
-        node->setNext(next);
+        DoublyNode<T> *next = node->getNext();
+        DoublyNode<T> *previous = node->getPrevious();
+        next->setPrevious(previous);
+        previous->setNext(next);
+        delete node;
         size_--;
     }
 
     void findByIndex(const int &index) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size() - 1) {
             throw InvalidArgument("Illegal index");
         }
 
         DoublyNode<T> *node = head_;
-        for (int i = 0; i < index - 1; ++i) {
+        for (int i = 0; i < index; ++i) {
             node = node->getNext();
         }
         std::cout << node->getData() << std::endl;
@@ -188,7 +198,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
     std::string toString() const {
         std::stringstream os;
         os << "[ ";
-        SinglyNode<T> *traversal = head_;
+        DoublyNode<T> *traversal = head_;
         while (traversal != nullptr) {
             os << traversal->getData();
             traversal = traversal->getNext();
@@ -204,8 +214,10 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
 
 void DoublyLinkedListTest() {
     int n, data;
+    std::cout << "Number of values: ";
     std::cin >> n;
     DoublyLinkedList<int> linkedList;
+    std::cout << "Enter " << n << " values: ";
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
@@ -213,37 +225,45 @@ void DoublyLinkedListTest() {
     linkedList.printList();
     int index;
 
+    std::cout << "Add new value at specific index (index value): ";
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to first node: ";
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to last node: ";
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Find value at specific index: ";
     std::cin >> index;
     linkedList.findByIndex(index);
 
+    std::cout << "Delete last node: ";
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete first node: ";
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific value: ";
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific index: ";
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();

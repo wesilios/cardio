@@ -66,24 +66,33 @@ template <typename T> class ArrayQueue final : public Queue<T> {
 
 void ArrayQueueTest() {
     int t, data;
+    std::cout << "Number of values to push: ";
     std::cin >> t;
     ArrayQueue<int> queue(0);
+    std::cout << "Enter " << t << " values: ";
     for (int i = 0; i < t; i++) {
         std::cin >> data;
         queue.push(data);
     }
+    std::cout << "Queue: ";
     queue.printStack();
+
+    std::cout << "Number of times to peek and pop: ";
     std::cin >> t;
+    std::cout << "Peek: ";
     for (int i = 0; i < t; i++) {
         std::cout << queue.peek() << " ";
     }
     std::cout << std::endl;
-    queue.printStack();
     for (int i = 0; i < t; i++) {
         std::cout << "Pop: " << queue.pop() << std::endl;
+        if (queue.isEmpty()) {
+            std::cout << "Queue is empty" << std::endl;
+            break;
+        }
+        std::cout << "Queue: ";
         queue.printStack();
     }
-    std::cout << std::endl;
 }
 } // namespace dsa
 

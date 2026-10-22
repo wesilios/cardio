@@ -65,24 +65,33 @@ template <typename T> class ArrayStack final : public Stack<T> {
 
 void ArrayStackTest() {
     int t, data;
+    std::cout << "Number of values to push: ";
     std::cin >> t;
     ArrayStack<int> stack(0);
-    for (int i = 0; i < t; ++i) {
+    std::cout << "Enter " << t << " values: ";
+    for (int i = 0; i < t; i++) {
         std::cin >> data;
         stack.push(data);
     }
+    std::cout << "Stack: ";
     stack.printStack();
+
+    std::cout << "Number of times to peek and pop: ";
     std::cin >> t;
+    std::cout << "Peek: ";
     for (int i = 0; i < t; i++) {
         std::cout << stack.peek() << " ";
     }
     std::cout << std::endl;
-    stack.printStack();
     for (int i = 0; i < t; i++) {
         std::cout << "Pop: " << stack.pop() << std::endl;
+        if (stack.isEmpty()) {
+            std::cout << "Stack is empty" << std::endl;
+            break;
+        }
+        std::cout << "Stack: ";
         stack.printStack();
     }
-    std::cout << std::endl;
 }
 } // namespace dsa
 

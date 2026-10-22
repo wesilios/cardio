@@ -17,7 +17,14 @@ if(CARDIO_BUILD_TESTS)
     fetchcontent_makeavailable(googletest)
 
     enable_testing()
-    add_executable(runTests tests/ArrayStackTests.cpp tests/ArrayRotationSolutionTests.cpp)
+    add_executable(
+        runTests
+        tests/ArrayStackTests.cpp
+        tests/ArrayRotationSolutionTests.cpp
+        tests/SinglyLinkedListTests.cpp
+        tests/DoublyLinkedListTests.cpp
+        tests/CircularSinglyLinkedListTests.cpp
+        tests/CircularDoublyLinkedListTests.cpp)
     target_link_libraries(runTests PRIVATE dsa GTest::gtest_main)
     include(GoogleTest)
     gtest_discover_tests(runTests)

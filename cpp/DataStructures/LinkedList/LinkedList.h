@@ -31,6 +31,8 @@ template <typename T, class U> class LinkedList {
     virtual U *getHead() = 0;
 
     virtual U *getTail() = 0;
+
+    virtual ~LinkedList() = default;
 };
 } // namespace dsa
 
