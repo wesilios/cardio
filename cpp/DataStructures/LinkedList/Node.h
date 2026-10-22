@@ -16,9 +16,9 @@ template <typename T, class U> class Node {
 
     void setData(const T &data) { Node<T, U>::data_ = data; }
 
-    T getData() { return Node<T, U>::data_; }
+    T getData() const { return Node<T, U>::data_; }
 
-    U *getNext() { return Node<T, U>::next_; }
+    U *getNext() const { return Node<T, U>::next_; }
 
     void setNext(U *next) { Node<T, U>::next_ = next; }
 
@@ -48,7 +48,7 @@ template <typename T> class DoublyNode final : public Node<T, DoublyNode<T>> {
 
     void setPrevious(DoublyNode<T> *previous) { previous_ = previous; }
 
-    DoublyNode<T> *getPrevious() { return previous_; }
+    DoublyNode<T> *getPrevious() const { return previous_; }
 };
 } // namespace dsa
 #endif // ALGORITHMS_NODE_H

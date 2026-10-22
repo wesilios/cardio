@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 #ifndef ALGORITHMS_ARRAYROTATIONSOLUTION_H
 #define ALGORITHMS_ARRAYROTATIONSOLUTION_H
@@ -148,33 +150,36 @@ class ArrayRotationSolution {
 };
 
 void arrayRotationSolutionTests() {
+    using RotateFn = void (*)(int *, int, int);
+    const std::pair<const char *, RotateFn> algorithms[] = {
+        {"Rotate using temp array", ArrayRotationSolution::rotateUsingTempArray},
+        {"Rotate one by one", ArrayRotationSolution::leftRotateByOne},
+        {"Rotate using Juggling Algorithm", ArrayRotationSolution::rotateWithJugglingAlgorithm},
+        {"Rotate using Reversal Algorithm", ArrayRotationSolution::rotateWithReversalAlgorithm},
+        {"Rotate using Block swap Algorithm", ArrayRotationSolution::rotateWithBlockSwapAlgorithm},
+        {"Rotate using Block swap Iterative Algorithm", ArrayRotationSolution::rotateWithBlockSwapIterativeAlgorithm},
+    };
+
     int t, n, d;
+    std::cout << "Number of test cases: ";
     std::cin >> t;
     while (t > 0) {
+        std::cout << "Array size and rotation (n d): ";
         std::cin >> n >> d;
         d = d % n;
-        int arr[n];
+        std::vector<int> original(n);
+        std::cout << "Enter " << n << " values: ";
         for (int i = 0; i < n; i++) {
-            std::cin >> arr[i];
+            std::cin >> original[i];
         }
-        std::cout << "Rotate using temp array_: " << std::endl;
-        ArrayRotationSolution::rotateUsingTempArray(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
-        std::cout << "Rotate one by one: " << std::endl;
-        ArrayRotationSolution::leftRotateByOne(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
-        std::cout << "Rotate using Juggling Algorithm: " << std::endl;
-        ArrayRotationSolution::rotateWithJugglingAlgorithm(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
-        std::cout << "Rotate using Reversal Algorithm: " << std::endl;
-        ArrayRotationSolution::rotateWithReversalAlgorithm(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
-        std::cout << "Rotate using Block swap Algorithm: " << std::endl;
-        ArrayRotationSolution::rotateWithBlockSwapAlgorithm(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
-        std::cout << "Rotate using Block swap Iterative Algorithm: " << std::endl;
-        ArrayRotationSolution::rotateWithBlockSwapIterativeAlgorithm(arr, d, n);
-        ArrayRotationSolution::printResult(arr, n);
+
+        // Each algorithm rotates its own copy, so every result starts from the original input.
+        for (const auto &algorithm : algorithms) {
+            std::vector<int> arr = original;
+            std::cout << algorithm.first << ": " << std::endl;
+            algorithm.second(arr.data(), d, n);
+            ArrayRotationSolution::printResult(arr.data(), n);
+        }
         t--;
     }
 }

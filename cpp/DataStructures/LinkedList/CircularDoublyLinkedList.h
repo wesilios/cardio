@@ -14,18 +14,47 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     DoublyNode<T> *tail_;
 
   public:
+    class Iterator {
+      private:
+        const DoublyNode<T> *currNode_;
+        int remaining_;
+
+      public:
+        explicit Iterator(const DoublyNode<T> *pNode, const int remaining) noexcept
+            : currNode_(pNode), remaining_(remaining) {}
+
+        Iterator &operator++() {
+            if (remaining_ > 0) {
+                currNode_ = currNode_->getNext();
+                --remaining_;
+            }
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator iterator = *this;
+            ++*this;
+            return iterator;
+        }
+
+        bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
+        bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
+
+        T operator*() { return currNode_->getData(); }
+    };
+
+  public:
     CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
     virtual ~CircularDoublyLinkedList() { clear(); }
 
     void clear() {
         DoublyNode<T> *node = head_;
-        while (node->getNext() != head_) {
+        for (int i = 0; i < size_; ++i) {
             DoublyNode<T> *next = node->getNext();
             delete node;
             node = next;
         }
-        delete head_;
         head_ = nullptr;
         tail_ = nullptr;
         size_ = 0;
@@ -81,7 +110,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     }
 
     void addAtIndex(const int &index, const T &data) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -90,77 +119,97 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
             return;
         }
 
-        if (index == size_ - 1) {
+        if (index == size()) {
             addLast(data);
             return;
         }
 
         DoublyNode<T> *node = head_;
-        for (int i = 0; i < index - 1; ++i) {
+        for (int i = 0; i < index; ++i) {
             node = node->getNext();
         }
 
-        auto *newNode = new DoublyNode<T>(data, node, node->getNext());
-        node->getNext()->setPrevious(newNode);
-        node->setNext(newNode);
+        auto *previous = node->getPrevious();
+        auto *newNode = new DoublyNode<T>(data, previous, node);
+        previous->setNext(newNode);
+        node->setPrevious(newNode);
         size_++;
     }
 
     void findByIndex(const int &index) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size() - 1) {
             throw InvalidArgument("Illegal index");
         }
 
         DoublyNode<T> *node = head_;
-        for (int i = 0; i < index - 1; ++i) {
+        for (int i = 0; i < index; ++i) {
             node = node->getNext();
         }
         std::cout << node->getData() << std::endl;
     }
 
     void deleteFirst() override {
-        DoublyNode<T> *head = head_;
-        head_ = head->getNext();
-        head_->setPrevious(tail_);
-        delete head;
+        if (head_ == tail_) {
+            clear();
+            return;
+        }
+
+        DoublyNode<T> *currentHead = head_;
+        DoublyNode<T> *next = currentHead->getNext();
+        next->setPrevious(tail_);
+        tail_->setNext(next);
+        head_ = next;
+        delete currentHead;
         size_--;
     }
 
     void deleteLast() override {
-        DoublyNode<T> *tail = tail_;
-        tail_ = tail->getPrevious();
-        tail_->setNext(head_);
-        delete tail;
+        if (head_ == tail_) {
+            clear();
+            return;
+        }
+
+        DoublyNode<T> *currentTail = tail_;
+        DoublyNode<T> *previous = currentTail->getPrevious();
+        previous->setNext(head_);
+        head_->setPrevious(previous);
+        tail_ = previous;
+        delete currentTail;
         size_--;
     }
 
     void deleteNode(const T &data) override {
-        if (head_->getData() == data) {
-            deleteFirst();
+        if (isEmpty()) {
+            return;
         }
 
-        if (tail_->getData() == data) {
-            deleteLast();
-        }
+        DoublyNode<T> *node = head_;
+        int count = size();
+        while (count > 0) {
+            DoublyNode<T> *next = node->getNext();
+            if (node->getData() == data) {
+                if (node == head_) {
+                    deleteFirst();
+                } else if (node == tail_) {
+                    deleteLast();
+                } else {
+                    DoublyNode<T> *previous = node->getPrevious();
 
-        DoublyNode<T> *node = head_->getNext();
-        while (node != tail_) {
-            if (node->getData() != data) {
-                node = node->getNext();
-                continue;
+                    previous->setNext(next);
+                    next->setPrevious(previous);
+
+                    delete node;
+                    --size_;
+                }
             }
 
-            DoublyNode<T> *next = node->getNext();
-            node->getPrevious()->setNext(node->getNext());
-            next->setPrevious(node->getPrevious());
-            delete node;
             node = next;
-            size_--;
+            count--;
         }
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index > size() - 1) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -171,18 +220,18 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
 
         if (index == size() - 1) {
             deleteLast();
-
             return;
         }
 
-        DoublyNode<T> *node = head_->getNext();
-        for (int i = 1; i < index - 1; ++i) {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; i < index; i++) {
             node = node->getNext();
         }
 
         DoublyNode<T> *next = node->getNext();
-        node->getPrevious()->setNext(next);
-        next->setPrevious(node->getPrevious());
+        DoublyNode<T> *previous = node->getPrevious();
+        next->setPrevious(previous);
+        previous->setNext(next);
         delete node;
         size_--;
     }
@@ -190,50 +239,84 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     DoublyNode<T> *getHead() override { return head_; }
 
     DoublyNode<T> *getTail() override { return tail_; }
+
+    Iterator begin() { return Iterator(head_, size_); }
+
+    Iterator end() { return Iterator(head_, 0); }
+
+    std::string toString() const {
+        std::stringstream os;
+        os << "[ ";
+        DoublyNode<T> *traversal = head_;
+        int size = size_;
+        while (size > 0) {
+            os << traversal->getData();
+            traversal = traversal->getNext();
+            --size;
+            if (size > 0)
+                os << ", ";
+        }
+        os << " ]";
+        return os.str();
+    }
+
+    friend std::ostream &operator<<(std::ostream &strm, const CircularDoublyLinkedList<T> &a) {
+        return strm << a.toString();
+    }
 };
 
 void CircularDoublyLinkedListTest() {
     int n, data;
+    std::cout << "Number of values: ";
     std::cin >> n;
     CircularDoublyLinkedList<int> linkedList;
+    std::cout << "Enter " << n << " values: ";
     for (int i = 0; i < n; i++) {
         std::cin >> data;
         linkedList.add(data);
     }
     linkedList.printList();
-
     int index;
+
+    std::cout << "Add new value at specific index (index value): ";
     std::cin >> index >> data;
     linkedList.addAtIndex(index, data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to first node: ";
     std::cin >> data;
     linkedList.addFirst(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Add new value to last node: ";
     std::cin >> data;
     linkedList.addLast(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Find value at specific index: ";
     std::cin >> index;
     linkedList.findByIndex(index);
 
+    std::cout << "Delete last node: ";
     linkedList.deleteLast();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete first node: ";
     linkedList.deleteFirst();
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific value: ";
     std::cin >> data;
     linkedList.deleteNode(data);
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 
+    std::cout << "Delete node by specific index: ";
     std::cin >> index;
     linkedList.deleteNodeAtIndex(index);
     linkedList.printList();
