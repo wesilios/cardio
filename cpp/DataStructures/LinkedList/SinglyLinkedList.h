@@ -4,16 +4,24 @@
 #include "../Exception.h"
 #include "LinkedList.h"
 #include "Node.h"
+#include <cstddef>
 #include <iostream>
+#include <utility>
 
 namespace dsa {
 void SinglyLinkedListTest();
 
 template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T>> {
   private:
-    int size_ = 0;
+    std::size_t size_ = 0;
     SinglyNode<T> *head_;
     SinglyNode<T> *tail_;
+
+    void swap(SinglyLinkedList<T> &other) noexcept {
+        std::swap(head_, other.head_);
+        std::swap(tail_, other.tail_);
+        std::swap(size_, other.size_);
+    }
 
   public:
     class Iterator {
@@ -38,31 +46,63 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         bool operator!=(const Iterator &iterator) const { return currNode_ != iterator.currNode_; }
         bool operator==(const Iterator &iterator) const { return currNode_ == iterator.currNode_; }
 
-        T operator*() { return currNode_->getData(); }
+        const T &operator*() { return currNode_->getData(); }
     };
 
   public:
     SinglyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
-    virtual ~SinglyLinkedList() { clear(); }
+    // Rule of Three
+    SinglyLinkedList(const SinglyLinkedList<T> &other) : SinglyLinkedList() {
+        for (const auto &value : other) {
+            addLast(value);
+        }
+    }
 
-    void clear() {
+    SinglyLinkedList &operator=(const SinglyLinkedList<T> &other) {
+        if (this != &other) {
+            SinglyLinkedList<T> temp(other);
+            swap(temp);
+        }
+
+        return *this;
+    }
+
+    // Rule of Five
+    SinglyLinkedList(SinglyLinkedList<T> &&other) noexcept
+        : size_(other.size()), head_(other.getHead()), tail_(other.getTail()) {
+        other.size_ = 0;
+        other.head_ = nullptr;
+        other.tail_ = nullptr;
+    }
+
+    SinglyLinkedList &operator=(SinglyLinkedList<T> &&other) noexcept {
+        SinglyLinkedList<T> temp(std::move(other));
+        swap(temp);
+        return *this;
+    }
+
+    ~SinglyLinkedList() override { clear(); }
+
+    void clear() override {
         SinglyNode<T> *node = head_;
+
         while (node != nullptr) {
             SinglyNode<T> *next = node->getNext();
             delete node;
             node = nullptr;
             node = next;
         }
+
         head_ = nullptr;
         tail_ = nullptr;
         node = nullptr;
         size_ = 0;
     }
 
-    int size() override { return size_; }
+    std::size_t size() const override { return size_; }
 
-    bool isEmpty() override { return size() == 0; }
+    bool isEmpty() const override { return size() == 0; }
 
     void add(const T &data) override { addLast(data); }
 
@@ -113,8 +153,6 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         node->setNext(newNode);
         size_++;
     }
-
-    void printList() override { std::cout << toString() << "\n"; }
 
     void deleteFirst() override {
         if (head_ == tail_) {
@@ -179,7 +217,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index > size() - 1) {
+        if (index < 0 || static_cast<std::size_t>(index) >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -188,7 +226,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
             return;
         }
 
-        if (index == size() - 1) {
+        if (static_cast<std::size_t>(index) == size() - 1) {
             deleteLast();
             return;
         }
@@ -210,8 +248,10 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         size_--;
     }
 
-    void findByIndex(const int &index) override {
-        if (index < 0 || index > size() - 1) {
+    void printList() const override { std::cout << toString() << "\n"; }
+
+    void findByIndex(const int &index) const override {
+        if (index < 0 || static_cast<std::size_t>(index) >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -222,15 +262,15 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         std::cout << node->getData() << std::endl;
     }
 
-    SinglyNode<T> *getHead() override { return head_; }
+    SinglyNode<T> *getHead() const override { return head_; }
 
-    SinglyNode<T> *getTail() override { return tail_; }
+    SinglyNode<T> *getTail() const override { return tail_; }
 
-    Iterator begin() { return Iterator(head_); }
+    Iterator begin() const { return Iterator(head_); }
 
-    Iterator end() { return Iterator(nullptr); }
+    Iterator end() const { return Iterator(nullptr); }
 
-    std::string toString() const {
+    std::string toString() const override {
         std::stringstream os;
         os << "[ ";
         SinglyNode<T> *traversal = head_;

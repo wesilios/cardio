@@ -16,7 +16,7 @@ template <typename T, class U> class Node {
 
     void setData(const T &data) { Node<T, U>::data_ = data; }
 
-    T getData() const { return Node<T, U>::data_; }
+    const T &getData() const { return Node<T, U>::data_; }
 
     U *getNext() const { return Node<T, U>::next_; }
 
