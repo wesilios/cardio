@@ -11,5 +11,5 @@ TEST(ArrayStack, PushThenPopReturnsLastPushed) {
 
 TEST(ArrayStack, PopOnEmptyThrows) {
     dsa::ArrayStack<int> stack(0);
-    EXPECT_THROW(stack.pop(), std::runtime_error);
+    EXPECT_THROW(stack.pop(), dsa::EmptyContainer);
 }

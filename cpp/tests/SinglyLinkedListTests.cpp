@@ -3,6 +3,8 @@
 
 #include <sstream>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -557,6 +559,17 @@ TEST(SinglyLinkedList, RangeForSeesChangesToTheList) {
     EXPECT_EQ(visited, std::vector<int>({0, 2, 3, 4}));
 }
 
+TEST(SinglyLinkedList, RangeForOverConstList) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    const dsa::SinglyLinkedList<int> &constList = list;
+    std::vector<int> visited;
+    for (int value : constList) {
+        visited.push_back(value);
+    }
+    EXPECT_EQ(visited, std::vector<int>({1, 2, 3}));
+}
+
 TEST(SinglyLinkedList, BeginEqualsEndOnEmptyList) {
     dsa::SinglyLinkedList<int> list;
     EXPECT_TRUE(list.begin() == list.end());
@@ -644,4 +657,323 @@ TEST(SinglyLinkedList, ToStringAfterDeletes) {
     list.deleteFirst();
     list.deleteLast();
     EXPECT_EQ(list.toString(), "[ 2, 3 ]");
+}
+
+// ---------- Copy (rule of three) ----------
+// A copy owns its own nodes (deep copy): changing one list never changes the
+// other. Double frees and leaks here only show up reliably in the sanitizer build.
+
+namespace {
+
+std::vector<const dsa::SinglyNode<int> *> nodesOf(const dsa::SinglyLinkedList<int> &list) {
+    std::vector<const dsa::SinglyNode<int> *> nodes;
+    auto *node = list.getHead();
+    for (std::size_t i = 0; node != nullptr && i < list.size(); ++i) {
+        nodes.push_back(node);
+        node = node->getNext();
+    }
+    return nodes;
+}
+
+dsa::SinglyLinkedList<int> makeList(const std::vector<int> &values) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, values);
+    return list;
+}
+
+} // namespace
+
+TEST(SinglyLinkedList, IsCopyConstructibleAndAssignable) {
+    EXPECT_TRUE(std::is_copy_constructible<dsa::SinglyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_copy_assignable<dsa::SinglyLinkedList<int>>::value);
+}
+
+// Copy constructor
+
+TEST(SinglyLinkedList, CopyConstructorCopiesValues) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {1, 2, 3});
+    dsa::SinglyLinkedList<int> copy(original);
+    EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
+    EXPECT_TRUE(HasContents(original, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CopyConstructorOfEmptyList) {
+    dsa::SinglyLinkedList<int> original;
+    dsa::SinglyLinkedList<int> copy(original);
+    EXPECT_TRUE(HasContents(copy, {}));
+    EXPECT_TRUE(HasContents(original, {}));
+}
+
+TEST(SinglyLinkedList, CopyConstructorOfSingleNode) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {7});
+    dsa::SinglyLinkedList<int> copy(original);
+    EXPECT_TRUE(HasContents(copy, {7}));
+    EXPECT_NE(copy.getHead(), original.getHead());
+}
+
+TEST(SinglyLinkedList, CopyConstructorKeepsDuplicates) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {2, 2, 1, 2});
+    dsa::SinglyLinkedList<int> copy(original);
+    EXPECT_TRUE(HasContents(copy, {2, 2, 1, 2}));
+}
+
+TEST(SinglyLinkedList, CopyConstructorAllocatesNewNodes) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {1, 2, 3});
+    dsa::SinglyLinkedList<int> copy(original);
+    const auto originalNodes = nodesOf(original);
+    for (const auto *node : nodesOf(copy)) {
+        for (const auto *shared : originalNodes) {
+            EXPECT_NE(node, shared) << "the copy shares a node with the original";
+        }
+    }
+}
+
+TEST(SinglyLinkedList, ChangingCopyLeavesOriginalUnchanged) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {1, 2, 3});
+    dsa::SinglyLinkedList<int> copy(original);
+    copy.deleteFirst();
+    copy.deleteLast();
+    copy.addLast(9);
+    copy.addFirst(0);
+    EXPECT_TRUE(HasContents(copy, {0, 2, 9}));
+    EXPECT_TRUE(HasContents(original, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, ChangingOriginalLeavesCopyUnchanged) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {1, 2, 3});
+    dsa::SinglyLinkedList<int> copy(original);
+    original.clear();
+    original.add(5);
+    EXPECT_TRUE(HasContents(original, {5}));
+    EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CopyOutlivesOriginal) {
+    auto *original = new dsa::SinglyLinkedList<int>();
+    fill(*original, {1, 2, 3});
+    dsa::SinglyLinkedList<int> copy(*original);
+    delete original;
+    EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CopyInitializationWithEquals) {
+    dsa::SinglyLinkedList<int> original;
+    fill(original, {1, 2});
+    dsa::SinglyLinkedList<int> copy = original;
+    EXPECT_TRUE(HasContents(copy, {1, 2}));
+    EXPECT_NE(copy.getHead(), original.getHead());
+}
+
+// Copy assignment
+
+TEST(SinglyLinkedList, CopyAssignmentIntoEmptyList) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    dsa::SinglyLinkedList<int> target;
+    target = source;
+    EXPECT_TRUE(HasContents(target, {1, 2, 3}));
+    EXPECT_TRUE(HasContents(source, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentReplacesLongerList) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2});
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {7, 8, 9, 10});
+    target = source;
+    EXPECT_TRUE(HasContents(target, {1, 2}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentReplacesShorterList) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3, 4});
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {9});
+    target = source;
+    EXPECT_TRUE(HasContents(target, {1, 2, 3, 4}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentFromEmptyListEmptiesTarget) {
+    dsa::SinglyLinkedList<int> source;
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {1, 2, 3});
+    target = source;
+    EXPECT_TRUE(HasContents(target, {}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentThenAddUsesNewTail) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2});
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {7, 8, 9});
+    target = source;
+    target.add(3);
+    EXPECT_TRUE(HasContents(target, {1, 2, 3}));
+    EXPECT_TRUE(HasContents(source, {1, 2}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentAllocatesNewNodes) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    dsa::SinglyLinkedList<int> target;
+    target = source;
+    const auto sourceNodes = nodesOf(source);
+    for (const auto *node : nodesOf(target)) {
+        for (const auto *shared : sourceNodes) {
+            EXPECT_NE(node, shared) << "the target shares a node with the source";
+        }
+    }
+}
+
+TEST(SinglyLinkedList, ChangingAssignedListLeavesSourceUnchanged) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    dsa::SinglyLinkedList<int> target;
+    target = source;
+    target.deleteNode(2);
+    EXPECT_TRUE(HasContents(target, {1, 3}));
+    EXPECT_TRUE(HasContents(source, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, SelfCopyAssignmentKeepsContents) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::SinglyLinkedList<int> &alias = list;
+    list = alias;
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CopyAssignmentReturnsTarget) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1});
+    dsa::SinglyLinkedList<int> target;
+    EXPECT_EQ(&(target = source), &target);
+}
+
+TEST(SinglyLinkedList, ChainedCopyAssignment) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2});
+    dsa::SinglyLinkedList<int> first;
+    dsa::SinglyLinkedList<int> second;
+    fill(second, {9, 9, 9});
+    second = first = source;
+    EXPECT_TRUE(HasContents(first, {1, 2}));
+    EXPECT_TRUE(HasContents(second, {1, 2}));
+    EXPECT_NE(first.getHead(), second.getHead());
+}
+
+TEST(SinglyLinkedList, ReturnByValue) {
+    dsa::SinglyLinkedList<int> list = makeList({1, 2, 3});
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, AssignFromTemporary) {
+    dsa::SinglyLinkedList<int> list;
+    fill(list, {9, 9});
+    list = makeList({1, 2, 3});
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, CanBeStoredInStdVector) {
+    std::vector<dsa::SinglyLinkedList<int>> lists;
+    for (int i = 0; i < 10; ++i) {
+        dsa::SinglyLinkedList<int> list;
+        fill(list, {i, i + 1});
+        lists.push_back(list);
+    }
+    for (int i = 0; i < 10; ++i) {
+        EXPECT_TRUE(HasContents(lists[i], {i, i + 1})) << "lists[" << i << "]";
+    }
+}
+
+// ---------- Move (rule of five) ----------
+// A move takes over the source's nodes without allocating, and leaves the
+// source empty and reusable.
+
+TEST(SinglyLinkedList, MoveOperationsAreNoexcept) {
+    EXPECT_TRUE(std::is_nothrow_move_constructible<dsa::SinglyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_nothrow_move_assignable<dsa::SinglyLinkedList<int>>::value);
+}
+
+TEST(SinglyLinkedList, MoveConstructorTakesTheNodes) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    const auto nodes = nodesOf(source);
+    dsa::SinglyLinkedList<int> moved(std::move(source));
+    EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
+    EXPECT_EQ(nodesOf(moved), nodes) << "a move must reuse the nodes, not copy them";
+}
+
+TEST(SinglyLinkedList, MoveConstructorLeavesSourceEmpty) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    dsa::SinglyLinkedList<int> moved(std::move(source));
+    EXPECT_TRUE(HasContents(source, {}));
+}
+
+TEST(SinglyLinkedList, MoveConstructorOfEmptyList) {
+    dsa::SinglyLinkedList<int> source;
+    dsa::SinglyLinkedList<int> moved(std::move(source));
+    EXPECT_TRUE(HasContents(moved, {}));
+    EXPECT_TRUE(HasContents(source, {}));
+}
+
+TEST(SinglyLinkedList, MovedFromListIsReusable) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    dsa::SinglyLinkedList<int> moved(std::move(source));
+    source.add(4);
+    source.addFirst(3);
+    EXPECT_TRUE(HasContents(source, {3, 4}));
+    EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
+}
+
+TEST(SinglyLinkedList, MoveAssignmentTakesTheNodes) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2, 3});
+    const auto nodes = nodesOf(source);
+    dsa::SinglyLinkedList<int> target;
+    target = std::move(source);
+    EXPECT_TRUE(HasContents(target, {1, 2, 3}));
+    EXPECT_EQ(nodesOf(target), nodes) << "a move must reuse the nodes, not copy them";
+}
+
+TEST(SinglyLinkedList, MoveAssignmentReplacesExistingContents) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2});
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {7, 8, 9});
+    target = std::move(source);
+    EXPECT_TRUE(HasContents(target, {1, 2}));
+}
+
+TEST(SinglyLinkedList, MoveAssignmentLeavesSourceEmpty) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1, 2});
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {7, 8, 9});
+    target = std::move(source);
+    EXPECT_TRUE(HasContents(source, {}));
+}
+
+TEST(SinglyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
+    dsa::SinglyLinkedList<int> source;
+    dsa::SinglyLinkedList<int> target;
+    fill(target, {1, 2, 3});
+    target = std::move(source);
+    EXPECT_TRUE(HasContents(target, {}));
+    EXPECT_TRUE(HasContents(source, {}));
+}
+
+TEST(SinglyLinkedList, MoveAssignmentReturnsTarget) {
+    dsa::SinglyLinkedList<int> source;
+    fill(source, {1});
+    dsa::SinglyLinkedList<int> target;
+    EXPECT_EQ(&(target = std::move(source)), &target);
 }

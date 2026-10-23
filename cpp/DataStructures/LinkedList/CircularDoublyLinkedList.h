@@ -4,14 +4,21 @@
 #include "../Exception.h"
 #include "LinkedList.h"
 #include "Node.h"
+#include <cstddef>
 #include <iostream>
 
 namespace dsa {
 template <typename T> class CircularDoublyLinkedList : public LinkedList<T, DoublyNode<T>> {
   private:
-    int size_ = 0;
+    std::size_t size_ = 0;
     DoublyNode<T> *head_;
     DoublyNode<T> *tail_;
+
+    void swap(CircularDoublyLinkedList<T> &other) noexcept {
+        std::swap(head_, other.head_);
+        std::swap(tail_, other.tail_);
+        std::swap(size_, other.size_);
+    }
 
   public:
     class Iterator {
@@ -40,38 +47,47 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
         bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
 
-        T operator*() { return currNode_->getData(); }
+        const T &operator*() { return currNode_->getData(); }
     };
 
   public:
     CircularDoublyLinkedList() : size_(0), head_(nullptr), tail_(nullptr) {}
 
-    virtual ~CircularDoublyLinkedList() { clear(); }
+    // Rule of Three
+    CircularDoublyLinkedList(const CircularDoublyLinkedList<T> &other) : CircularDoublyLinkedList() {
+        for (const auto &value : other) {
+            addLast(value);
+        }
+    }
 
-    void clear() {
+    CircularDoublyLinkedList &operator=(const CircularDoublyLinkedList<T> &other) {
+        if (this != &other) {
+            CircularDoublyLinkedList<T> temp(other);
+            swap(temp);
+        }
+
+        return *this;
+    }
+
+    ~CircularDoublyLinkedList() { clear(); }
+
+    void clear() override {
         DoublyNode<T> *node = head_;
+
         for (int i = 0; i < size_; ++i) {
             DoublyNode<T> *next = node->getNext();
             delete node;
             node = next;
         }
+
         head_ = nullptr;
         tail_ = nullptr;
         size_ = 0;
     }
 
-    int size() override { return size_; }
+    std::size_t size() const override { return size_; }
 
-    bool isEmpty() override { return size() == 0; }
-
-    void printList() override {
-        DoublyNode<T> *node = head_;
-        for (int i = 0; node != nullptr && i < size(); ++i) {
-            std::cout << node->getData() << " ";
-            node = node->getNext();
-        }
-        std::cout << std::endl;
-    }
+    bool isEmpty() const override { return size() == 0; }
 
     void add(const T &data) override { addLast(data); }
 
@@ -136,18 +152,6 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_++;
     }
 
-    void findByIndex(const int &index) override {
-        if (index < 0 || index > size() - 1) {
-            throw InvalidArgument("Illegal index");
-        }
-
-        DoublyNode<T> *node = head_;
-        for (int i = 0; i < index; ++i) {
-            node = node->getNext();
-        }
-        std::cout << node->getData() << std::endl;
-    }
-
     void deleteFirst() override {
         if (head_ == tail_) {
             clear();
@@ -209,7 +213,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     }
 
     void deleteNodeAtIndex(const int &index) override {
-        if (index < 0 || index > size() - 1) {
+        if (index < 0 || static_cast<std::size_t>(index) >= size()) {
             throw InvalidArgument("Illegal index");
         }
 
@@ -218,7 +222,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
             return;
         }
 
-        if (index == size() - 1) {
+        if (static_cast<std::size_t>(index) == size() - 1) {
             deleteLast();
             return;
         }
@@ -236,19 +240,40 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         size_--;
     }
 
-    DoublyNode<T> *getHead() override { return head_; }
+    void printList() const override {
+        DoublyNode<T> *node = head_;
+        for (int i = 0; node != nullptr && i < size(); ++i) {
+            std::cout << node->getData() << " ";
+            node = node->getNext();
+        }
+        std::cout << std::endl;
+    }
 
-    DoublyNode<T> *getTail() override { return tail_; }
+    void findByIndex(const int &index) const override {
+        if (index < 0 || static_cast<std::size_t>(index) >= size()) {
+            throw InvalidArgument("Illegal index");
+        }
 
-    Iterator begin() { return Iterator(head_, size_); }
+        DoublyNode<T> *node = head_;
+        for (int i = 0; i < index; ++i) {
+            node = node->getNext();
+        }
+        std::cout << node->getData() << std::endl;
+    }
 
-    Iterator end() { return Iterator(head_, 0); }
+    DoublyNode<T> *getHead() const override { return head_; }
 
-    std::string toString() const {
+    DoublyNode<T> *getTail() const override { return tail_; }
+
+    Iterator begin() const { return Iterator(head_, size_); }
+
+    Iterator end() const { return Iterator(head_, 0); }
+
+    std::string toString() const override {
         std::stringstream os;
         os << "[ ";
         DoublyNode<T> *traversal = head_;
-        int size = size_;
+        std::size_t size = size_;
         while (size > 0) {
             os << traversal->getData();
             traversal = traversal->getNext();

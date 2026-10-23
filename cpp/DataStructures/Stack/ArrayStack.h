@@ -1,6 +1,7 @@
 #ifndef ALGORITHMS_ARRAYSTACK_H
 #define ALGORITHMS_ARRAYSTACK_H
 
+#include "../Exception.h"
 #include <iostream>
 #include <vector>
 
@@ -17,7 +18,7 @@ template <typename T> class ArrayStack final : public Stack<T> {
   public:
     explicit ArrayStack(int id) : Stack<T>(id) { capacity_ = data_.capacity(); }
 
-    ~ArrayStack() override { data_.clear(); }
+    virtual ~ArrayStack() override { data_.clear(); }
 
     int id() override { return Stack<T>::id(); }
 
@@ -35,7 +36,7 @@ template <typename T> class ArrayStack final : public Stack<T> {
 
     T pop() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
         T element = data_.back();
         data_.erase(data_.end() - 1);
@@ -44,14 +45,14 @@ template <typename T> class ArrayStack final : public Stack<T> {
 
     T peek() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
         return data_.back();
     }
 
     void printStack() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
 
         for (__attribute__((unused)) int i : data_) {

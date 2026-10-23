@@ -1,6 +1,7 @@
 #ifndef ALGORITHMS_LISTSTACK_H
 #define ALGORITHMS_LISTSTACK_H
 
+#include "../Exception.h"
 #include "../LinkedList/SinglyLinkedList.h"
 #include "Stack.h"
 #include <iostream>
@@ -15,7 +16,7 @@ template <typename T> class ListStack final : public Stack<T> {
   public:
     explicit ListStack(int id) : Stack<T>(id) {}
 
-    ~ListStack() override { clear(); }
+    virtual ~ListStack() override { clear(); }
 
     int id() override { return Stack<T>::id(); }
 
@@ -29,7 +30,7 @@ template <typename T> class ListStack final : public Stack<T> {
 
     T pop() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
 
         T data = linkedList_.getTail()->getData();
@@ -39,7 +40,7 @@ template <typename T> class ListStack final : public Stack<T> {
 
     T peek() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
 
         return linkedList_.getTail()->getData();
@@ -47,7 +48,7 @@ template <typename T> class ListStack final : public Stack<T> {
 
     void printStack() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty stack");
         }
 
         linkedList_.printList();
