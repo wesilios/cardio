@@ -605,6 +605,13 @@ TEST(DoublyLinkedList, DereferenceReturnsCurrentValue) {
     EXPECT_EQ(*it, 10);
 }
 
+TEST(DoublyLinkedList, DereferenceOnConstIterator) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    const auto it = list.begin();
+    EXPECT_EQ(*it, 10);
+}
+
 TEST(DoublyLinkedList, PrefixIncrementMovesToNextNode) {
     dsa::DoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
@@ -991,4 +998,51 @@ TEST(DoublyLinkedList, MoveAssignmentReturnsTarget) {
     fill(source, {1});
     dsa::DoublyLinkedList<int> target;
     EXPECT_EQ(&(target = std::move(source)), &target);
+}
+
+// Self-move goes through a reference so the compiler doesn't warn about
+// `list = std::move(list)`. A leak or double free is reported by ASan when
+// the list is destroyed at the end of the test.
+
+TEST(DoublyLinkedList, SelfMoveAssignmentKeepsContents) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::DoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(DoublyLinkedList, SelfMoveAssignmentKeepsTheNodes) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    const auto nodes = nodesOf(list);
+    dsa::DoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_EQ(nodesOf(list), nodes);
+}
+
+TEST(DoublyLinkedList, SelfMoveAssignmentOnEmptyList) {
+    dsa::DoublyLinkedList<int> list;
+    dsa::DoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {}));
+}
+
+TEST(DoublyLinkedList, SelfMoveAssignmentOnSingleNode) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {7});
+    dsa::DoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {7}));
+}
+
+TEST(DoublyLinkedList, SelfMoveAssignmentThenModify) {
+    dsa::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::DoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    list.addFirst(0);
+    list.addLast(4);
+    list.deleteNode(2);
+    EXPECT_TRUE(HasContents(list, {0, 1, 3, 4}));
 }

@@ -13,8 +13,8 @@ template <typename T, class U> class LinkedList {
     virtual void clear() = 0;
 
     virtual void add(const T &data) = 0;
-    virtual void addLast(const T &data) = 0;
     virtual void addFirst(const T &data) = 0;
+    virtual void addLast(const T &data) = 0;
     virtual void addAtIndex(const int &index, const T &data) = 0;
 
     virtual void deleteFirst() = 0;

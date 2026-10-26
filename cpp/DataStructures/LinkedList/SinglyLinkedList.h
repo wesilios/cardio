@@ -46,7 +46,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         bool operator!=(const Iterator &iterator) const { return currNode_ != iterator.currNode_; }
         bool operator==(const Iterator &iterator) const { return currNode_ == iterator.currNode_; }
 
-        const T &operator*() { return currNode_->getData(); }
+        const T &operator*() const { return currNode_->getData(); }
     };
 
   public:
@@ -106,18 +106,6 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
 
     void add(const T &data) override { addLast(data); }
 
-    // Add element to the end of the list, O(1)
-    void addLast(const T &data) override {
-        if (isEmpty()) {
-            head_ = new SinglyNode<T>(data, nullptr);
-            tail_ = head_;
-        } else {
-            tail_->setNext(new SinglyNode<T>(data, nullptr));
-            tail_ = tail_->getNext();
-        }
-        size_++;
-    }
-
     // Add element to the beginning of the list, O(1)
     void addFirst(const T &data) override {
         if (isEmpty()) {
@@ -126,6 +114,18 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         } else {
             auto *first = new SinglyNode<T>(data, head_);
             head_ = first;
+        }
+        size_++;
+    }
+
+    // Add element to the end of the list, O(1)
+    void addLast(const T &data) override {
+        if (isEmpty()) {
+            head_ = new SinglyNode<T>(data, nullptr);
+            tail_ = head_;
+        } else {
+            tail_->setNext(new SinglyNode<T>(data, nullptr));
+            tail_ = tail_->getNext();
         }
         size_++;
     }

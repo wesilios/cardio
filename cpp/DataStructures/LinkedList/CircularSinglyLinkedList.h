@@ -49,7 +49,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
         bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
         bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
 
-        const T &operator*() { return currNode_->getData(); }
+        const T &operator*() const { return currNode_->getData(); }
     };
 
   public:
@@ -68,6 +68,20 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
             swap(temp);
         }
 
+        return *this;
+    }
+
+    // Rule of Five
+    CircularSinglyLinkedList(CircularSinglyLinkedList<T> &&other) noexcept
+        : size_(other.size()), head_(other.getHead()), tail_(other.getTail()) {
+        other.size_ = 0;
+        other.head_ = nullptr;
+        other.tail_ = nullptr;
+    }
+
+    CircularSinglyLinkedList &operator=(CircularSinglyLinkedList<T> &&other) noexcept {
+        CircularSinglyLinkedList<T> temp(std::move(other));
+        swap(temp);
         return *this;
     }
 
@@ -93,18 +107,6 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
 
     void add(const T &data) override { addLast(data); }
 
-    void addLast(const T &data) override {
-        if (isEmpty()) {
-            head_ = new SinglyNode<T>(data, nullptr);
-            head_->setNext(head_);
-            tail_ = head_;
-        } else {
-            tail_->setNext(new SinglyNode<T>(data, head_));
-            tail_ = tail_->getNext();
-        }
-        size_++;
-    }
-
     void addFirst(const T &data) override {
         if (isEmpty()) {
             head_ = new SinglyNode<T>(data, nullptr);
@@ -114,6 +116,18 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
             auto *head = new SinglyNode<T>(data, head_);
             head_ = head;
             tail_->setNext(head);
+        }
+        size_++;
+    }
+
+    void addLast(const T &data) override {
+        if (isEmpty()) {
+            head_ = new SinglyNode<T>(data, nullptr);
+            head_->setNext(head_);
+            tail_ = head_;
+        } else {
+            tail_->setNext(new SinglyNode<T>(data, head_));
+            tail_ = tail_->getNext();
         }
         size_++;
     }
@@ -160,16 +174,18 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
         }
 
         SinglyNode<T> *node = head_;
-        while (node != tail_) {
+        auto count = size() - 1;
+        while (count > 0) {
             SinglyNode<T> *next = node->getNext();
-            if (next->getData() != data) {
-                node = node->getNext();
+            --count;
+            if (next->getData() == data) {
+                node->setNext(next->getNext());
+                delete next;
+                --size_;
                 continue;
             }
 
-            node->setNext(next->getNext());
-            delete next;
-            --size_;
+            node = node->getNext();
         }
     }
 
@@ -221,8 +237,10 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
         }
 
         SinglyNode<T> *node = head_;
-        while (node->getNext() != tail_) {
+        auto count = size() - 1;
+        while (count > 1) {
             node = node->getNext();
+            --count;
         }
         node->setNext(tail_->getNext());
         delete tail_;
@@ -232,7 +250,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
 
     void printList() const override {
         SinglyNode<T> *node = head_;
-        for (int i = 0; node != nullptr && i < size(); i++) {
+        for (std::size_t i = 0; node != nullptr && i < size(); i++) {
             std::cout << node->getData() << " ";
             node = node->getNext();
         }
@@ -263,12 +281,12 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
         std::stringstream os;
         os << "[ ";
         SinglyNode<T> *traversal = head_;
-        std::size_t size = size_;
-        while (size > 0) {
+        auto count = size();
+        while (count > 0) {
             os << traversal->getData();
             traversal = traversal->getNext();
-            size--;
-            if (size > 0)
+            count--;
+            if (count > 0)
                 os << ", ";
         }
         os << " ]";
