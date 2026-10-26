@@ -132,6 +132,24 @@ TEST(CircularSinglyLinkedList, DeleteLastRemovesTail) {
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
+TEST(CircularSinglyLinkedList, DeleteLastOnTwoNodes) {
+    // The walk to the node before tail takes zero steps here.
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2});
+    list.deleteLast();
+    EXPECT_TRUE(HasContents(list, {1}));
+}
+
+TEST(CircularSinglyLinkedList, DeleteLastRepeatedlyKeepsRing) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4, 5});
+    list.deleteLast();
+    list.deleteLast();
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+    list.addLast(6);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3, 6}));
+}
+
 TEST(CircularSinglyLinkedList, DeleteFirstOnSingleNodeEmptiesList) {
     dsa::CircularSinglyLinkedList<int> list;
     fill(list, {1});
@@ -290,6 +308,36 @@ TEST(CircularSinglyLinkedList, DeleteNodeWhenEveryValueMatchesEmptiesList) {
     fill(list, {5, 5, 5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
+}
+
+TEST(CircularSinglyLinkedList, DeleteNodeRemovesValueJustBeforeTail) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2, 5, 3});
+    list.deleteNode(5);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(CircularSinglyLinkedList, DeleteNodeRemovesSecondNode) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 5, 2});
+    list.deleteNode(5);
+    EXPECT_TRUE(HasContents(list, {1, 2}));
+}
+
+TEST(CircularSinglyLinkedList, DeleteNodeRemovesMatchesAtBothEndsAndMiddle) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {5, 5, 1, 5, 5, 2, 5, 5});
+    list.deleteNode(5);
+    EXPECT_TRUE(HasContents(list, {1, 2}));
+}
+
+TEST(CircularSinglyLinkedList, DeleteNodeLeavesOnlyTwoNodes) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 5, 5, 5, 2});
+    list.deleteNode(5);
+    EXPECT_TRUE(HasContents(list, {1, 2}));
+    list.addLast(3);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 // ---------- Index functions ----------
@@ -629,6 +677,13 @@ TEST(CircularSinglyLinkedList, DereferenceReturnsCurrentValue) {
     EXPECT_EQ(*it, 10);
 }
 
+TEST(CircularSinglyLinkedList, DereferenceOnConstIterator) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {10, 20});
+    const auto it = list.begin();
+    EXPECT_EQ(*it, 10);
+}
+
 TEST(CircularSinglyLinkedList, PrefixIncrementMovesToNextNode) {
     dsa::CircularSinglyLinkedList<int> list;
     fill(list, {10, 20, 30});
@@ -934,17 +989,15 @@ TEST(CircularSinglyLinkedList, CanBeStoredInStdVector) {
 }
 
 // ---------- Move (rule of five) ----------
-// DISABLED_ until the move constructor and move assignment exist: without them
-// std::move silently falls back to copying. Remove the prefix to enable them.
 // A move takes over the source's nodes without allocating, and leaves the
 // source empty and reusable.
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveOperationsAreNoexcept) {
+TEST(CircularSinglyLinkedList, MoveOperationsAreNoexcept) {
     EXPECT_TRUE(std::is_nothrow_move_constructible<dsa::CircularSinglyLinkedList<int>>::value);
     EXPECT_TRUE(std::is_nothrow_move_assignable<dsa::CircularSinglyLinkedList<int>>::value);
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveConstructorTakesTheNodes) {
+TEST(CircularSinglyLinkedList, MoveConstructorTakesTheNodes) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
@@ -953,21 +1006,21 @@ TEST(CircularSinglyLinkedList, DISABLED_MoveConstructorTakesTheNodes) {
     EXPECT_EQ(nodesOf(moved), nodes) << "a move must reuse the nodes, not copy them";
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveConstructorLeavesSourceEmpty) {
+TEST(CircularSinglyLinkedList, MoveConstructorLeavesSourceEmpty) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2, 3});
     dsa::CircularSinglyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveConstructorOfEmptyList) {
+TEST(CircularSinglyLinkedList, MoveConstructorOfEmptyList) {
     dsa::CircularSinglyLinkedList<int> source;
     dsa::CircularSinglyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {}));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MovedFromListIsReusable) {
+TEST(CircularSinglyLinkedList, MovedFromListIsReusable) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2, 3});
     dsa::CircularSinglyLinkedList<int> moved(std::move(source));
@@ -977,7 +1030,7 @@ TEST(CircularSinglyLinkedList, DISABLED_MovedFromListIsReusable) {
     EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentTakesTheNodes) {
+TEST(CircularSinglyLinkedList, MoveAssignmentTakesTheNodes) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
@@ -987,7 +1040,7 @@ TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentTakesTheNodes) {
     EXPECT_EQ(nodesOf(target), nodes) << "a move must reuse the nodes, not copy them";
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentReplacesExistingContents) {
+TEST(CircularSinglyLinkedList, MoveAssignmentReplacesExistingContents) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2});
     dsa::CircularSinglyLinkedList<int> target;
@@ -996,7 +1049,7 @@ TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentReplacesExistingContents) 
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentLeavesSourceEmpty) {
+TEST(CircularSinglyLinkedList, MoveAssignmentLeavesSourceEmpty) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1, 2});
     dsa::CircularSinglyLinkedList<int> target;
@@ -1005,7 +1058,7 @@ TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentLeavesSourceEmpty) {
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentFromEmptyListEmptiesTarget) {
+TEST(CircularSinglyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
     dsa::CircularSinglyLinkedList<int> source;
     dsa::CircularSinglyLinkedList<int> target;
     fill(target, {1, 2, 3});
@@ -1014,9 +1067,56 @@ TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentFromEmptyListEmptiesTarget
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularSinglyLinkedList, DISABLED_MoveAssignmentReturnsTarget) {
+TEST(CircularSinglyLinkedList, MoveAssignmentReturnsTarget) {
     dsa::CircularSinglyLinkedList<int> source;
     fill(source, {1});
     dsa::CircularSinglyLinkedList<int> target;
     EXPECT_EQ(&(target = std::move(source)), &target);
+}
+
+// Self-move goes through a reference so the compiler doesn't warn about
+// `list = std::move(list)`. A leak or double free is reported by ASan when
+// the list is destroyed at the end of the test.
+
+TEST(CircularSinglyLinkedList, SelfMoveAssignmentKeepsContents) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::CircularSinglyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(CircularSinglyLinkedList, SelfMoveAssignmentKeepsTheNodes) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    const auto nodes = nodesOf(list);
+    dsa::CircularSinglyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_EQ(nodesOf(list), nodes);
+}
+
+TEST(CircularSinglyLinkedList, SelfMoveAssignmentOnEmptyList) {
+    dsa::CircularSinglyLinkedList<int> list;
+    dsa::CircularSinglyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {}));
+}
+
+TEST(CircularSinglyLinkedList, SelfMoveAssignmentOnSingleNode) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {7});
+    dsa::CircularSinglyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {7}));
+}
+
+TEST(CircularSinglyLinkedList, SelfMoveAssignmentThenModify) {
+    dsa::CircularSinglyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::CircularSinglyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    list.addFirst(0);
+    list.addLast(4);
+    list.deleteNode(2);
+    EXPECT_TRUE(HasContents(list, {0, 1, 3, 4}));
 }

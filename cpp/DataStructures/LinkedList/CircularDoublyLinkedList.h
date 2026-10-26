@@ -47,7 +47,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         bool operator!=(const Iterator &iterator) const { return remaining_ != iterator.remaining_; }
         bool operator==(const Iterator &iterator) const { return remaining_ == iterator.remaining_; }
 
-        const T &operator*() { return currNode_->getData(); }
+        const T &operator*() const { return currNode_->getData(); }
     };
 
   public:
@@ -66,6 +66,20 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
             swap(temp);
         }
 
+        return *this;
+    }
+
+    // Rule of Five
+    CircularDoublyLinkedList(CircularDoublyLinkedList<T> &&other) noexcept
+        : size_(other.size()), head_(other.getHead()), tail_(other.getTail()) {
+        other.size_ = 0;
+        other.head_ = nullptr;
+        other.tail_ = nullptr;
+    }
+
+    CircularDoublyLinkedList &operator=(CircularDoublyLinkedList<T> &&other) noexcept {
+        CircularDoublyLinkedList<T> temp(std::move(other));
+        swap(temp);
         return *this;
     }
 
@@ -91,23 +105,6 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
 
     void add(const T &data) override { addLast(data); }
 
-    void addLast(const T &data) override {
-        if (isEmpty()) {
-            head_ = new DoublyNode<T>(data, nullptr, nullptr);
-            head_->setNext(head_);
-            head_->setPrevious(head_);
-            tail_ = head_;
-            size_++;
-            return;
-        }
-
-        auto *node = new DoublyNode<T>(data, tail_, head_);
-        tail_->setNext(node);
-        head_->setPrevious(node);
-        tail_ = node;
-        size_++;
-    }
-
     void addFirst(const T &data) override {
         if (isEmpty()) {
             head_ = new DoublyNode<T>(data, nullptr, nullptr);
@@ -122,6 +119,23 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         tail_->setNext(node);
         head_->setPrevious(node);
         head_ = node;
+        size_++;
+    }
+
+    void addLast(const T &data) override {
+        if (isEmpty()) {
+            head_ = new DoublyNode<T>(data, nullptr, nullptr);
+            head_->setNext(head_);
+            head_->setPrevious(head_);
+            tail_ = head_;
+            size_++;
+            return;
+        }
+
+        auto *node = new DoublyNode<T>(data, tail_, head_);
+        tail_->setNext(node);
+        head_->setPrevious(node);
+        tail_ = node;
         size_++;
     }
 
@@ -188,7 +202,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
         }
 
         DoublyNode<T> *node = head_;
-        int count = size();
+        auto count = size();
         while (count > 0) {
             DoublyNode<T> *next = node->getNext();
             if (node->getData() == data) {

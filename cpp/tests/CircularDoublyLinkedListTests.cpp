@@ -645,6 +645,13 @@ TEST(CircularDoublyLinkedList, DereferenceReturnsCurrentValue) {
     EXPECT_EQ(*it, 10);
 }
 
+TEST(CircularDoublyLinkedList, DereferenceOnConstIterator) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {10, 20});
+    const auto it = list.begin();
+    EXPECT_EQ(*it, 10);
+}
+
 TEST(CircularDoublyLinkedList, PrefixIncrementMovesToNextNode) {
     dsa::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
@@ -950,17 +957,15 @@ TEST(CircularDoublyLinkedList, CanBeStoredInStdVector) {
 }
 
 // ---------- Move (rule of five) ----------
-// DISABLED_ until the move constructor and move assignment exist: without them
-// std::move silently falls back to copying. Remove the prefix to enable them.
 // A move takes over the source's nodes without allocating, and leaves the
 // source empty and reusable.
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveOperationsAreNoexcept) {
+TEST(CircularDoublyLinkedList, MoveOperationsAreNoexcept) {
     EXPECT_TRUE(std::is_nothrow_move_constructible<dsa::CircularDoublyLinkedList<int>>::value);
     EXPECT_TRUE(std::is_nothrow_move_assignable<dsa::CircularDoublyLinkedList<int>>::value);
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveConstructorTakesTheNodes) {
+TEST(CircularDoublyLinkedList, MoveConstructorTakesTheNodes) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
@@ -969,21 +974,21 @@ TEST(CircularDoublyLinkedList, DISABLED_MoveConstructorTakesTheNodes) {
     EXPECT_EQ(nodesOf(moved), nodes) << "a move must reuse the nodes, not copy them";
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveConstructorLeavesSourceEmpty) {
+TEST(CircularDoublyLinkedList, MoveConstructorLeavesSourceEmpty) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     dsa::CircularDoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveConstructorOfEmptyList) {
+TEST(CircularDoublyLinkedList, MoveConstructorOfEmptyList) {
     dsa::CircularDoublyLinkedList<int> source;
     dsa::CircularDoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {}));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MovedFromListIsReusable) {
+TEST(CircularDoublyLinkedList, MovedFromListIsReusable) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     dsa::CircularDoublyLinkedList<int> moved(std::move(source));
@@ -993,7 +998,7 @@ TEST(CircularDoublyLinkedList, DISABLED_MovedFromListIsReusable) {
     EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentTakesTheNodes) {
+TEST(CircularDoublyLinkedList, MoveAssignmentTakesTheNodes) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
@@ -1003,7 +1008,7 @@ TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentTakesTheNodes) {
     EXPECT_EQ(nodesOf(target), nodes) << "a move must reuse the nodes, not copy them";
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentReplacesExistingContents) {
+TEST(CircularDoublyLinkedList, MoveAssignmentReplacesExistingContents) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
     dsa::CircularDoublyLinkedList<int> target;
@@ -1012,7 +1017,7 @@ TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentReplacesExistingContents) 
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentLeavesSourceEmpty) {
+TEST(CircularDoublyLinkedList, MoveAssignmentLeavesSourceEmpty) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
     dsa::CircularDoublyLinkedList<int> target;
@@ -1021,7 +1026,7 @@ TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentLeavesSourceEmpty) {
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentFromEmptyListEmptiesTarget) {
+TEST(CircularDoublyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
     dsa::CircularDoublyLinkedList<int> source;
     dsa::CircularDoublyLinkedList<int> target;
     fill(target, {1, 2, 3});
@@ -1030,9 +1035,56 @@ TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentFromEmptyListEmptiesTarget
     EXPECT_TRUE(HasContents(source, {}));
 }
 
-TEST(CircularDoublyLinkedList, DISABLED_MoveAssignmentReturnsTarget) {
+TEST(CircularDoublyLinkedList, MoveAssignmentReturnsTarget) {
     dsa::CircularDoublyLinkedList<int> source;
     fill(source, {1});
     dsa::CircularDoublyLinkedList<int> target;
     EXPECT_EQ(&(target = std::move(source)), &target);
+}
+
+// Self-move goes through a reference so the compiler doesn't warn about
+// `list = std::move(list)`. A leak or double free is reported by ASan when
+// the list is destroyed at the end of the test.
+
+TEST(CircularDoublyLinkedList, SelfMoveAssignmentKeepsContents) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::CircularDoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+}
+
+TEST(CircularDoublyLinkedList, SelfMoveAssignmentKeepsTheNodes) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    const auto nodes = nodesOf(list);
+    dsa::CircularDoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_EQ(nodesOf(list), nodes);
+}
+
+TEST(CircularDoublyLinkedList, SelfMoveAssignmentOnEmptyList) {
+    dsa::CircularDoublyLinkedList<int> list;
+    dsa::CircularDoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {}));
+}
+
+TEST(CircularDoublyLinkedList, SelfMoveAssignmentOnSingleNode) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {7});
+    dsa::CircularDoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    EXPECT_TRUE(HasContents(list, {7}));
+}
+
+TEST(CircularDoublyLinkedList, SelfMoveAssignmentThenModify) {
+    dsa::CircularDoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    dsa::CircularDoublyLinkedList<int> &alias = list;
+    list = std::move(alias);
+    list.addFirst(0);
+    list.addLast(4);
+    list.deleteNode(2);
+    EXPECT_TRUE(HasContents(list, {0, 1, 3, 4}));
 }

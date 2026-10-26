@@ -45,7 +45,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
         bool operator!=(const Iterator &iterator) const { return currNode_ != iterator.currNode_; }
         bool operator==(const Iterator &iterator) const { return currNode_ == iterator.currNode_; }
 
-        const T &operator*() { return currNode_->getData(); }
+        const T &operator*() const { return currNode_->getData(); }
     };
 
   public:
@@ -68,7 +68,7 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
 
     // Rule of Five
     DoublyLinkedList(DoublyLinkedList<T> &&other) noexcept
-        : size_(other.size_), head_(other.head_), tail_(other.tail_) {
+        : size_(other.size()), head_(other.getHead()), tail_(other.getTail()) {
         other.size_ = 0;
         other.head_ = nullptr;
         other.tail_ = nullptr;
