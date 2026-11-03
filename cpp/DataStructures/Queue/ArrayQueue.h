@@ -1,99 +1,101 @@
-#ifndef ALGORITHMS_ARRAYQUEUE_H
-#define ALGORITHMS_ARRAYQUEUE_H
+#ifndef DATASTRUCTURE_ARRAYQUEUE_H
+#define DATASTRUCTURE_ARRAYQUEUE_H
 
-#include <algorithm>
+#include <cstddef>
 #include <iostream>
+#include <ostream>
 #include <vector>
 
+#include "../Exception.h"
 #include "Queue.h"
 
-namespace dsa {
+namespace ds {
 void ArrayQueueTest();
 
 template <typename T> class ArrayQueue final : public Queue<T> {
   private:
-    int capacity_;
     std::vector<T> data_;
 
   public:
-    explicit ArrayQueue(int id) : Queue<T>(id) { capacity_ = data_.capacity(); }
+    explicit ArrayQueue() : Queue<T>() {}
 
-    ~ArrayQueue() override { clear(); }
-
-    int id() override { return Queue<T>::id(); }
-
-    int size() override { return data_.size(); };
+    std::size_t size() const override { return data_.size(); };
 
     void clear() override {
         data_.clear();
         data_.shrink_to_fit();
-        capacity_ = data_.capacity();
     };
 
-    bool isEmpty() override { return data_.empty(); };
+    bool isEmpty() const override { return data_.empty(); };
 
-    void push(const T &element) override { data_.push_back(element); };
+    void enqueue(const T &element) override { data_.push_back(element); };
 
-    T pop() override {
+    T dequeue() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty queue");
         }
         T element = data_.front();
         data_.erase(data_.begin());
         return element;
     };
 
-    T peek() override {
+    T front() const override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw EmptyContainer("Empty queue");
         }
         return data_.front();
     };
 
-    __attribute__((unused)) int capacity() { return capacity_; };
+    __attribute__((unused)) int capacity() { return data_.capacity(); };
 
-    void printStack() override {
+    void printQueue() const override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            std::cout << "[  ]" << std::endl;
+            return;
         }
 
-        for (int i : data_) {
-            std::cout << i << " ";
+        std::cout << "[ ";
+        for (std::size_t index = 0; index < size(); index++) {
+            std::cout << data_.at(index);
+            if (index < size() - 1) {
+                std::cout << ", ";
+            }
         }
-        std::cout << std::endl;
+
+        std::cout << " ]" << std::endl;
     };
 };
 
-void ArrayQueueTest() {
+inline void ArrayQueueTest() {
     int t, data;
-    std::cout << "Number of values to push: ";
+    std::cout << "Number of values to enqueue: ";
     std::cin >> t;
-    ArrayQueue<int> queue(0);
+    ArrayQueue<int> queue;
     std::cout << "Enter " << t << " values: ";
     for (int i = 0; i < t; i++) {
         std::cin >> data;
-        queue.push(data);
+        queue.enqueue(data);
     }
     std::cout << "Queue: ";
-    queue.printStack();
+    queue.printQueue();
 
-    std::cout << "Number of times to peek and pop: ";
+    std::cout << "Number of times to front and dequeue: ";
     std::cin >> t;
-    std::cout << "Peek: ";
+    std::cout << "Front: ";
     for (int i = 0; i < t; i++) {
-        std::cout << queue.peek() << " ";
+        std::cout << queue.front() << " ";
     }
     std::cout << std::endl;
     for (int i = 0; i < t; i++) {
-        std::cout << "Pop: " << queue.pop() << std::endl;
+        std::cout << "Dequeue: " << queue.dequeue() << std::endl;
         if (queue.isEmpty()) {
             std::cout << "Queue is empty" << std::endl;
             break;
         }
         std::cout << "Queue: ";
-        queue.printStack();
+        queue.printQueue();
     }
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_ARRAYQUEUE_H
+#endif // DATASTRUCTURE_ARRAYQUEUE_H

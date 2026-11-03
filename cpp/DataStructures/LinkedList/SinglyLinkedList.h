@@ -1,5 +1,5 @@
-#ifndef ALGORITHMS_SINGLYLINKEDLIST_H
-#define ALGORITHMS_SINGLYLINKEDLIST_H
+#ifndef DATASTRUCTURE_SINGLYLINKEDLIST_H
+#define DATASTRUCTURE_SINGLYLINKEDLIST_H
 
 #include "../Exception.h"
 #include "LinkedList.h"
@@ -8,7 +8,7 @@
 #include <iostream>
 #include <utility>
 
-namespace dsa {
+namespace ds {
 void SinglyLinkedListTest();
 
 template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T>> {
@@ -248,7 +248,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
         size_--;
     }
 
-    void printList() const override { std::cout << toString() << "\n"; }
+    void printList() const override { std::cout << toString() << std::endl; }
 
     void findByIndex(const int &index) const override {
         if (index < 0 || static_cast<std::size_t>(index) >= size()) {
@@ -287,7 +287,7 @@ template <typename T> class SinglyLinkedList : public LinkedList<T, SinglyNode<T
     friend std::ostream &operator<<(std::ostream &strm, const SinglyLinkedList<T> &a) { return strm << a.toString(); }
 };
 
-void SinglyLinkedListTest() {
+inline void SinglyLinkedListTest() {
     int n, data;
     std::cout << "Number of values: ";
     std::cin >> n;
@@ -344,6 +344,6 @@ void SinglyLinkedListTest() {
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_SINGLYLINKEDLIST_H
+#endif // DATASTRUCTURE_SINGLYLINKEDLIST_H

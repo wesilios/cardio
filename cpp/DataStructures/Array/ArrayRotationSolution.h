@@ -3,8 +3,8 @@
 #include <utility>
 #include <vector>
 
-#ifndef ALGORITHMS_ARRAYROTATIONSOLUTION_H
-#define ALGORITHMS_ARRAYROTATIONSOLUTION_H
+#ifndef DATASTRUCTURE_ARRAYROTATIONSOLUTION_H
+#define DATASTRUCTURE_ARRAYROTATIONSOLUTION_H
 
 class ArrayRotationSolution {
   private:
@@ -184,4 +184,4 @@ void arrayRotationSolutionTests() {
     }
 }
 
-#endif // ALGORITHMS_ARRAYROTATIONSOLUTION_H
+#endif // DATASTRUCTURE_ARRAYROTATIONSOLUTION_H

@@ -19,7 +19,7 @@ std::string describe(const std::vector<int> &values) {
     return os.str();
 }
 
-void fill(dsa::CircularDoublyLinkedList<int> &list, const std::vector<int> &values) {
+void fill(ds::CircularDoublyLinkedList<int> &list, const std::vector<int> &values) {
     for (int value : values) {
         list.add(value);
     }
@@ -27,7 +27,7 @@ void fill(dsa::CircularDoublyLinkedList<int> &list, const std::vector<int> &valu
 
 // Checks size, contents, head/tail, that tail->next is head and head->previous is tail,
 // and that the previous links give the same values walking back from the tail.
-::testing::AssertionResult HasContents(dsa::CircularDoublyLinkedList<int> &list, const std::vector<int> &expected) {
+::testing::AssertionResult HasContents(ds::CircularDoublyLinkedList<int> &list, const std::vector<int> &expected) {
     const int expectedSize = static_cast<int>(expected.size());
     if (list.size() != expectedSize) {
         return ::testing::AssertionFailure() << "size() is " << list.size() << ", expected " << expectedSize;
@@ -86,44 +86,44 @@ void fill(dsa::CircularDoublyLinkedList<int> &list, const std::vector<int> &valu
 // ---------- Adding ----------
 
 TEST(CircularDoublyLinkedList, NewListIsEmpty) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, AddAppendsInOrder) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddLastAppends) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.addLast(3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddLastOnEmptyListSetsHeadAndTail) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.addLast(7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(CircularDoublyLinkedList, AddFirstPrepends) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {2, 3});
     list.addFirst(1);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddFirstOnEmptyListSetsHeadAndTail) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.addFirst(7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(CircularDoublyLinkedList, AddFirstAndAddLastMixed) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.addFirst(2);
     list.addLast(3);
     list.addFirst(1);
@@ -134,47 +134,47 @@ TEST(CircularDoublyLinkedList, AddFirstAndAddLastMixed) {
 // ---------- Deleting first / last ----------
 
 TEST(CircularDoublyLinkedList, DeleteFirstRemovesHead) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteLastRemovesTail) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteFirstOnSingleNodeEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteLastOnSingleNodeEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteFirstOnEmptyListIsSafe) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteLastOnEmptyListIsSafe) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteFirstUntilEmptyThenReuse) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.deleteFirst();
@@ -187,7 +187,7 @@ TEST(CircularDoublyLinkedList, DeleteFirstUntilEmptyThenReuse) {
 
 TEST(CircularDoublyLinkedList, DeleteLastUntilEmptyThenReuse) {
     // This is how ListStack::pop() drains a stack.
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     list.deleteLast();
@@ -199,7 +199,7 @@ TEST(CircularDoublyLinkedList, DeleteLastUntilEmptyThenReuse) {
 }
 
 TEST(CircularDoublyLinkedList, DeleteFirstThenAddFirst) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.addFirst(9);
@@ -207,7 +207,7 @@ TEST(CircularDoublyLinkedList, DeleteFirstThenAddFirst) {
 }
 
 TEST(CircularDoublyLinkedList, DeleteLastThenAddLast) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     list.addLast(9);
@@ -218,21 +218,21 @@ TEST(CircularDoublyLinkedList, DeleteLastThenAddLast) {
 // deleteNode removes every node holding the value.
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesMiddleValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(3);
     EXPECT_TRUE(HasContents(list, {1, 2, 4}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesHeadValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(1);
     EXPECT_TRUE(HasContents(list, {2, 3, 4}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesTailValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(4);
     list.printList();
@@ -240,69 +240,69 @@ TEST(CircularDoublyLinkedList, DeleteNodeRemovesTailValue) {
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeIgnoresMissingValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNode(9);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeOnEmptyListIsSafe) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeOnSingleNodeEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeOnSingleNodeKeepsOtherValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
     list.deleteNode(99);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesEveryMatch) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 5, 2, 5, 3});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesAdjacentMatches) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 5, 5, 2});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesRepeatedHeadValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {5, 5, 1});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeRemovesRepeatedTailValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeOnTwoMatchingNodesEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeWhenEveryValueMatchesEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {5, 5, 5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
@@ -313,137 +313,137 @@ TEST(CircularDoublyLinkedList, DeleteNodeWhenEveryValueMatchesEmptiesList) {
 // deleteNodeAtIndex and findByIndex accept 0..size()-1.
 
 TEST(CircularDoublyLinkedList, AddAtIndexZeroOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.addAtIndex(0, 7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexZeroPrepends) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {2, 3});
     list.addAtIndex(0, 1);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexOneInsertsAfterHead) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 3});
     list.addAtIndex(1, 2);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexInsertsInMiddle) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 4, 5});
     list.addAtIndex(2, 3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3, 4, 5}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexBeforeTail) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 5});
     list.addAtIndex(3, 4);
     EXPECT_TRUE(HasContents(list, {1, 2, 3, 4, 5}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexSizeAppends) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.addAtIndex(2, 3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexRejectsNegativeIndex) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.addAtIndex(-1, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(-1, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexRejectsIndexPastSize) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.addAtIndex(3, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(3, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexRejectsIndexPastSizeOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
-    EXPECT_THROW(list.addAtIndex(1, 9), dsa::InvalidArgument);
+    ds::CircularDoublyLinkedList<int> list;
+    EXPECT_THROW(list.addAtIndex(1, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexRejectsIndexPastSizeOnSingleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
-    EXPECT_THROW(list.addAtIndex(2, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(2, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(CircularDoublyLinkedList, AddAtIndexSizeAppendsOnSingleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
     list.addAtIndex(1, 2);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexZeroRemovesHead) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNodeAtIndex(0);
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexOneRemovesSecondNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNodeAtIndex(1);
     EXPECT_TRUE(HasContents(list, {1, 3, 4}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexRemovesMiddleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4, 5});
     list.deleteNodeAtIndex(2);
     EXPECT_TRUE(HasContents(list, {1, 2, 4, 5}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexLastRemovesTail) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNodeAtIndex(2);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexOnSingleNodeEmptiesList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
     list.deleteNodeAtIndex(0);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexRejectsNegativeIndex) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.deleteNodeAtIndex(-1), dsa::InvalidArgument);
+    EXPECT_THROW(list.deleteNodeAtIndex(-1), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexRejectsIndexPastEnd) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.deleteNodeAtIndex(2), dsa::InvalidArgument);
+    EXPECT_THROW(list.deleteNodeAtIndex(2), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, DeleteNodeAtIndexOnEmptyListThrows) {
-    dsa::CircularDoublyLinkedList<int> list;
-    EXPECT_THROW(list.deleteNodeAtIndex(0), dsa::InvalidArgument);
+    ds::CircularDoublyLinkedList<int> list;
+    EXPECT_THROW(list.deleteNodeAtIndex(0), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, FindByIndexPrintsValueAtEveryIndex) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
 
     testing::internal::CaptureStdout();
@@ -460,20 +460,20 @@ TEST(CircularDoublyLinkedList, FindByIndexPrintsValueAtEveryIndex) {
 }
 
 TEST(CircularDoublyLinkedList, FindByIndexRejectsNegativeIndex) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.findByIndex(-1), dsa::InvalidArgument);
+    EXPECT_THROW(list.findByIndex(-1), ds::InvalidArgument);
 }
 
 TEST(CircularDoublyLinkedList, FindByIndexRejectsIndexPastEnd) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.findByIndex(2), dsa::InvalidArgument);
+    EXPECT_THROW(list.findByIndex(2), ds::InvalidArgument);
 }
 
 TEST(CircularDoublyLinkedList, FindByIndexOnEmptyListThrows) {
-    dsa::CircularDoublyLinkedList<int> list;
-    EXPECT_THROW(list.findByIndex(0), dsa::InvalidArgument);
+    ds::CircularDoublyLinkedList<int> list;
+    EXPECT_THROW(list.findByIndex(0), ds::InvalidArgument);
 }
 
 // ---------- Clear / destruction ----------
@@ -481,7 +481,7 @@ TEST(CircularDoublyLinkedList, FindByIndexOnEmptyListThrows) {
 // reliably in the sanitizer build, which is what CI runs.
 
 TEST(CircularDoublyLinkedList, ClearEmptiesListAndAllowsReuse) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
@@ -491,20 +491,20 @@ TEST(CircularDoublyLinkedList, ClearEmptiesListAndAllowsReuse) {
 }
 
 TEST(CircularDoublyLinkedList, ClearOnEmptyListIsSafe) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, ClearOnSingleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, ClearTwiceIsSafe) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.clear();
     list.clear();
@@ -513,18 +513,18 @@ TEST(CircularDoublyLinkedList, ClearTwiceIsSafe) {
 
 TEST(CircularDoublyLinkedList, DestructorFreesEveryNode) {
     // The list is destroyed at the end of this scope.
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4, 5});
     EXPECT_EQ(list.size(), 5);
 }
 
 TEST(CircularDoublyLinkedList, DestructorOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     EXPECT_TRUE(list.isEmpty());
 }
 
 TEST(CircularDoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteFirst();
     list.deleteLast();
@@ -536,7 +536,7 @@ TEST(CircularDoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
 // Each range-for stops after 10 values so a broken end() fails the test instead of looping forever.
 
 TEST(CircularDoublyLinkedList, RangeForVisitsEveryValueOnce) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     std::vector<int> visited;
     for (int value : list) {
@@ -549,7 +549,7 @@ TEST(CircularDoublyLinkedList, RangeForVisitsEveryValueOnce) {
 }
 
 TEST(CircularDoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     std::vector<int> visited;
     for (int value : list) {
         visited.push_back(value);
@@ -562,7 +562,7 @@ TEST(CircularDoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
 
 TEST(CircularDoublyLinkedList, RangeForOnSingleNodeVisitsItOnce) {
     // The single node links to itself.
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
     std::vector<int> visited;
     for (int value : list) {
@@ -575,7 +575,7 @@ TEST(CircularDoublyLinkedList, RangeForOnSingleNodeVisitsItOnce) {
 }
 
 TEST(CircularDoublyLinkedList, RangeForSeesChangesToTheList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.addFirst(0);
@@ -591,7 +591,7 @@ TEST(CircularDoublyLinkedList, RangeForSeesChangesToTheList) {
 }
 
 TEST(CircularDoublyLinkedList, RangeForTwiceGivesSameValues) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     std::vector<int> first;
     for (int value : list) {
@@ -612,9 +612,9 @@ TEST(CircularDoublyLinkedList, RangeForTwiceGivesSameValues) {
 }
 
 TEST(CircularDoublyLinkedList, RangeForOverConstList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    const dsa::CircularDoublyLinkedList<int> &constList = list;
+    const ds::CircularDoublyLinkedList<int> &constList = list;
     std::vector<int> visited;
     for (int value : constList) {
         visited.push_back(value);
@@ -626,34 +626,34 @@ TEST(CircularDoublyLinkedList, RangeForOverConstList) {
 }
 
 TEST(CircularDoublyLinkedList, BeginEqualsEndOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     EXPECT_TRUE(list.begin() == list.end());
     EXPECT_FALSE(list.begin() != list.end());
 }
 
 TEST(CircularDoublyLinkedList, BeginDiffersFromEndOnNonEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1});
     EXPECT_TRUE(list.begin() != list.end());
     EXPECT_FALSE(list.begin() == list.end());
 }
 
 TEST(CircularDoublyLinkedList, DereferenceReturnsCurrentValue) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     EXPECT_EQ(*it, 10);
 }
 
 TEST(CircularDoublyLinkedList, DereferenceOnConstIterator) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20});
     const auto it = list.begin();
     EXPECT_EQ(*it, 10);
 }
 
 TEST(CircularDoublyLinkedList, PrefixIncrementMovesToNextNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
     auto it = list.begin();
     ++it;
@@ -662,7 +662,7 @@ TEST(CircularDoublyLinkedList, PrefixIncrementMovesToNextNode) {
 }
 
 TEST(CircularDoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     auto old = it++;
@@ -671,7 +671,7 @@ TEST(CircularDoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
 }
 
 TEST(CircularDoublyLinkedList, IncrementPastTailReachesEnd) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     ++it;
@@ -681,7 +681,7 @@ TEST(CircularDoublyLinkedList, IncrementPastTailReachesEnd) {
 
 TEST(CircularDoublyLinkedList, IncrementPastSingleNodeReachesEnd) {
     // The node's next is itself, so the iterator must still count it as one lap.
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
     auto it = list.begin();
     ++it;
@@ -691,13 +691,13 @@ TEST(CircularDoublyLinkedList, IncrementPastSingleNodeReachesEnd) {
 // ---------- Printing ----------
 
 TEST(CircularDoublyLinkedList, ToStringListsValues) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     EXPECT_EQ(list.toString(), "[ 1, 2, 3 ]");
 }
 
 TEST(CircularDoublyLinkedList, StreamOperatorPrintsToString) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     std::stringstream os;
     os << list;
@@ -705,18 +705,18 @@ TEST(CircularDoublyLinkedList, StreamOperatorPrintsToString) {
 }
 
 TEST(CircularDoublyLinkedList, ToStringOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     EXPECT_EQ(list.toString(), "[  ]");
 }
 
 TEST(CircularDoublyLinkedList, ToStringOnSingleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
     EXPECT_EQ(list.toString(), "[ 7 ]");
 }
 
 TEST(CircularDoublyLinkedList, ToStringAfterDeletes) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteFirst();
     list.deleteLast();
@@ -729,8 +729,8 @@ TEST(CircularDoublyLinkedList, ToStringAfterDeletes) {
 
 namespace {
 
-std::vector<const dsa::DoublyNode<int> *> nodesOf(const dsa::CircularDoublyLinkedList<int> &list) {
-    std::vector<const dsa::DoublyNode<int> *> nodes;
+std::vector<const ds::DoublyNode<int> *> nodesOf(const ds::CircularDoublyLinkedList<int> &list) {
+    std::vector<const ds::DoublyNode<int> *> nodes;
     auto *node = list.getHead();
     for (std::size_t i = 0; node != nullptr && i < list.size(); ++i) {
         nodes.push_back(node);
@@ -739,8 +739,8 @@ std::vector<const dsa::DoublyNode<int> *> nodesOf(const dsa::CircularDoublyLinke
     return nodes;
 }
 
-dsa::CircularDoublyLinkedList<int> makeList(const std::vector<int> &values) {
-    dsa::CircularDoublyLinkedList<int> list;
+ds::CircularDoublyLinkedList<int> makeList(const std::vector<int> &values) {
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, values);
     return list;
 }
@@ -748,46 +748,46 @@ dsa::CircularDoublyLinkedList<int> makeList(const std::vector<int> &values) {
 } // namespace
 
 TEST(CircularDoublyLinkedList, IsCopyConstructibleAndAssignable) {
-    EXPECT_TRUE(std::is_copy_constructible<dsa::CircularDoublyLinkedList<int>>::value);
-    EXPECT_TRUE(std::is_copy_assignable<dsa::CircularDoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_copy_constructible<ds::CircularDoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_copy_assignable<ds::CircularDoublyLinkedList<int>>::value);
 }
 
 // Copy constructor
 
 TEST(CircularDoublyLinkedList, CopyConstructorCopiesValues) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
     EXPECT_TRUE(HasContents(original, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, CopyConstructorOfEmptyList) {
-    dsa::CircularDoublyLinkedList<int> original;
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {}));
     EXPECT_TRUE(HasContents(original, {}));
 }
 
 TEST(CircularDoublyLinkedList, CopyConstructorOfSingleNode) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {7});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {7}));
     EXPECT_NE(copy.getHead(), original.getHead());
 }
 
 TEST(CircularDoublyLinkedList, CopyConstructorKeepsDuplicates) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {2, 2, 1, 2});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {2, 2, 1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, CopyConstructorAllocatesNewNodes) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     const auto originalNodes = nodesOf(original);
     for (const auto *node : nodesOf(copy)) {
         for (const auto *shared : originalNodes) {
@@ -797,9 +797,9 @@ TEST(CircularDoublyLinkedList, CopyConstructorAllocatesNewNodes) {
 }
 
 TEST(CircularDoublyLinkedList, ChangingCopyLeavesOriginalUnchanged) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     copy.deleteFirst();
     copy.deleteLast();
     copy.addLast(9);
@@ -809,9 +809,9 @@ TEST(CircularDoublyLinkedList, ChangingCopyLeavesOriginalUnchanged) {
 }
 
 TEST(CircularDoublyLinkedList, ChangingOriginalLeavesCopyUnchanged) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> copy(original);
+    ds::CircularDoublyLinkedList<int> copy(original);
     original.clear();
     original.add(5);
     EXPECT_TRUE(HasContents(original, {5}));
@@ -819,17 +819,17 @@ TEST(CircularDoublyLinkedList, ChangingOriginalLeavesCopyUnchanged) {
 }
 
 TEST(CircularDoublyLinkedList, CopyOutlivesOriginal) {
-    auto *original = new dsa::CircularDoublyLinkedList<int>();
+    auto *original = new ds::CircularDoublyLinkedList<int>();
     fill(*original, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> copy(*original);
+    ds::CircularDoublyLinkedList<int> copy(*original);
     delete original;
     EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, CopyInitializationWithEquals) {
-    dsa::CircularDoublyLinkedList<int> original;
+    ds::CircularDoublyLinkedList<int> original;
     fill(original, {1, 2});
-    dsa::CircularDoublyLinkedList<int> copy = original;
+    ds::CircularDoublyLinkedList<int> copy = original;
     EXPECT_TRUE(HasContents(copy, {1, 2}));
     EXPECT_NE(copy.getHead(), original.getHead());
 }
@@ -837,44 +837,44 @@ TEST(CircularDoublyLinkedList, CopyInitializationWithEquals) {
 // Copy assignment
 
 TEST(CircularDoublyLinkedList, CopyAssignmentIntoEmptyList) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2, 3}));
     EXPECT_TRUE(HasContents(source, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentReplacesLongerList) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {7, 8, 9, 10});
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentReplacesShorterList) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3, 4});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {9});
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2, 3, 4}));
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentFromEmptyListEmptiesTarget) {
-    dsa::CircularDoublyLinkedList<int> source;
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {1, 2, 3});
     target = source;
     EXPECT_TRUE(HasContents(target, {}));
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentThenAddUsesNewTail) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = source;
     target.add(3);
@@ -883,9 +883,9 @@ TEST(CircularDoublyLinkedList, CopyAssignmentThenAddUsesNewTail) {
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentAllocatesNewNodes) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     target = source;
     const auto sourceNodes = nodesOf(source);
     for (const auto *node : nodesOf(target)) {
@@ -896,9 +896,9 @@ TEST(CircularDoublyLinkedList, CopyAssignmentAllocatesNewNodes) {
 }
 
 TEST(CircularDoublyLinkedList, ChangingAssignedListLeavesSourceUnchanged) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     target = source;
     target.deleteNode(2);
     EXPECT_TRUE(HasContents(target, {1, 3}));
@@ -906,25 +906,25 @@ TEST(CircularDoublyLinkedList, ChangingAssignedListLeavesSourceUnchanged) {
 }
 
 TEST(CircularDoublyLinkedList, SelfCopyAssignmentKeepsContents) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = alias;
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, CopyAssignmentReturnsTarget) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     EXPECT_EQ(&(target = source), &target);
 }
 
 TEST(CircularDoublyLinkedList, ChainedCopyAssignment) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::CircularDoublyLinkedList<int> first;
-    dsa::CircularDoublyLinkedList<int> second;
+    ds::CircularDoublyLinkedList<int> first;
+    ds::CircularDoublyLinkedList<int> second;
     fill(second, {9, 9, 9});
     second = first = source;
     EXPECT_TRUE(HasContents(first, {1, 2}));
@@ -933,21 +933,21 @@ TEST(CircularDoublyLinkedList, ChainedCopyAssignment) {
 }
 
 TEST(CircularDoublyLinkedList, ReturnByValue) {
-    dsa::CircularDoublyLinkedList<int> list = makeList({1, 2, 3});
+    ds::CircularDoublyLinkedList<int> list = makeList({1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, AssignFromTemporary) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {9, 9});
     list = makeList({1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, CanBeStoredInStdVector) {
-    std::vector<dsa::CircularDoublyLinkedList<int>> lists;
+    std::vector<ds::CircularDoublyLinkedList<int>> lists;
     for (int i = 0; i < 10; ++i) {
-        dsa::CircularDoublyLinkedList<int> list;
+        ds::CircularDoublyLinkedList<int> list;
         fill(list, {i, i + 1});
         lists.push_back(list);
     }
@@ -961,37 +961,37 @@ TEST(CircularDoublyLinkedList, CanBeStoredInStdVector) {
 // source empty and reusable.
 
 TEST(CircularDoublyLinkedList, MoveOperationsAreNoexcept) {
-    EXPECT_TRUE(std::is_nothrow_move_constructible<dsa::CircularDoublyLinkedList<int>>::value);
-    EXPECT_TRUE(std::is_nothrow_move_assignable<dsa::CircularDoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_nothrow_move_constructible<ds::CircularDoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_nothrow_move_assignable<ds::CircularDoublyLinkedList<int>>::value);
 }
 
 TEST(CircularDoublyLinkedList, MoveConstructorTakesTheNodes) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
-    dsa::CircularDoublyLinkedList<int> moved(std::move(source));
+    ds::CircularDoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
     EXPECT_EQ(nodesOf(moved), nodes) << "a move must reuse the nodes, not copy them";
 }
 
 TEST(CircularDoublyLinkedList, MoveConstructorLeavesSourceEmpty) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> moved(std::move(source));
+    ds::CircularDoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(CircularDoublyLinkedList, MoveConstructorOfEmptyList) {
-    dsa::CircularDoublyLinkedList<int> source;
-    dsa::CircularDoublyLinkedList<int> moved(std::move(source));
+    ds::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {}));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(CircularDoublyLinkedList, MovedFromListIsReusable) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> moved(std::move(source));
+    ds::CircularDoublyLinkedList<int> moved(std::move(source));
     source.add(4);
     source.addFirst(3);
     EXPECT_TRUE(HasContents(source, {3, 4}));
@@ -999,36 +999,36 @@ TEST(CircularDoublyLinkedList, MovedFromListIsReusable) {
 }
 
 TEST(CircularDoublyLinkedList, MoveAssignmentTakesTheNodes) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {1, 2, 3}));
     EXPECT_EQ(nodesOf(target), nodes) << "a move must reuse the nodes, not copy them";
 }
 
 TEST(CircularDoublyLinkedList, MoveAssignmentReplacesExistingContents) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
 TEST(CircularDoublyLinkedList, MoveAssignmentLeavesSourceEmpty) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = std::move(source);
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(CircularDoublyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
-    dsa::CircularDoublyLinkedList<int> source;
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> target;
     fill(target, {1, 2, 3});
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {}));
@@ -1036,9 +1036,9 @@ TEST(CircularDoublyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
 }
 
 TEST(CircularDoublyLinkedList, MoveAssignmentReturnsTarget) {
-    dsa::CircularDoublyLinkedList<int> source;
+    ds::CircularDoublyLinkedList<int> source;
     fill(source, {1});
-    dsa::CircularDoublyLinkedList<int> target;
+    ds::CircularDoublyLinkedList<int> target;
     EXPECT_EQ(&(target = std::move(source)), &target);
 }
 
@@ -1047,41 +1047,41 @@ TEST(CircularDoublyLinkedList, MoveAssignmentReturnsTarget) {
 // the list is destroyed at the end of the test.
 
 TEST(CircularDoublyLinkedList, SelfMoveAssignmentKeepsContents) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(CircularDoublyLinkedList, SelfMoveAssignmentKeepsTheNodes) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     const auto nodes = nodesOf(list);
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_EQ(nodesOf(list), nodes);
 }
 
 TEST(CircularDoublyLinkedList, SelfMoveAssignmentOnEmptyList) {
-    dsa::CircularDoublyLinkedList<int> list;
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(CircularDoublyLinkedList, SelfMoveAssignmentOnSingleNode) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {7});
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(CircularDoublyLinkedList, SelfMoveAssignmentThenModify) {
-    dsa::CircularDoublyLinkedList<int> list;
+    ds::CircularDoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::CircularDoublyLinkedList<int> &alias = list;
+    ds::CircularDoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     list.addFirst(0);
     list.addLast(4);

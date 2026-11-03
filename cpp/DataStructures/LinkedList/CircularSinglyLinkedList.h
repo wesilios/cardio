@@ -1,5 +1,5 @@
-#ifndef ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
-#define ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
+#ifndef DATASTRUCTURE_CIRCULARSINGLYLINKEDLIST_H
+#define DATASTRUCTURE_CIRCULARSINGLYLINKEDLIST_H
 
 #include "../Exception.h"
 #include "LinkedList.h"
@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <iostream>
 
-namespace dsa {
+namespace ds {
 void CircularSinglyLinkedListTest();
 
 template <typename T> class CircularSinglyLinkedList : public LinkedList<T, SinglyNode<T>> {
@@ -254,7 +254,6 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
             std::cout << node->getData() << " ";
             node = node->getNext();
         }
-        std::cout << std::endl;
     }
 
     void findByIndex(const int &index) const override {
@@ -298,7 +297,7 @@ template <typename T> class CircularSinglyLinkedList : public LinkedList<T, Sing
     }
 };
 
-void CircularSinglyLinkedListTest() {
+inline void CircularSinglyLinkedListTest() {
     int n, data;
     std::cout << "Number of values: ";
     std::cin >> n;
@@ -355,6 +354,6 @@ void CircularSinglyLinkedListTest() {
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_CIRCULARSINGLYLINKEDLIST_H
+#endif // DATASTRUCTURE_CIRCULARSINGLYLINKEDLIST_H

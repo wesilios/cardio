@@ -1,6 +1,6 @@
 # Cardio — C++
 
-Header-only data structures (C++14, namespace `dsa`) with an interactive demo program and GoogleTest unit tests.
+Header-only data structures (C++14, namespace `ds`) with an interactive demo program and GoogleTest unit tests.
 
 ## Requirements
 

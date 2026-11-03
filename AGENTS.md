@@ -60,15 +60,15 @@ ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_
 - **Tests:** they use GoogleTest, which configure downloads through `FetchContent`. Test files live in `cpp/tests/` and must be listed in `add_executable(runTests ...)` in `CMakeLists.txt`.
 - **Test style:** each test file stands on its own and uses plain `TEST(<Suite>, ...)`. Repeating the same cases across similar structures is deliberate: the owner prefers tests that read on their own to a shared typed suite with conditionals, so don't refactor them into one. Each linked-list test file has its own `HasContents()`, which checks every link: size, head/tail, `tail->next`, and the `previous` links.
 - **CI:** `.github/workflows/cpp.yml` builds with g++ and clang++ under ASan/UBSan, runs `ctest`, then runs menu options 6–9 on their `testcases.txt` input as smoke tests.
-- **Headers:** every data structure is header-only (C++14, namespace `dsa`). Each header also defines a free `XxxTest()` demo function that reads from stdin. `main.cpp` shows a numbered menu that dispatches to those functions. The `testcases.txt` files don't include the menu number, so prepend it: `(echo 7; cat DataStructures/Stack/testcases.txt) | ./build/Algorithms`.
-- **Duplicate definitions:** the `XxxTest()` functions are not marked `inline`. If two test files include the same header, linking fails with duplicate definitions.
+- **Headers:** every data structure is header-only (C++14, namespace `ds`). Each header also defines a free `XxxTest()` demo function that reads from stdin. `main.cpp` shows a numbered menu that dispatches to those functions. The `testcases.txt` files don't include the menu number, so prepend it: `(echo 7; cat DataStructures/Stack/testcases.txt) | ./build/Algorithms`.
+- **Duplicate definitions:** the `XxxTest()` demo functions are defined in headers, so they must be `inline`. Without it, linking `runTests` fails with "multiple definition" as soon as two test files include the same header, directly or indirectly (e.g. `ListStack.h` pulls in `DoublyLinkedList.h`). Mark every new demo function `inline`.
 - **Design:**
   - Interfaces are abstract templates (`LinkedList<T, U>`, `Stack<T>`, `Queue<T>`) with `final` implementations.
   - Nodes use a CRTP-style `Node<T, U>`.
   - Stacks and queues come in array-backed and list-backed versions.
-  - Errors use `dsa::InvalidArgument` from `DataStructures/Exception.h`.
+  - Errors use `ds::InvalidArgument` from `DataStructures/Exception.h`.
   - Indexes start at 0.
-- **Style:** include guards are `ALGORITHMS_<NAME>_H`, private members end with an underscore (`id_`), and indentation is 4 spaces.
+- **Style:** include guards are `DATASTRUCTURE_<NAME>_H`, private members end with an underscore (`id_`), and indentation is 4 spaces.
 
 ## C# / .NET (`dotnet/`)
 

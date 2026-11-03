@@ -1,32 +1,26 @@
-#ifndef ALGORITHMS_STACK_H
-#define ALGORITHMS_STACK_H
+#ifndef DATASTRUCTURE_STACK_H
+#define DATASTRUCTURE_STACK_H
 
-namespace dsa {
+#include <cstddef>
+
+namespace ds {
 template <typename T> class Stack {
-  private:
-    int id_;
-
   public:
-    explicit Stack(int id) : id_(id) {}
+    explicit Stack() {}
 
     virtual ~Stack() = default;
 
-    virtual int id() { return id_; }
-
-    virtual int size() = 0;
+    virtual std::size_t size() const = 0;
+    virtual bool isEmpty() const = 0;
 
     virtual void clear() = 0;
 
-    virtual bool isEmpty() = 0;
-
     virtual void push(const T &element) = 0;
-
     virtual T pop() = 0;
+    virtual T peek() const = 0;
 
-    virtual T peek() = 0;
-
-    virtual void printStack() = 0;
+    virtual void printStack() const = 0;
 };
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_STACK_H
+#endif // DATASTRUCTURE_STACK_H

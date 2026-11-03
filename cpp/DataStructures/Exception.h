@@ -1,9 +1,9 @@
 #include <stdexcept>
 
-#ifndef ALGORITHMS_EXCEPTION_H
-#define ALGORITHMS_EXCEPTION_H
+#ifndef DATASTRUCTURE_EXCEPTION_H
+#define DATASTRUCTURE_EXCEPTION_H
 
-namespace dsa {
+namespace ds {
 
 class InvalidArgument : public std::invalid_argument {
   public:
@@ -19,6 +19,13 @@ class EmptyContainer : public std::out_of_range {
     EmptyContainer(const char *message) : std::out_of_range(message) {}
 };
 
-} // namespace dsa
+class OutOfRange : public std::out_of_range {
+  public:
+    OutOfRange(const std::string &message) : std::out_of_range(message) {}
 
-#endif // ALGORITHMS_EXCEPTION_H
+    OutOfRange(const char *message) : std::out_of_range(message) {}
+};
+
+} // namespace ds
+
+#endif // DATASTRUCTURE_EXCEPTION_H

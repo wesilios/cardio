@@ -1,10 +1,10 @@
-#ifndef ALGORITHMS_LINKEDLIST_H
-#define ALGORITHMS_LINKEDLIST_H
+#ifndef DATASTRUCTURE_LINKEDLIST_H
+#define DATASTRUCTURE_LINKEDLIST_H
 
 #include <cstddef>
 #include <string>
 
-namespace dsa {
+namespace ds {
 template <typename T, class U> class LinkedList {
   public:
     virtual std::size_t size() const = 0;
@@ -32,6 +32,6 @@ template <typename T, class U> class LinkedList {
 
     virtual std::string toString() const = 0;
 };
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_LINKEDLIST_H
+#endif // DATASTRUCTURE_LINKEDLIST_H

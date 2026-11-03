@@ -1,13 +1,14 @@
-#ifndef ALGORITHMS_LISTQUEUE_H
-#define ALGORITHMS_LISTQUEUE_H
+#ifndef DATASTRUCTURE_LISTQUEUE_H
+#define DATASTRUCTURE_LISTQUEUE_H
 
+#include <cstddef>
 #include <iostream>
-#include <vector>
 
+#include "../Exception.h"
 #include "../LinkedList/SinglyLinkedList.h"
 #include "Queue.h"
 
-namespace dsa {
+namespace ds {
 void ListQueueTest();
 
 template <typename T> class ListQueue final : public Queue<T> {
@@ -15,23 +16,19 @@ template <typename T> class ListQueue final : public Queue<T> {
     SinglyLinkedList<T> linkedList_;
 
   public:
-    explicit ListQueue(int id) : Queue<T>(id) {}
+    explicit ListQueue() : Queue<T>() {}
 
-    ~ListQueue() override { clear(); }
-
-    int id() override { return Queue<T>::id(); }
-
-    int size() override { return linkedList_.size(); }
+    std::size_t size() const override { return linkedList_.size(); }
 
     void clear() override { linkedList_.clear(); }
 
-    bool isEmpty() override { return linkedList_.isEmpty(); }
+    bool isEmpty() const override { return linkedList_.isEmpty(); }
 
-    void push(const T &element) override { linkedList_.add(element); }
+    void enqueue(const T &element) override { linkedList_.add(element); }
 
-    T pop() override {
+    T dequeue() override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw ds::EmptyContainer("Empty queue");
         }
 
         T element = linkedList_.getHead()->getData();
@@ -39,53 +36,54 @@ template <typename T> class ListQueue final : public Queue<T> {
         return element;
     }
 
-    T peek() override {
+    T front() const override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            throw ds::EmptyContainer("Empty queue");
         }
 
         T element = linkedList_.getHead()->getData();
         return element;
     }
 
-    void printStack() override {
+    void printQueue() const override {
         if (isEmpty()) {
-            throw std::runtime_error("Empty stack");
+            std::cout << "[  ]" << std::endl;
+            return;
         }
         linkedList_.printList();
     }
 };
 
-void ListQueueTest() {
+inline void ListQueueTest() {
     int t, data;
-    std::cout << "Number of values to push: ";
+    std::cout << "Number of values to enqueue: ";
     std::cin >> t;
-    ListQueue<int> queue(0);
+    ListQueue<int> queue;
     std::cout << "Enter " << t << " values: ";
     for (int i = 0; i < t; i++) {
         std::cin >> data;
-        queue.push(data);
+        queue.enqueue(data);
     }
     std::cout << "Queue: ";
-    queue.printStack();
+    queue.printQueue();
 
-    std::cout << "Number of times to peek and pop: ";
+    std::cout << "Number of times to front and dequeue: ";
     std::cin >> t;
-    std::cout << "Peek: ";
+    std::cout << "Front: ";
     for (int i = 0; i < t; i++) {
-        std::cout << queue.peek() << " ";
+        std::cout << queue.front() << " ";
     }
     std::cout << std::endl;
     for (int i = 0; i < t; i++) {
-        std::cout << "Pop: " << queue.pop() << std::endl;
+        std::cout << "Dequeue: " << queue.dequeue() << std::endl;
         if (queue.isEmpty()) {
             std::cout << "Queue is empty" << std::endl;
             break;
         }
         std::cout << "Queue: ";
-        queue.printStack();
+        queue.printQueue();
     }
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_LISTQUEUE_H
+#endif // DATASTRUCTURE_LISTQUEUE_H

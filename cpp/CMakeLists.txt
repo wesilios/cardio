@@ -4,28 +4,34 @@ project(Algorithms CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clangd
 
-add_library(dsa INTERFACE)
-target_include_directories(dsa INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(ds INTERFACE)
+target_include_directories(ds INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(Algorithms main.cpp)
-target_link_libraries(Algorithms PRIVATE dsa)
+target_link_libraries(Algorithms PRIVATE ds)
 
 option(CARDIO_BUILD_TESTS "Build unit tests" ON)
 if(CARDIO_BUILD_TESTS)
     include(FetchContent)
     FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz)
-    fetchcontent_makeavailable(googletest)
+    FetchContent_MakeAvailable(googletest)
 
     enable_testing()
     add_executable(
         runTests
         tests/ArrayStackTests.cpp
+        tests/ListStackTests.cpp
+        tests/ArrayQueueTests.cpp
+        tests/ListQueueTests.cpp
+        tests/ArrayTests.cpp
+        tests/VectorTests.cpp
+        # tests/VectorIterationTests.cpp  # enable once Vector has begin()/end()
         tests/ArrayRotationSolutionTests.cpp
         tests/SinglyLinkedListTests.cpp
         tests/DoublyLinkedListTests.cpp
         tests/CircularSinglyLinkedListTests.cpp
         tests/CircularDoublyLinkedListTests.cpp)
-    target_link_libraries(runTests PRIVATE dsa GTest::gtest_main)
+    target_link_libraries(runTests PRIVATE ds GTest::gtest_main)
     include(GoogleTest)
     gtest_discover_tests(runTests)
 endif()

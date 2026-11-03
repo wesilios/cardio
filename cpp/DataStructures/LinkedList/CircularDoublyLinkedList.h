@@ -1,5 +1,5 @@
-#ifndef ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
-#define ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
+#ifndef DATASTRUCTURE_CIRCULARDOUBLYLINKEDLIST_H
+#define DATASTRUCTURE_CIRCULARDOUBLYLINKEDLIST_H
 
 #include "../Exception.h"
 #include "LinkedList.h"
@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <iostream>
 
-namespace dsa {
+namespace ds {
 template <typename T> class CircularDoublyLinkedList : public LinkedList<T, DoublyNode<T>> {
   private:
     std::size_t size_ = 0;
@@ -304,7 +304,7 @@ template <typename T> class CircularDoublyLinkedList : public LinkedList<T, Doub
     }
 };
 
-void CircularDoublyLinkedListTest() {
+inline void CircularDoublyLinkedListTest() {
     int n, data;
     std::cout << "Number of values: ";
     std::cin >> n;
@@ -362,6 +362,6 @@ void CircularDoublyLinkedListTest() {
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
 
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_CIRCULARDOUBLYLINKEDLIST_H
+#endif // DATASTRUCTURE_CIRCULARDOUBLYLINKEDLIST_H

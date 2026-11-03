@@ -19,7 +19,7 @@ std::string describe(const std::vector<int> &values) {
     return os.str();
 }
 
-void fill(dsa::DoublyLinkedList<int> &list, const std::vector<int> &values) {
+void fill(ds::DoublyLinkedList<int> &list, const std::vector<int> &values) {
     for (int value : values) {
         list.add(value);
     }
@@ -27,7 +27,7 @@ void fill(dsa::DoublyLinkedList<int> &list, const std::vector<int> &values) {
 
 // Checks size, contents, head/tail, that tail->next and head->previous are nullptr,
 // and that the previous links give the same values walking back from the tail.
-::testing::AssertionResult HasContents(dsa::DoublyLinkedList<int> &list, const std::vector<int> &expected) {
+::testing::AssertionResult HasContents(ds::DoublyLinkedList<int> &list, const std::vector<int> &expected) {
     const int expectedSize = static_cast<int>(expected.size());
     if (list.size() != expectedSize) {
         return ::testing::AssertionFailure() << "size() is " << list.size() << ", expected " << expectedSize;
@@ -55,8 +55,8 @@ void fill(dsa::DoublyLinkedList<int> &list, const std::vector<int> &values) {
         node = node->getNext();
     }
     if (forward != expected) {
-        return ::testing::AssertionFailure() << "contents are " << describe(forward) << ", expected "
-                                             << describe(expected);
+        return ::testing::AssertionFailure()
+               << "contents are " << describe(forward) << ", expected " << describe(expected);
     }
     if (last != list.getTail()) {
         return ::testing::AssertionFailure() << "the last node is not tail";
@@ -86,44 +86,44 @@ void fill(dsa::DoublyLinkedList<int> &list, const std::vector<int> &values) {
 // ---------- Adding ----------
 
 TEST(DoublyLinkedList, NewListIsEmpty) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, AddAppendsInOrder) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddLastAppends) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.addLast(3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddLastOnEmptyListSetsHeadAndTail) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.addLast(7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(DoublyLinkedList, AddFirstPrepends) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {2, 3});
     list.addFirst(1);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddFirstOnEmptyListSetsHeadAndTail) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.addFirst(7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(DoublyLinkedList, AddFirstAndAddLastMixed) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.addFirst(2);
     list.addLast(3);
     list.addFirst(1);
@@ -134,47 +134,47 @@ TEST(DoublyLinkedList, AddFirstAndAddLastMixed) {
 // ---------- Deleting first / last ----------
 
 TEST(DoublyLinkedList, DeleteFirstRemovesHead) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
 
 TEST(DoublyLinkedList, DeleteLastRemovesTail) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteFirstOnSingleNodeEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteLastOnSingleNodeEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteFirstOnEmptyListIsSafe) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.deleteFirst();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteLastOnEmptyListIsSafe) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.deleteLast();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteFirstUntilEmptyThenReuse) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.deleteFirst();
@@ -187,7 +187,7 @@ TEST(DoublyLinkedList, DeleteFirstUntilEmptyThenReuse) {
 
 TEST(DoublyLinkedList, DeleteLastUntilEmptyThenReuse) {
     // This is how ListStack::pop() drains a stack.
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     list.deleteLast();
@@ -199,7 +199,7 @@ TEST(DoublyLinkedList, DeleteLastUntilEmptyThenReuse) {
 }
 
 TEST(DoublyLinkedList, DeleteFirstThenAddFirst) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.addFirst(9);
@@ -207,7 +207,7 @@ TEST(DoublyLinkedList, DeleteFirstThenAddFirst) {
 }
 
 TEST(DoublyLinkedList, DeleteLastThenAddLast) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteLast();
     list.addLast(9);
@@ -218,90 +218,90 @@ TEST(DoublyLinkedList, DeleteLastThenAddLast) {
 // deleteNode removes every node holding the value.
 
 TEST(DoublyLinkedList, DeleteNodeRemovesMiddleValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(3);
     EXPECT_TRUE(HasContents(list, {1, 2, 4}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesHeadValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(1);
     EXPECT_TRUE(HasContents(list, {2, 3, 4}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesTailValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNode(4);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeIgnoresMissingValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNode(9);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeOnEmptyListIsSafe) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeOnSingleNodeEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeOnSingleNodeKeepsOtherValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {7});
     list.deleteNode(99);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesEveryMatch) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 5, 2, 5, 3});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesAdjacentMatches) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 5, 5, 2});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesRepeatedHeadValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {5, 5, 1});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeRemovesRepeatedTailValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeOnTwoMatchingNodesEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeWhenEveryValueMatchesEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {5, 5, 5, 5});
     list.deleteNode(5);
     EXPECT_TRUE(HasContents(list, {}));
@@ -312,137 +312,137 @@ TEST(DoublyLinkedList, DeleteNodeWhenEveryValueMatchesEmptiesList) {
 // deleteNodeAtIndex and findByIndex accept 0..size()-1.
 
 TEST(DoublyLinkedList, AddAtIndexZeroOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.addAtIndex(0, 7);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexZeroPrepends) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {2, 3});
     list.addAtIndex(0, 1);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexOneInsertsAfterHead) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 3});
     list.addAtIndex(1, 2);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexInsertsInMiddle) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 4, 5});
     list.addAtIndex(2, 3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3, 4, 5}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexBeforeTail) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 5});
     list.addAtIndex(3, 4);
     EXPECT_TRUE(HasContents(list, {1, 2, 3, 4, 5}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexSizeAppends) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.addAtIndex(2, 3);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexRejectsNegativeIndex) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.addAtIndex(-1, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(-1, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexRejectsIndexPastSize) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.addAtIndex(3, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(3, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexRejectsIndexPastSizeOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
-    EXPECT_THROW(list.addAtIndex(1, 9), dsa::InvalidArgument);
+    ds::DoublyLinkedList<int> list;
+    EXPECT_THROW(list.addAtIndex(1, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexRejectsIndexPastSizeOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
-    EXPECT_THROW(list.addAtIndex(2, 9), dsa::InvalidArgument);
+    EXPECT_THROW(list.addAtIndex(2, 9), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1}));
 }
 
 TEST(DoublyLinkedList, AddAtIndexSizeAppendsOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
     list.addAtIndex(1, 2);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexZeroRemovesHead) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNodeAtIndex(0);
     EXPECT_TRUE(HasContents(list, {2, 3}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexOneRemovesSecondNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteNodeAtIndex(1);
     EXPECT_TRUE(HasContents(list, {1, 3, 4}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexRemovesMiddleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4, 5});
     list.deleteNodeAtIndex(2);
     EXPECT_TRUE(HasContents(list, {1, 2, 4, 5}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexLastRemovesTail) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteNodeAtIndex(2);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexOnSingleNodeEmptiesList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {7});
     list.deleteNodeAtIndex(0);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexRejectsNegativeIndex) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.deleteNodeAtIndex(-1), dsa::InvalidArgument);
+    EXPECT_THROW(list.deleteNodeAtIndex(-1), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexRejectsIndexPastEnd) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.deleteNodeAtIndex(2), dsa::InvalidArgument);
+    EXPECT_THROW(list.deleteNodeAtIndex(2), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {1, 2}));
 }
 
 TEST(DoublyLinkedList, DeleteNodeAtIndexOnEmptyListThrows) {
-    dsa::DoublyLinkedList<int> list;
-    EXPECT_THROW(list.deleteNodeAtIndex(0), dsa::InvalidArgument);
+    ds::DoublyLinkedList<int> list;
+    EXPECT_THROW(list.deleteNodeAtIndex(0), ds::InvalidArgument);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, FindByIndexPrintsValueAtEveryIndex) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
 
     testing::internal::CaptureStdout();
@@ -459,20 +459,20 @@ TEST(DoublyLinkedList, FindByIndexPrintsValueAtEveryIndex) {
 }
 
 TEST(DoublyLinkedList, FindByIndexRejectsNegativeIndex) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.findByIndex(-1), dsa::InvalidArgument);
+    EXPECT_THROW(list.findByIndex(-1), ds::InvalidArgument);
 }
 
 TEST(DoublyLinkedList, FindByIndexRejectsIndexPastEnd) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
-    EXPECT_THROW(list.findByIndex(2), dsa::InvalidArgument);
+    EXPECT_THROW(list.findByIndex(2), ds::InvalidArgument);
 }
 
 TEST(DoublyLinkedList, FindByIndexOnEmptyListThrows) {
-    dsa::DoublyLinkedList<int> list;
-    EXPECT_THROW(list.findByIndex(0), dsa::InvalidArgument);
+    ds::DoublyLinkedList<int> list;
+    EXPECT_THROW(list.findByIndex(0), ds::InvalidArgument);
 }
 
 // ---------- Clear / destruction ----------
@@ -480,7 +480,7 @@ TEST(DoublyLinkedList, FindByIndexOnEmptyListThrows) {
 // reliably in the sanitizer build, which is what CI runs.
 
 TEST(DoublyLinkedList, ClearEmptiesListAndAllowsReuse) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
@@ -490,20 +490,20 @@ TEST(DoublyLinkedList, ClearEmptiesListAndAllowsReuse) {
 }
 
 TEST(DoublyLinkedList, ClearOnEmptyListIsSafe) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, ClearOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
     list.clear();
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, ClearTwiceIsSafe) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2});
     list.clear();
     list.clear();
@@ -512,18 +512,18 @@ TEST(DoublyLinkedList, ClearTwiceIsSafe) {
 
 TEST(DoublyLinkedList, DestructorFreesEveryNode) {
     // The list is destroyed at the end of this scope.
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4, 5});
     EXPECT_EQ(list.size(), 5);
 }
 
 TEST(DoublyLinkedList, DestructorOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     EXPECT_TRUE(list.isEmpty());
 }
 
 TEST(DoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteFirst();
     list.deleteLast();
@@ -533,7 +533,7 @@ TEST(DoublyLinkedList, DestructorAfterDeletesFreesRemainingNodes) {
 // ---------- Iterator ----------
 
 TEST(DoublyLinkedList, RangeForVisitsEveryValueInOrder) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     std::vector<int> visited;
     for (int value : list) {
@@ -543,7 +543,7 @@ TEST(DoublyLinkedList, RangeForVisitsEveryValueInOrder) {
 }
 
 TEST(DoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     std::vector<int> visited;
     for (int value : list) {
         visited.push_back(value);
@@ -552,7 +552,7 @@ TEST(DoublyLinkedList, RangeForOnEmptyListVisitsNothing) {
 }
 
 TEST(DoublyLinkedList, RangeForOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {7});
     std::vector<int> visited;
     for (int value : list) {
@@ -562,7 +562,7 @@ TEST(DoublyLinkedList, RangeForOnSingleNode) {
 }
 
 TEST(DoublyLinkedList, RangeForSeesChangesToTheList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     list.deleteFirst();
     list.addFirst(0);
@@ -575,9 +575,9 @@ TEST(DoublyLinkedList, RangeForSeesChangesToTheList) {
 }
 
 TEST(DoublyLinkedList, RangeForOverConstList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    const dsa::DoublyLinkedList<int> &constList = list;
+    const ds::DoublyLinkedList<int> &constList = list;
     std::vector<int> visited;
     for (int value : constList) {
         visited.push_back(value);
@@ -586,34 +586,34 @@ TEST(DoublyLinkedList, RangeForOverConstList) {
 }
 
 TEST(DoublyLinkedList, BeginEqualsEndOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     EXPECT_TRUE(list.begin() == list.end());
     EXPECT_FALSE(list.begin() != list.end());
 }
 
 TEST(DoublyLinkedList, BeginDiffersFromEndOnNonEmptyList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1});
     EXPECT_TRUE(list.begin() != list.end());
     EXPECT_FALSE(list.begin() == list.end());
 }
 
 TEST(DoublyLinkedList, DereferenceReturnsCurrentValue) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     EXPECT_EQ(*it, 10);
 }
 
 TEST(DoublyLinkedList, DereferenceOnConstIterator) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20});
     const auto it = list.begin();
     EXPECT_EQ(*it, 10);
 }
 
 TEST(DoublyLinkedList, PrefixIncrementMovesToNextNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20, 30});
     auto it = list.begin();
     ++it;
@@ -622,7 +622,7 @@ TEST(DoublyLinkedList, PrefixIncrementMovesToNextNode) {
 }
 
 TEST(DoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     auto old = it++;
@@ -631,7 +631,7 @@ TEST(DoublyLinkedList, PostfixIncrementReturnsPreviousPosition) {
 }
 
 TEST(DoublyLinkedList, IncrementPastLastNodeReachesEnd) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {10, 20});
     auto it = list.begin();
     ++it;
@@ -640,7 +640,7 @@ TEST(DoublyLinkedList, IncrementPastLastNodeReachesEnd) {
 }
 
 TEST(DoublyLinkedList, IncrementAtEndStaysAtEnd) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     auto it = list.end();
     ++it;
     EXPECT_TRUE(it == list.end());
@@ -649,13 +649,13 @@ TEST(DoublyLinkedList, IncrementAtEndStaysAtEnd) {
 // ---------- Printing ----------
 
 TEST(DoublyLinkedList, ToStringListsValues) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     EXPECT_EQ(list.toString(), "[ 1, 2, 3 ]");
 }
 
 TEST(DoublyLinkedList, StreamOperatorPrintsToString) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     std::stringstream os;
     os << list;
@@ -663,22 +663,125 @@ TEST(DoublyLinkedList, StreamOperatorPrintsToString) {
 }
 
 TEST(DoublyLinkedList, ToStringOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     EXPECT_EQ(list.toString(), "[  ]");
 }
 
 TEST(DoublyLinkedList, ToStringOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {7});
     EXPECT_EQ(list.toString(), "[ 7 ]");
 }
 
 TEST(DoublyLinkedList, ToStringAfterDeletes) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3, 4});
     list.deleteFirst();
     list.deleteLast();
     EXPECT_EQ(list.toString(), "[ 2, 3 ]");
+}
+
+// toStringInReverse walks from tail through the previous links, so these also
+// catch an operation that leaves a previous link stale.
+
+TEST(DoublyLinkedList, ToStringInReverseListsValuesTailFirst) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    EXPECT_EQ(list.toStringInReverse(), "[ 3, 2, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseOnEmptyList) {
+    ds::DoublyLinkedList<int> list;
+    EXPECT_EQ(list.toStringInReverse(), "[  ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseOnSingleNode) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {7});
+    EXPECT_EQ(list.toStringInReverse(), "[ 7 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseKeepsDuplicates) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 2, 3});
+    EXPECT_EQ(list.toStringInReverse(), "[ 3, 2, 2, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseDoesNotChangeList) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    list.toStringInReverse();
+    EXPECT_TRUE(HasContents(list, {1, 2, 3}));
+    EXPECT_EQ(list.toString(), "[ 1, 2, 3 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterAddFirst) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {2, 3});
+    list.addFirst(1);
+    EXPECT_EQ(list.toStringInReverse(), "[ 3, 2, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterAddAtIndex) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 3});
+    list.addAtIndex(1, 2);
+    list.addAtIndex(0, 0);
+    list.addAtIndex(4, 4);
+    EXPECT_EQ(list.toStringInReverse(), "[ 4, 3, 2, 1, 0 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterDeletes) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4});
+    list.deleteFirst();
+    list.deleteLast();
+    EXPECT_EQ(list.toStringInReverse(), "[ 3, 2 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterDeleteNode) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {5, 1, 5, 2, 5});
+    list.deleteNode(5);
+    EXPECT_EQ(list.toStringInReverse(), "[ 2, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterDeleteNodeAtIndex) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3, 4});
+    list.deleteNodeAtIndex(1);
+    EXPECT_EQ(list.toStringInReverse(), "[ 4, 3, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterDeletingDownToOneNode) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2});
+    list.deleteFirst();
+    EXPECT_EQ(list.toStringInReverse(), "[ 2 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseAfterClear) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2, 3});
+    list.clear();
+    EXPECT_EQ(list.toStringInReverse(), "[  ]");
+    list.add(9);
+    EXPECT_EQ(list.toStringInReverse(), "[ 9 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseOnConstList) {
+    ds::DoublyLinkedList<int> list;
+    fill(list, {1, 2});
+    const ds::DoublyLinkedList<int> &constList = list;
+    EXPECT_EQ(constList.toStringInReverse(), "[ 2, 1 ]");
+}
+
+TEST(DoublyLinkedList, ToStringInReverseOfStrings) {
+    ds::DoublyLinkedList<std::string> list;
+    list.add("a");
+    list.add("b");
+    list.add("c");
+    EXPECT_EQ(list.toStringInReverse(), "[ c, b, a ]");
 }
 
 // ---------- Copy (rule of three) ----------
@@ -687,8 +790,8 @@ TEST(DoublyLinkedList, ToStringAfterDeletes) {
 
 namespace {
 
-std::vector<const dsa::DoublyNode<int> *> nodesOf(const dsa::DoublyLinkedList<int> &list) {
-    std::vector<const dsa::DoublyNode<int> *> nodes;
+std::vector<const ds::DoublyNode<int> *> nodesOf(const ds::DoublyLinkedList<int> &list) {
+    std::vector<const ds::DoublyNode<int> *> nodes;
     auto *node = list.getHead();
     for (std::size_t i = 0; node != nullptr && i < list.size(); ++i) {
         nodes.push_back(node);
@@ -697,8 +800,8 @@ std::vector<const dsa::DoublyNode<int> *> nodesOf(const dsa::DoublyLinkedList<in
     return nodes;
 }
 
-dsa::DoublyLinkedList<int> makeList(const std::vector<int> &values) {
-    dsa::DoublyLinkedList<int> list;
+ds::DoublyLinkedList<int> makeList(const std::vector<int> &values) {
+    ds::DoublyLinkedList<int> list;
     fill(list, values);
     return list;
 }
@@ -706,46 +809,46 @@ dsa::DoublyLinkedList<int> makeList(const std::vector<int> &values) {
 } // namespace
 
 TEST(DoublyLinkedList, IsCopyConstructibleAndAssignable) {
-    EXPECT_TRUE(std::is_copy_constructible<dsa::DoublyLinkedList<int>>::value);
-    EXPECT_TRUE(std::is_copy_assignable<dsa::DoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_copy_constructible<ds::DoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_copy_assignable<ds::DoublyLinkedList<int>>::value);
 }
 
 // Copy constructor
 
 TEST(DoublyLinkedList, CopyConstructorCopiesValues) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
     EXPECT_TRUE(HasContents(original, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, CopyConstructorOfEmptyList) {
-    dsa::DoublyLinkedList<int> original;
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {}));
     EXPECT_TRUE(HasContents(original, {}));
 }
 
 TEST(DoublyLinkedList, CopyConstructorOfSingleNode) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {7});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {7}));
     EXPECT_NE(copy.getHead(), original.getHead());
 }
 
 TEST(DoublyLinkedList, CopyConstructorKeepsDuplicates) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {2, 2, 1, 2});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     EXPECT_TRUE(HasContents(copy, {2, 2, 1, 2}));
 }
 
 TEST(DoublyLinkedList, CopyConstructorAllocatesNewNodes) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     const auto originalNodes = nodesOf(original);
     for (const auto *node : nodesOf(copy)) {
         for (const auto *shared : originalNodes) {
@@ -755,9 +858,9 @@ TEST(DoublyLinkedList, CopyConstructorAllocatesNewNodes) {
 }
 
 TEST(DoublyLinkedList, ChangingCopyLeavesOriginalUnchanged) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     copy.deleteFirst();
     copy.deleteLast();
     copy.addLast(9);
@@ -767,9 +870,9 @@ TEST(DoublyLinkedList, ChangingCopyLeavesOriginalUnchanged) {
 }
 
 TEST(DoublyLinkedList, ChangingOriginalLeavesCopyUnchanged) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {1, 2, 3});
-    dsa::DoublyLinkedList<int> copy(original);
+    ds::DoublyLinkedList<int> copy(original);
     original.clear();
     original.add(5);
     EXPECT_TRUE(HasContents(original, {5}));
@@ -777,17 +880,17 @@ TEST(DoublyLinkedList, ChangingOriginalLeavesCopyUnchanged) {
 }
 
 TEST(DoublyLinkedList, CopyOutlivesOriginal) {
-    auto *original = new dsa::DoublyLinkedList<int>();
+    auto *original = new ds::DoublyLinkedList<int>();
     fill(*original, {1, 2, 3});
-    dsa::DoublyLinkedList<int> copy(*original);
+    ds::DoublyLinkedList<int> copy(*original);
     delete original;
     EXPECT_TRUE(HasContents(copy, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, CopyInitializationWithEquals) {
-    dsa::DoublyLinkedList<int> original;
+    ds::DoublyLinkedList<int> original;
     fill(original, {1, 2});
-    dsa::DoublyLinkedList<int> copy = original;
+    ds::DoublyLinkedList<int> copy = original;
     EXPECT_TRUE(HasContents(copy, {1, 2}));
     EXPECT_NE(copy.getHead(), original.getHead());
 }
@@ -795,44 +898,44 @@ TEST(DoublyLinkedList, CopyInitializationWithEquals) {
 // Copy assignment
 
 TEST(DoublyLinkedList, CopyAssignmentIntoEmptyList) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2, 3}));
     EXPECT_TRUE(HasContents(source, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, CopyAssignmentReplacesLongerList) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     fill(target, {7, 8, 9, 10});
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
 TEST(DoublyLinkedList, CopyAssignmentReplacesShorterList) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3, 4});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     fill(target, {9});
     target = source;
     EXPECT_TRUE(HasContents(target, {1, 2, 3, 4}));
 }
 
 TEST(DoublyLinkedList, CopyAssignmentFromEmptyListEmptiesTarget) {
-    dsa::DoublyLinkedList<int> source;
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> target;
     fill(target, {1, 2, 3});
     target = source;
     EXPECT_TRUE(HasContents(target, {}));
 }
 
 TEST(DoublyLinkedList, CopyAssignmentThenAddUsesNewTail) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = source;
     target.add(3);
@@ -841,9 +944,9 @@ TEST(DoublyLinkedList, CopyAssignmentThenAddUsesNewTail) {
 }
 
 TEST(DoublyLinkedList, CopyAssignmentAllocatesNewNodes) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     target = source;
     const auto sourceNodes = nodesOf(source);
     for (const auto *node : nodesOf(target)) {
@@ -854,9 +957,9 @@ TEST(DoublyLinkedList, CopyAssignmentAllocatesNewNodes) {
 }
 
 TEST(DoublyLinkedList, ChangingAssignedListLeavesSourceUnchanged) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     target = source;
     target.deleteNode(2);
     EXPECT_TRUE(HasContents(target, {1, 3}));
@@ -864,25 +967,25 @@ TEST(DoublyLinkedList, ChangingAssignedListLeavesSourceUnchanged) {
 }
 
 TEST(DoublyLinkedList, SelfCopyAssignmentKeepsContents) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = alias;
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, CopyAssignmentReturnsTarget) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     EXPECT_EQ(&(target = source), &target);
 }
 
 TEST(DoublyLinkedList, ChainedCopyAssignment) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::DoublyLinkedList<int> first;
-    dsa::DoublyLinkedList<int> second;
+    ds::DoublyLinkedList<int> first;
+    ds::DoublyLinkedList<int> second;
     fill(second, {9, 9, 9});
     second = first = source;
     EXPECT_TRUE(HasContents(first, {1, 2}));
@@ -891,21 +994,21 @@ TEST(DoublyLinkedList, ChainedCopyAssignment) {
 }
 
 TEST(DoublyLinkedList, ReturnByValue) {
-    dsa::DoublyLinkedList<int> list = makeList({1, 2, 3});
+    ds::DoublyLinkedList<int> list = makeList({1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, AssignFromTemporary) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {9, 9});
     list = makeList({1, 2, 3});
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, CanBeStoredInStdVector) {
-    std::vector<dsa::DoublyLinkedList<int>> lists;
+    std::vector<ds::DoublyLinkedList<int>> lists;
     for (int i = 0; i < 10; ++i) {
-        dsa::DoublyLinkedList<int> list;
+        ds::DoublyLinkedList<int> list;
         fill(list, {i, i + 1});
         lists.push_back(list);
     }
@@ -919,37 +1022,37 @@ TEST(DoublyLinkedList, CanBeStoredInStdVector) {
 // source empty and reusable.
 
 TEST(DoublyLinkedList, MoveOperationsAreNoexcept) {
-    EXPECT_TRUE(std::is_nothrow_move_constructible<dsa::DoublyLinkedList<int>>::value);
-    EXPECT_TRUE(std::is_nothrow_move_assignable<dsa::DoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_nothrow_move_constructible<ds::DoublyLinkedList<int>>::value);
+    EXPECT_TRUE(std::is_nothrow_move_assignable<ds::DoublyLinkedList<int>>::value);
 }
 
 TEST(DoublyLinkedList, MoveConstructorTakesTheNodes) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
-    dsa::DoublyLinkedList<int> moved(std::move(source));
+    ds::DoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {1, 2, 3}));
     EXPECT_EQ(nodesOf(moved), nodes) << "a move must reuse the nodes, not copy them";
 }
 
 TEST(DoublyLinkedList, MoveConstructorLeavesSourceEmpty) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::DoublyLinkedList<int> moved(std::move(source));
+    ds::DoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(DoublyLinkedList, MoveConstructorOfEmptyList) {
-    dsa::DoublyLinkedList<int> source;
-    dsa::DoublyLinkedList<int> moved(std::move(source));
+    ds::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> moved(std::move(source));
     EXPECT_TRUE(HasContents(moved, {}));
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(DoublyLinkedList, MovedFromListIsReusable) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
-    dsa::DoublyLinkedList<int> moved(std::move(source));
+    ds::DoublyLinkedList<int> moved(std::move(source));
     source.add(4);
     source.addFirst(3);
     EXPECT_TRUE(HasContents(source, {3, 4}));
@@ -957,36 +1060,36 @@ TEST(DoublyLinkedList, MovedFromListIsReusable) {
 }
 
 TEST(DoublyLinkedList, MoveAssignmentTakesTheNodes) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2, 3});
     const auto nodes = nodesOf(source);
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {1, 2, 3}));
     EXPECT_EQ(nodesOf(target), nodes) << "a move must reuse the nodes, not copy them";
 }
 
 TEST(DoublyLinkedList, MoveAssignmentReplacesExistingContents) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {1, 2}));
 }
 
 TEST(DoublyLinkedList, MoveAssignmentLeavesSourceEmpty) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1, 2});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     fill(target, {7, 8, 9});
     target = std::move(source);
     EXPECT_TRUE(HasContents(source, {}));
 }
 
 TEST(DoublyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
-    dsa::DoublyLinkedList<int> source;
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> target;
     fill(target, {1, 2, 3});
     target = std::move(source);
     EXPECT_TRUE(HasContents(target, {}));
@@ -994,9 +1097,9 @@ TEST(DoublyLinkedList, MoveAssignmentFromEmptyListEmptiesTarget) {
 }
 
 TEST(DoublyLinkedList, MoveAssignmentReturnsTarget) {
-    dsa::DoublyLinkedList<int> source;
+    ds::DoublyLinkedList<int> source;
     fill(source, {1});
-    dsa::DoublyLinkedList<int> target;
+    ds::DoublyLinkedList<int> target;
     EXPECT_EQ(&(target = std::move(source)), &target);
 }
 
@@ -1005,41 +1108,41 @@ TEST(DoublyLinkedList, MoveAssignmentReturnsTarget) {
 // the list is destroyed at the end of the test.
 
 TEST(DoublyLinkedList, SelfMoveAssignmentKeepsContents) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {1, 2, 3}));
 }
 
 TEST(DoublyLinkedList, SelfMoveAssignmentKeepsTheNodes) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
     const auto nodes = nodesOf(list);
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_EQ(nodesOf(list), nodes);
 }
 
 TEST(DoublyLinkedList, SelfMoveAssignmentOnEmptyList) {
-    dsa::DoublyLinkedList<int> list;
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {}));
 }
 
 TEST(DoublyLinkedList, SelfMoveAssignmentOnSingleNode) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {7});
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     EXPECT_TRUE(HasContents(list, {7}));
 }
 
 TEST(DoublyLinkedList, SelfMoveAssignmentThenModify) {
-    dsa::DoublyLinkedList<int> list;
+    ds::DoublyLinkedList<int> list;
     fill(list, {1, 2, 3});
-    dsa::DoublyLinkedList<int> &alias = list;
+    ds::DoublyLinkedList<int> &alias = list;
     list = std::move(alias);
     list.addFirst(0);
     list.addLast(4);
