@@ -1,36 +1,32 @@
-#ifndef ALGORITHMS_ARRAYSTACK_H
-#define ALGORITHMS_ARRAYSTACK_H
+#ifndef DATASTRUCTURE_ARRAYSTACK_H
+#define DATASTRUCTURE_ARRAYSTACK_H
 
 #include "../Exception.h"
+#include <cstddef>
 #include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "Stack.h"
 
-namespace dsa {
+namespace ds {
 void ArrayStackTest();
 
 template <typename T> class ArrayStack final : public Stack<T> {
   private:
-    int capacity_;
     std::vector<T> data_;
 
   public:
-    explicit ArrayStack(int id) : Stack<T>(id) { capacity_ = data_.capacity(); }
-
-    virtual ~ArrayStack() override { data_.clear(); }
-
-    int id() override { return Stack<T>::id(); }
+    explicit ArrayStack() : Stack<T>() {}
 
     void clear() override {
         data_.clear();
         data_.shrink_to_fit();
-        capacity_ = data_.capacity();
     }
 
-    int size() override { return data_.size(); }
+    std::size_t size() const override { return data_.size(); }
 
-    bool isEmpty() override { return data_.empty(); }
+    bool isEmpty() const override { return data_.empty(); }
 
     void push(const T &element) override { data_.push_back(element); }
 
@@ -38,37 +34,40 @@ template <typename T> class ArrayStack final : public Stack<T> {
         if (isEmpty()) {
             throw EmptyContainer("Empty stack");
         }
+
         T element = data_.back();
         data_.erase(data_.end() - 1);
         return element;
     }
 
-    T peek() override {
+    T peek() const override {
         if (isEmpty()) {
             throw EmptyContainer("Empty stack");
         }
+
         return data_.back();
     }
 
-    void printStack() override {
-        if (isEmpty()) {
-            throw EmptyContainer("Empty stack");
+    void printStack() const override {
+        std::cout << "[ ";
+        for (std::size_t index = size(); index-- > 0;) {
+            std::cout << data_.at(index);
+            if (index > 0) {
+                std::cout << ", ";
+            }
         }
 
-        for (__attribute__((unused)) int i : data_) {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
+        std::cout << " ]" << std::endl;
     }
 
-    __attribute__((unused)) int capacity() { return capacity_; }
+    __attribute__((unused)) int capacity() const { return data_.capacity(); }
 };
 
-void ArrayStackTest() {
+inline void ArrayStackTest() {
     int t, data;
     std::cout << "Number of values to push: ";
     std::cin >> t;
-    ArrayStack<int> stack(0);
+    ArrayStack<int> stack;
     std::cout << "Enter " << t << " values: ";
     for (int i = 0; i < t; i++) {
         std::cin >> data;
@@ -94,6 +93,6 @@ void ArrayStackTest() {
         stack.printStack();
     }
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_ARRAYSTACK_H
+#endif // DATASTRUCTURE_ARRAYSTACK_H

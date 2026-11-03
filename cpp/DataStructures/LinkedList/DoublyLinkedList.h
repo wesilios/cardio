@@ -1,5 +1,5 @@
-#ifndef ALGORITHMS_DOUBLYLINKEDLIST_H
-#define ALGORITHMS_DOUBLYLINKEDLIST_H
+#ifndef DATASTRUCTURE_DOUBLYLINKEDLIST_H
+#define DATASTRUCTURE_DOUBLYLINKEDLIST_H
 
 #include "../Exception.h"
 #include "LinkedList.h"
@@ -8,7 +8,7 @@
 #include <iostream>
 #include <utility>
 
-namespace dsa {
+namespace ds {
 void DoublyLinkedListTest();
 
 template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T>> {
@@ -278,10 +278,24 @@ template <typename T> class DoublyLinkedList : public LinkedList<T, DoublyNode<T
         return os.str();
     }
 
+    std::string toStringInReverse() const {
+        std::stringstream os;
+        os << "[ ";
+        DoublyNode<T> *traversal = tail_;
+        while (traversal != nullptr) {
+            os << traversal->getData();
+            traversal = traversal->getPrevious();
+            if (traversal)
+                os << ", ";
+        }
+        os << " ]";
+        return os.str();
+    }
+
     friend std::ostream &operator<<(std::ostream &strm, const DoublyLinkedList<T> &a) { return strm << a.toString(); }
 };
 
-void DoublyLinkedListTest() {
+inline void DoublyLinkedListTest() {
     int n, data;
     std::cout << "Number of values: ";
     std::cin >> n;
@@ -338,6 +352,6 @@ void DoublyLinkedListTest() {
     linkedList.printList();
     std::cout << "Size: " << linkedList.size() << std::endl;
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_DOUBLYLINKEDLIST_H
+#endif // DATASTRUCTURE_DOUBLYLINKEDLIST_H

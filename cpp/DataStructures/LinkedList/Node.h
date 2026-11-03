@@ -1,9 +1,9 @@
-#ifndef ALGORITHMS_NODE_H
-#define ALGORITHMS_NODE_H
+#ifndef DATASTRUCTURE_NODE_H
+#define DATASTRUCTURE_NODE_H
 
 #include <sstream>
 
-namespace dsa {
+namespace ds {
 template <typename T, class U> class Node {
   protected:
     T data_;
@@ -50,5 +50,5 @@ template <typename T> class DoublyNode final : public Node<T, DoublyNode<T>> {
 
     DoublyNode<T> *getPrevious() const { return previous_; }
 };
-} // namespace dsa
-#endif // ALGORITHMS_NODE_H
+} // namespace ds
+#endif // DATASTRUCTURE_NODE_H

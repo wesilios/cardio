@@ -1,30 +1,27 @@
-#ifndef ALGORITHMS_LISTSTACK_H
-#define ALGORITHMS_LISTSTACK_H
+#ifndef DATASTRUCTURE_LISTSTACK_H
+#define DATASTRUCTURE_LISTSTACK_H
 
 #include "../Exception.h"
-#include "../LinkedList/SinglyLinkedList.h"
+#include "../LinkedList/DoublyLinkedList.h"
 #include "Stack.h"
+#include <cstddef>
 #include <iostream>
 
-namespace dsa {
+namespace ds {
 void ListStackTest();
 
 template <typename T> class ListStack final : public Stack<T> {
   private:
-    SinglyLinkedList<T> linkedList_;
+    DoublyLinkedList<T> linkedList_;
 
   public:
-    explicit ListStack(int id) : Stack<T>(id) {}
+    explicit ListStack() : Stack<T>() {}
 
-    virtual ~ListStack() override { clear(); }
-
-    int id() override { return Stack<T>::id(); }
-
-    int size() override { return linkedList_.size(); }
+    std::size_t size() const override { return linkedList_.size(); }
 
     void clear() override { linkedList_.clear(); }
 
-    bool isEmpty() override { return linkedList_.isEmpty(); }
+    bool isEmpty() const override { return linkedList_.isEmpty(); }
 
     void push(const T &element) override { linkedList_.add(element); }
 
@@ -38,7 +35,7 @@ template <typename T> class ListStack final : public Stack<T> {
         return data;
     }
 
-    T peek() override {
+    T peek() const override {
         if (isEmpty()) {
             throw EmptyContainer("Empty stack");
         }
@@ -46,20 +43,21 @@ template <typename T> class ListStack final : public Stack<T> {
         return linkedList_.getTail()->getData();
     }
 
-    void printStack() override {
+    void printStack() const override {
         if (isEmpty()) {
-            throw EmptyContainer("Empty stack");
+            std::cout << "[  ]" << std::endl;
+            return;
         }
 
-        linkedList_.printList();
+        std::cout << linkedList_.toStringInReverse() << std::endl;
     }
 };
 
-void ListStackTest() {
+inline void ListStackTest() {
     int t, data;
     std::cout << "Number of values to push: ";
     std::cin >> t;
-    ListStack<int> stack(0);
+    ListStack<int> stack;
     std::cout << "Enter " << t << " values: ";
     for (int i = 0; i < t; i++) {
         std::cin >> data;
@@ -85,6 +83,6 @@ void ListStackTest() {
         stack.printStack();
     }
 }
-} // namespace dsa
+} // namespace ds
 
-#endif // ALGORITHMS_LISTSTACK_H
+#endif // DATASTRUCTURE_LISTSTACK_H
